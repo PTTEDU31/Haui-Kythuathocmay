@@ -7,6 +7,7 @@ for folder in ['data','models','reports']:
 for name in ['faqs.json']:
     shutil.copy(SOURCE/'data'/name,TEST_ROOT/'data'/name)
 for p in (SOURCE/'reports').glob('*.json'):shutil.copy(p,TEST_ROOT/'reports'/p.name)
+for p in (SOURCE/'models').glob('*.joblib'):shutil.copy(p,TEST_ROOT/'models'/p.name)
 os.environ['STUDENT_ROOT']=str(TEST_ROOT)
 sys.path.insert(0,str(SOURCE))
 from app.main import password_hash,init_db

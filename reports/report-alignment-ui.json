@@ -1,0 +1,13 @@
+{
+  "created_at": "2026-10-21T17:22:58.581Z",
+  "passed": 6,
+  "checks": [
+    "Rerun warning and actual feature count",
+    "Two confusion matrices",
+    "Four model options only in experiment renderer",
+    "Per-class metrics and Test predictions",
+    "Model-specific submission and score display",
+    "Escaped result content and enabled submit button"
+  ],
+  "limitation": "Node VM with DOM stubs checks rendering logic, not browser layout. Chromium launch is blocked by sandbox."
+}

@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-10-21T05:15:00.407583+00:00",
+  "method": "httpx.ASGITransport, synthetic temporary data, AI disabled, no network sockets",
+  "passed": 9,
+  "checks": [
+    "Health, source count and response headers",
+    "Experiment API exposes the retrained report",
+    "MLP/LinearSVC research routes use labels with distinct score semantics and leave history empty",
+    "Research input validation and cross-origin protection",
+    "Normal chat retains automatic selection, extension routing and source citations",
+    "Topic words alone cannot supply evidence",
+    "Synthetic admin authentication, draft exclusion and approved FAQ rebuild",
+    "HTML and experiment JavaScript assets are served",
+    "Disposable visitor history can be cleared"
+  ],
+  "limitation": "Complements pytest. Full TestClient suite and browser still require host verification in an environment allowing their execution."
+}

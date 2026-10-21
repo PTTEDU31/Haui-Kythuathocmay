@@ -1,29 +1,122 @@
 {
-  "created_at": "2026-10-20T18:13:07.290982+00:00",
+  "created_at": "2026-10-21T05:10:29.990534+00:00",
+  "seed": 42,
+  "environment": {
+    "python": "3.12.14",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "platform": "Linux-7.2.7-200.fc44.x86_64-x86_64-with-glibc2.43",
+    "cpu": "",
+    "threads": {
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2"
+    }
+  },
   "dataset": {
     "total": 50,
     "train": 30,
     "validation": 10,
     "test": 10,
-    "origin": "50 câu minh họa do tác giả biên soạn trong báo cáo; không phải câu hỏi thực tế độc lập.",
-    "sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b"
+    "sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b",
+    "version": "TC1-original-50-fixed-split",
+    "origin": "50 câu minh họa do tác giả biên soạn trong DOCX; không phải phản hồi sinh viên thực tế.",
+    "source_sha256": "7775b4962a05d8d186e70cdd1327b26f8cede75d0612a8c3d050a6e540158859",
+    "split_ids": {
+      "Train": [
+        "Q001",
+        "Q002",
+        "Q003",
+        "Q004",
+        "Q005",
+        "Q006",
+        "Q011",
+        "Q012",
+        "Q013",
+        "Q014",
+        "Q015",
+        "Q016",
+        "Q021",
+        "Q022",
+        "Q023",
+        "Q024",
+        "Q025",
+        "Q026",
+        "Q031",
+        "Q032",
+        "Q033",
+        "Q034",
+        "Q035",
+        "Q036",
+        "Q041",
+        "Q042",
+        "Q043",
+        "Q044",
+        "Q045",
+        "Q046"
+      ],
+      "Validation": [
+        "Q007",
+        "Q008",
+        "Q017",
+        "Q018",
+        "Q027",
+        "Q028",
+        "Q037",
+        "Q038",
+        "Q047",
+        "Q048"
+      ],
+      "Test": [
+        "Q009",
+        "Q010",
+        "Q019",
+        "Q020",
+        "Q029",
+        "Q030",
+        "Q039",
+        "Q040",
+        "Q049",
+        "Q050"
+      ]
+    }
   },
-  "method": "TF-IDF học trên 30 câu Train. Mỗi họ mô hình chọn cấu hình theo Macro-F1 trên 10 câu Validation; chốt lựa chọn trước khi đánh giá 10 câu Test. Không tăng dữ liệu bằng câu diễn đạt lại từ Test.",
-  "seed": 42,
   "labels": [
-    "dang_ky_hoc_phan",
-    "diem_hoc_tap",
-    "hoc_bong",
     "hoc_phi",
-    "lich_thi"
+    "dang_ky_hoc_phan",
+    "lich_thi",
+    "hoc_bong",
+    "diem_hoc_tap"
   ],
   "label_names": {
-    "dang_ky_hoc_phan": "Đăng ký học phần",
-    "diem_hoc_tap": "Điểm học tập",
-    "hoc_bong": "Học bổng",
     "hoc_phi": "Học phí",
-    "lich_thi": "Lịch thi"
+    "dang_ky_hoc_phan": "Đăng ký học phần",
+    "lich_thi": "Lịch thi",
+    "hoc_bong": "Học bổng",
+    "diem_hoc_tap": "Điểm học tập"
   },
+  "label_encoding": "Nhãn chuỗi trong sklearn; thứ tự báo cáo theo Bảng 1.7 DOCX. classes_ lưu riêng để giải mã điểm.",
+  "normalization": {
+    "version": "nfc-lower-space-v1",
+    "callable": "app.text.normalize_classification",
+    "rules": "Unicode NFC, chữ thường, khoảng trắng; giữ dấu và từ phủ định; không stopword, không mở rộng viết tắt."
+  },
+  "tfidf_configuration": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "max_features": 500,
+    "min_df": 1,
+    "strip_accents": null,
+    "sublinear_tf": true,
+    "norm": "l2",
+    "lowercase": false
+  },
+  "method": "TF-IDF chỉ fit trên 30 câu Train. Chọn từng họ theo Macro-F1 Validation; hòa trong họ lấy cấu hình đầu theo thứ tự đã định. Chọn ứng dụng theo Macro-F1 Validation, hòa ưu tiên LinearSVC. Lưu selection.json trước khi tính Test, không refit Train+Validation.",
+  "evaluation_status": "Tái thực nghiệm trên tập Test đã từng được xem; không phải đánh giá độc lập mới.",
+  "research_primary": "MLP",
   "models": [
     {
       "name": "MLP",
@@ -33,31 +126,684 @@
         ],
         "alpha": 0.001
       },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.012967,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 29,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": 0.0038575020568628066,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      },
+      "metadata": {
+        "dataset_sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b",
+        "normalization": {
+          "version": "nfc-lower-space-v1",
+          "callable": "app.text.normalize_classification",
+          "rules": "Unicode NFC, chữ thường, khoảng trắng; giữ dấu và từ phủ định; không stopword, không mở rộng viết tắt."
+        },
+        "seed": 42,
+        "feature_count": 327,
+        "labels": [
+          "hoc_phi",
+          "dang_ky_hoc_phan",
+          "lich_thi",
+          "hoc_bong",
+          "diem_hoc_tap"
+        ],
+        "classes": [
+          "dang_ky_hoc_phan",
+          "diem_hoc_tap",
+          "hoc_bong",
+          "hoc_phi",
+          "lich_thi"
+        ],
+        "tfidf_configuration": {
+          "ngram_range": [
+            1,
+            2
+          ],
+          "max_features": 500,
+          "min_df": 1,
+          "strip_accents": null,
+          "sublinear_tf": true,
+          "norm": "l2",
+          "lowercase": false
+        },
+        "classifier_parameters": {
+          "activation": "relu",
+          "alpha": 0.001,
+          "batch_size": "auto",
+          "beta_1": 0.9,
+          "beta_2": 0.999,
+          "early_stopping": false,
+          "epsilon": 1e-08,
+          "hidden_layer_sizes": [
+            16
+          ],
+          "learning_rate": "constant",
+          "learning_rate_init": 0.001,
+          "max_fun": 15000,
+          "max_iter": 1000,
+          "momentum": 0.9,
+          "n_iter_no_change": 10,
+          "nesterovs_momentum": true,
+          "power_t": 0.5,
+          "random_state": 42,
+          "shuffle": true,
+          "solver": "lbfgs",
+          "tol": 0.0001,
+          "validation_fraction": 0.1,
+          "verbose": false,
+          "warm_start": false
+        },
+        "environment": {
+          "python": "3.12.14",
+          "sklearn": "1.9.1",
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "joblib": "1.6.0",
+          "platform": "Linux-7.2.7-200.fc44.x86_64-x86_64-with-glibc2.43",
+          "cpu": "",
+          "threads": {
+            "OMP_NUM_THREADS": "2",
+            "OPENBLAS_NUM_THREADS": "2"
+          }
+        },
+        "convergence": {
+          "n_iter": 29,
+          "convergence_warning": false,
+          "warnings": [],
+          "loss": 0.0038575020568628066,
+          "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+        }
+      },
+      "train": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            6,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            6,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            6
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q001",
+            "question": "Khi nào sinh viên phải đóng học phí học kỳ này?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q002",
+            "question": "Em có thể xem số tiền học phí ở đâu?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q003",
+            "question": "Có những hình thức nộp học phí nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q004",
+            "question": "Làm thế nào để kiểm tra học phí đã được ghi nhận?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q005",
+            "question": "Em cần làm gì nếu chuyển khoản học phí nhưng chưa cập nhật?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q006",
+            "question": "Học phí được tính theo số tín chỉ như thế nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q011",
+            "question": "Lịch mở đăng ký học phần được thông báo ở đâu?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q012",
+            "question": "Làm sao để đăng ký môn học trong học kỳ mới?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q013",
+            "question": "Em có thể thay đổi lớp học phần đã đăng ký không?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q014",
+            "question": "Cách kiểm tra các môn học đã đăng ký thành công là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q015",
+            "question": "Nếu lớp học phần đã đủ sĩ số thì em phải làm sao?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q016",
+            "question": "Em muốn hủy một học phần đã đăng ký thì làm thế nào?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q021",
+            "question": "Em có thể xem lịch thi cuối kỳ ở đâu?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q022",
+            "question": "Lịch thi giữa kỳ được công bố trên hệ thống nào?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q023",
+            "question": "Làm sao biết phòng thi của môn học?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q024",
+            "question": "Em cần kiểm tra ca thi bằng cách nào?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q025",
+            "question": "Nếu hai môn bị trùng lịch thi thì em phải làm sao?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q026",
+            "question": "Em muốn xác nhận lại ngày thi của học phần đã đăng ký.",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q031",
+            "question": "Sinh viên cần đáp ứng điều kiện nào để xét học bổng?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q032",
+            "question": "Thông báo học bổng được đăng ở đâu?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q033",
+            "question": "Hồ sơ đăng ký học bổng gồm những giấy tờ gì?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q034",
+            "question": "Thời hạn nộp hồ sơ học bổng là khi nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q035",
+            "question": "Em có thể tìm danh sách học bổng đang nhận hồ sơ ở đâu?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q036",
+            "question": "Làm thế nào để biết kết quả xét học bổng?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q041",
+            "question": "Em có thể xem điểm học phần ở đâu?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q042",
+            "question": "Làm sao để tra cứu điểm trung bình học kỳ?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q043",
+            "question": "Điểm tổng kết học phần được cập nhật trên hệ thống nào?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q044",
+            "question": "Nếu điểm hiển thị không đúng thì em nên làm gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q045",
+            "question": "Em muốn biết cách xem bảng điểm tích lũy.",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q046",
+            "question": "Có thể kiểm tra điểm chuyên cần ở đâu?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "test": {
+        "accuracy": 0.7,
+        "macro_f1": 0.7133333333333333,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1-score": 0.5,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 0.3333333333333333,
+            "recall": 0.5,
+            "f1-score": 0.4,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1-score": 0.6666666666666666,
+            "support": 2.0
+          },
+          "accuracy": 0.7,
+          "macro avg": {
+            "precision": 0.7666666666666666,
+            "recall": 0.7,
+            "f1-score": 0.7133333333333333,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 0.7666666666666666,
+            "recall": 0.7,
+            "f1-score": 0.7133333333333333,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q009",
+            "question": "Nếu đóng học phí muộn thì em cần liên hệ bộ phận nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q010",
+            "question": "Làm sao để lấy thông tin các khoản phải nộp của học kỳ?",
+            "true": "hoc_phi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q019",
+            "question": "Làm sao xem thời khóa biểu sau khi đăng ký học phần?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q020",
+            "question": "Em có thể đăng ký bổ sung học phần vào thời điểm nào?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q029",
+            "question": "Làm thế nào để kiểm tra địa điểm thi?",
+            "true": "lich_thi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q030",
+            "question": "Em cần xem thông báo đổi lịch thi ở đâu?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q039",
+            "question": "Em muốn biết quy trình xét học bổng khuyến khích học tập.",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q040",
+            "question": "Bộ phận nào tiếp nhận câu hỏi về học bổng sinh viên?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q049",
+            "question": "Em có thể tra cứu điểm của từng môn theo cách nào?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q050",
+            "question": "Làm sao để biết mình đã có kết quả thi cuối kỳ?",
+            "true": "diem_hoc_tap",
+            "predicted": "lich_thi"
+          }
+        ]
+      },
       "validation_macro_f1": 1.0,
       "test_accuracy": 0.7,
       "test_macro_f1": 0.7133333333333333,
-      "fit_seconds": 0.0146,
-      "latency_p50_ms": 0.355,
-      "latency_p95_ms": 0.381,
       "confusion_matrix": [
         [
-          2,
+          1,
           0,
-          0,
+          1,
           0,
           0
         ],
         [
           0,
-          1,
+          2,
           0,
           0,
-          1
+          0
         ],
         [
+          1,
           0,
-          0,
-          2,
+          1,
           0,
           0
         ],
@@ -65,40 +811,28 @@
           0,
           0,
           0,
-          1,
-          1
+          2,
+          0
         ],
         [
           0,
-          1,
           0,
+          1,
           0,
           1
         ]
       ],
       "per_class": {
-        "dang_ky_hoc_phan": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1-score": 1.0,
-          "support": 2.0
-        },
-        "diem_hoc_tap": {
+        "hoc_phi": {
           "precision": 0.5,
           "recall": 0.5,
           "f1-score": 0.5,
           "support": 2.0
         },
-        "hoc_bong": {
+        "dang_ky_hoc_phan": {
           "precision": 1.0,
           "recall": 1.0,
           "f1-score": 1.0,
-          "support": 2.0
-        },
-        "hoc_phi": {
-          "precision": 1.0,
-          "recall": 0.5,
-          "f1-score": 0.6666666666666666,
           "support": 2.0
         },
         "lich_thi": {
@@ -107,15 +841,27 @@
           "f1-score": 0.4,
           "support": 2.0
         },
+        "hoc_bong": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 2.0
+        },
+        "diem_hoc_tap": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1-score": 0.6666666666666666,
+          "support": 2.0
+        },
         "accuracy": 0.7,
         "macro avg": {
-          "precision": 0.7666666666666667,
+          "precision": 0.7666666666666666,
           "recall": 0.7,
           "f1-score": 0.7133333333333333,
           "support": 10.0
         },
         "weighted avg": {
-          "precision": 0.7666666666666667,
+          "precision": 0.7666666666666666,
           "recall": 0.7,
           "f1-score": 0.7133333333333333,
           "support": 10.0
@@ -150,7 +896,7 @@
           "id": "Q029",
           "question": "Làm thế nào để kiểm tra địa điểm thi?",
           "true": "lich_thi",
-          "predicted": "diem_hoc_tap"
+          "predicted": "hoc_phi"
         },
         {
           "id": "Q030",
@@ -182,64 +928,714 @@
           "true": "diem_hoc_tap",
           "predicted": "lich_thi"
         }
-      ]
+      ],
+      "latency_p50_ms": 0.341,
+      "latency_p95_ms": 0.366,
+      "artifact": "models/mlp.joblib",
+      "artifact_sha256": "8232806096cffd02acba38da53e685819a21b7fd420610a59a315a2c7eac852a"
     },
     {
       "name": "LinearSVC",
       "configuration": {
         "C": 0.1
       },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.001617,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 10,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": null,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      },
+      "metadata": {
+        "dataset_sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b",
+        "normalization": {
+          "version": "nfc-lower-space-v1",
+          "callable": "app.text.normalize_classification",
+          "rules": "Unicode NFC, chữ thường, khoảng trắng; giữ dấu và từ phủ định; không stopword, không mở rộng viết tắt."
+        },
+        "seed": 42,
+        "feature_count": 327,
+        "labels": [
+          "hoc_phi",
+          "dang_ky_hoc_phan",
+          "lich_thi",
+          "hoc_bong",
+          "diem_hoc_tap"
+        ],
+        "classes": [
+          "dang_ky_hoc_phan",
+          "diem_hoc_tap",
+          "hoc_bong",
+          "hoc_phi",
+          "lich_thi"
+        ],
+        "tfidf_configuration": {
+          "ngram_range": [
+            1,
+            2
+          ],
+          "max_features": 500,
+          "min_df": 1,
+          "strip_accents": null,
+          "sublinear_tf": true,
+          "norm": "l2",
+          "lowercase": false
+        },
+        "classifier_parameters": {
+          "C": 0.1,
+          "class_weight": null,
+          "dual": "auto",
+          "fit_intercept": true,
+          "intercept_scaling": 1,
+          "loss": "squared_hinge",
+          "max_iter": 1000,
+          "multi_class": "ovr",
+          "penalty": "l2",
+          "random_state": 42,
+          "tol": 0.0001,
+          "verbose": 0
+        },
+        "environment": {
+          "python": "3.12.14",
+          "sklearn": "1.9.1",
+          "numpy": "2.5.4",
+          "scipy": "1.18.1",
+          "joblib": "1.6.0",
+          "platform": "Linux-7.2.7-200.fc44.x86_64-x86_64-with-glibc2.43",
+          "cpu": "",
+          "threads": {
+            "OMP_NUM_THREADS": "2",
+            "OPENBLAS_NUM_THREADS": "2"
+          }
+        },
+        "convergence": {
+          "n_iter": 10,
+          "convergence_warning": false,
+          "warnings": [],
+          "loss": null,
+          "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+        }
+      },
+      "train": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 6.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            6,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            6,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            6,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            6
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q001",
+            "question": "Khi nào sinh viên phải đóng học phí học kỳ này?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q002",
+            "question": "Em có thể xem số tiền học phí ở đâu?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q003",
+            "question": "Có những hình thức nộp học phí nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q004",
+            "question": "Làm thế nào để kiểm tra học phí đã được ghi nhận?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q005",
+            "question": "Em cần làm gì nếu chuyển khoản học phí nhưng chưa cập nhật?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q006",
+            "question": "Học phí được tính theo số tín chỉ như thế nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q011",
+            "question": "Lịch mở đăng ký học phần được thông báo ở đâu?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q012",
+            "question": "Làm sao để đăng ký môn học trong học kỳ mới?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q013",
+            "question": "Em có thể thay đổi lớp học phần đã đăng ký không?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q014",
+            "question": "Cách kiểm tra các môn học đã đăng ký thành công là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q015",
+            "question": "Nếu lớp học phần đã đủ sĩ số thì em phải làm sao?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q016",
+            "question": "Em muốn hủy một học phần đã đăng ký thì làm thế nào?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q021",
+            "question": "Em có thể xem lịch thi cuối kỳ ở đâu?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q022",
+            "question": "Lịch thi giữa kỳ được công bố trên hệ thống nào?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q023",
+            "question": "Làm sao biết phòng thi của môn học?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q024",
+            "question": "Em cần kiểm tra ca thi bằng cách nào?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q025",
+            "question": "Nếu hai môn bị trùng lịch thi thì em phải làm sao?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q026",
+            "question": "Em muốn xác nhận lại ngày thi của học phần đã đăng ký.",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q031",
+            "question": "Sinh viên cần đáp ứng điều kiện nào để xét học bổng?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q032",
+            "question": "Thông báo học bổng được đăng ở đâu?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q033",
+            "question": "Hồ sơ đăng ký học bổng gồm những giấy tờ gì?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q034",
+            "question": "Thời hạn nộp hồ sơ học bổng là khi nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q035",
+            "question": "Em có thể tìm danh sách học bổng đang nhận hồ sơ ở đâu?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q036",
+            "question": "Làm thế nào để biết kết quả xét học bổng?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q041",
+            "question": "Em có thể xem điểm học phần ở đâu?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q042",
+            "question": "Làm sao để tra cứu điểm trung bình học kỳ?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q043",
+            "question": "Điểm tổng kết học phần được cập nhật trên hệ thống nào?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q044",
+            "question": "Nếu điểm hiển thị không đúng thì em nên làm gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q045",
+            "question": "Em muốn biết cách xem bảng điểm tích lũy.",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q046",
+            "question": "Có thể kiểm tra điểm chuyên cần ở đâu?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "test": {
+        "accuracy": 0.7,
+        "macro_f1": 0.6933333333333332,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1-score": 0.5,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "f1-score": 0.8,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1-score": 0.5,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1-score": 0.6666666666666666,
+            "support": 2.0
+          },
+          "accuracy": 0.7,
+          "macro avg": {
+            "precision": 0.7333333333333333,
+            "recall": 0.7,
+            "f1-score": 0.6933333333333332,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 0.7333333333333333,
+            "recall": 0.7,
+            "f1-score": 0.6933333333333332,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q009",
+            "question": "Nếu đóng học phí muộn thì em cần liên hệ bộ phận nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q010",
+            "question": "Làm sao để lấy thông tin các khoản phải nộp của học kỳ?",
+            "true": "hoc_phi",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q019",
+            "question": "Làm sao xem thời khóa biểu sau khi đăng ký học phần?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q020",
+            "question": "Em có thể đăng ký bổ sung học phần vào thời điểm nào?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q029",
+            "question": "Làm thế nào để kiểm tra địa điểm thi?",
+            "true": "lich_thi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q030",
+            "question": "Em cần xem thông báo đổi lịch thi ở đâu?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q039",
+            "question": "Em muốn biết quy trình xét học bổng khuyến khích học tập.",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q040",
+            "question": "Bộ phận nào tiếp nhận câu hỏi về học bổng sinh viên?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q049",
+            "question": "Em có thể tra cứu điểm của từng môn theo cách nào?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q050",
+            "question": "Làm sao để biết mình đã có kết quả thi cuối kỳ?",
+            "true": "diem_hoc_tap",
+            "predicted": "lich_thi"
+          }
+        ]
+      },
       "validation_macro_f1": 1.0,
       "test_accuracy": 0.7,
       "test_macro_f1": 0.6933333333333332,
-      "fit_seconds": 0.0019,
-      "latency_p50_ms": 0.312,
-      "latency_p95_ms": 0.332,
       "confusion_matrix": [
         [
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
           2,
           0,
           0,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
           0,
           0
         ],
         [
           0,
-          1,
-          0,
-          0,
-          1
-        ],
-        [
           0,
           0,
           2,
-          0,
-          0
-        ],
-        [
-          1,
-          0,
-          0,
-          1,
           0
         ],
         [
           0,
-          1,
           0,
+          1,
           0,
           1
         ]
       ],
       "per_class": {
+        "hoc_phi": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1-score": 0.5,
+          "support": 2.0
+        },
         "dang_ky_hoc_phan": {
           "precision": 0.6666666666666666,
           "recall": 1.0,
           "f1-score": 0.8,
           "support": 2.0
         },
-        "diem_hoc_tap": {
+        "lich_thi": {
           "precision": 0.5,
           "recall": 0.5,
           "f1-score": 0.5,
@@ -251,16 +1647,10 @@
           "f1-score": 1.0,
           "support": 2.0
         },
-        "hoc_phi": {
+        "diem_hoc_tap": {
           "precision": 1.0,
           "recall": 0.5,
           "f1-score": 0.6666666666666666,
-          "support": 2.0
-        },
-        "lich_thi": {
-          "precision": 0.5,
-          "recall": 0.5,
-          "f1-score": 0.5,
           "support": 2.0
         },
         "accuracy": 0.7,
@@ -306,7 +1696,7 @@
           "id": "Q029",
           "question": "Làm thế nào để kiểm tra địa điểm thi?",
           "true": "lich_thi",
-          "predicted": "diem_hoc_tap"
+          "predicted": "hoc_phi"
         },
         {
           "id": "Q030",
@@ -338,20 +1728,1040 @@
           "true": "diem_hoc_tap",
           "predicted": "lich_thi"
         }
-      ]
+      ],
+      "latency_p50_ms": 0.295,
+      "latency_p95_ms": 0.313,
+      "artifact": "models/linearsvc.joblib",
+      "artifact_sha256": "48514079e1b9d6339bfa2e1f5e240ef2efb60f6d36098b40115202f9de538160"
     }
   ],
-  "environment": {
-    "python": "3.12.14",
-    "sklearn": "1.9.1",
-    "cpu": ""
-  },
-  "limitations": [
-    "Test chỉ có 10 câu, hai câu mỗi nhãn; một lỗi làm accuracy thay đổi 10 điểm phần trăm.",
-    "Điểm mô hình phân loại không đo độ đúng của câu trả lời AI.",
-    "Dữ liệu minh họa nhỏ chưa chứng minh khả năng dùng ổn định trên câu hỏi sinh viên thực tế.",
-    "BiLSTM/PhoBERT chưa chạy; cần thêm dữ liệu độc lập trước khi so sánh."
+  "candidates": [
+    {
+      "name": "MLP",
+      "configuration": {
+        "hidden_layer_sizes": [
+          16
+        ],
+        "alpha": 0.001
+      },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.012967,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 29,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": 0.0038575020568628066,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      }
+    },
+    {
+      "name": "MLP",
+      "configuration": {
+        "hidden_layer_sizes": [
+          16
+        ],
+        "alpha": 0.01
+      },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.013287,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 42,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": 0.025010443376602624,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      }
+    },
+    {
+      "name": "MLP",
+      "configuration": {
+        "hidden_layer_sizes": [
+          32
+        ],
+        "alpha": 0.001
+      },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.015094,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 29,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": 0.0046513180370760625,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      }
+    },
+    {
+      "name": "MLP",
+      "configuration": {
+        "hidden_layer_sizes": [
+          32
+        ],
+        "alpha": 0.01
+      },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.018868,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 39,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": 0.025127208877513227,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      }
+    },
+    {
+      "name": "LinearSVC",
+      "configuration": {
+        "C": 0.1
+      },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.001617,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 10,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": null,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      }
+    },
+    {
+      "name": "LinearSVC",
+      "configuration": {
+        "C": 1.0
+      },
+      "validation": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "hoc_phi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "dang_ky_hoc_phan": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "lich_thi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "hoc_bong": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "diem_hoc_tap": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 2.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 10.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "predictions": [
+          {
+            "id": "Q007",
+            "question": "Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q008",
+            "question": "Em có thể tra cứu hạn nộp học phí bằng cách nào?",
+            "true": "hoc_phi",
+            "predicted": "hoc_phi"
+          },
+          {
+            "id": "Q017",
+            "question": "Điều kiện để đăng ký học phần có môn tiên quyết là gì?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q018",
+            "question": "Cổng đăng ký học phần không truy cập được thì liên hệ ai?",
+            "true": "dang_ky_hoc_phan",
+            "predicted": "dang_ky_hoc_phan"
+          },
+          {
+            "id": "Q027",
+            "question": "Lịch thi có thể được điều chỉnh sau khi công bố không?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q028",
+            "question": "Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?",
+            "true": "lich_thi",
+            "predicted": "lich_thi"
+          },
+          {
+            "id": "Q037",
+            "question": "Sinh viên năm nhất có thể tìm học bổng bằng cách nào?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q038",
+            "question": "Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?",
+            "true": "hoc_bong",
+            "predicted": "hoc_bong"
+          },
+          {
+            "id": "Q047",
+            "question": "Cách xem kết quả học tập của học kỳ trước là gì?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          },
+          {
+            "id": "Q048",
+            "question": "Em liên hệ ai để hỏi về việc điều chỉnh điểm?",
+            "true": "diem_hoc_tap",
+            "predicted": "diem_hoc_tap"
+          }
+        ]
+      },
+      "fit_seconds": 0.001617,
+      "feature_count": 327,
+      "convergence": {
+        "n_iter": 19,
+        "convergence_warning": false,
+        "warnings": [],
+        "loss": null,
+        "note": "n_iter là vòng lặp bộ tối ưu; không gọi là epoch Adam. Không có loss_curve_ với lbfgs."
+      }
+    }
   ],
+  "limitations": [
+    "Test đã từng được xem trong lần triển khai trước; lần chạy này không tạo holdout độc lập.",
+    "Test chỉ có 10 câu, hai câu mỗi nhãn; một lỗi thay đổi accuracy 10 điểm phần trăm.",
+    "Dữ liệu tự biên soạn nhỏ; chưa đo chất lượng trên phản hồi sinh viên thực tế.",
+    "Điểm phân loại và điểm truy hồi không phải xác suất câu trả lời đúng đã hiệu chỉnh.",
+    "Ngưỡng truy hồi là quy tắc kỹ thuật, chưa tối ưu hay đo nhận biết ngoài phạm vi trên tập độc lập.",
+    "BiLSTM/PhoBERT chưa chạy. Qwen/Ollama chỉ hỗ trợ diễn đạt FAQ, không được huấn luyện bằng 50 câu."
+  ],
+  "selection": {
+    "selected": "LinearSVC",
+    "selected_at": "2026-10-21T05:10:30.083280+00:00",
+    "validation_macro_f1": 1.0,
+    "configuration": {
+      "C": 0.1
+    },
+    "dataset_sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b",
+    "research_primary": "MLP",
+    "test_previously_seen": true,
+    "test_evaluated_in_this_run": false,
+    "reason": "Macro-F1 Validation cao nhất; hòa ưu tiên LinearSVC vì suy luận tuyến tính đơn giản. Không chọn bằng Test.",
+    "evaluation_status": "Tái thực nghiệm trên tập Test đã từng được xem; không phải đánh giá độc lập mới.",
+    "family_selections": {
+      "MLP": {
+        "hidden_layer_sizes": [
+          16
+        ],
+        "alpha": 0.001
+      },
+      "LinearSVC": {
+        "C": 0.1
+      }
+    }
+  },
+  "test_evaluation_started_at": "2026-10-21T05:10:30.083477+00:00",
+  "test_evaluation_completed_at": "2026-10-21T05:10:30.175582+00:00",
   "selected_model": "LinearSVC",
-  "application_retrieval": "Truy hồi kết hợp TF-IDF word n-gram và char n-gram, hỗ trợ câu không dấu; 7 chủ đề. Nhãn mô hình 5 lớp thực nghiệm được hiển thị riêng, không dùng để tuyên bố câu trả lời đúng."
+  "application_retrieval": "Nhãn phân loại định hướng truy hồi FAQ trong 5 chủ đề khi không có chủ đề tường minh. An toàn, nhiều chủ đề, ngữ cảnh và chủ đề tường minh được ưu tiên; CTSV/KTX là mở rộng, không gán ép vào 5 lớp. Truy hồi word/char không dấu kiểm tra bằng chứng riêng; thiếu khớp thì hỏi lại/từ chối. Có chế độ auto, MLP, LinearSVC và chỉ truy hồi tại trang Thực nghiệm."
 }

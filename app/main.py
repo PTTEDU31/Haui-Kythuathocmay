@@ -4,6 +4,7 @@ from datetime import date,datetime,timezone
 from collections import defaultdict,deque
 from contextlib import asynccontextmanager
 from urllib.parse import urlparse
+from typing import Literal
 from fastapi import FastAPI,HTTPException,Request,Response,Depends,UploadFile,File
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -96,6 +97,9 @@ async def guard(request,call_next):
 class Chat(BaseModel):
     question:str=Field(min_length=1,max_length=1500)
     use_ai:bool=True
+class ResearchQuery(BaseModel):
+    question:str=Field(min_length=1,max_length=1500)
+    model_mode:Literal['auto','mlp','linearsvc','retrieval']='auto'
 class Login(BaseModel):password:str=Field(min_length=1,max_length=256)
 class ChangePassword(BaseModel):
     current_password:str=Field(min_length=1,max_length=256)
@@ -171,7 +175,25 @@ def knowledge(q:str='',intent:str=''):
 @app.get('/api/experiments')
 def experiments():
     p=ROOT/'reports'/'experiments.json'
-    return json.loads(p.read_text()) if p.exists() else {'status':'pending'}
+    if not p.exists():return {'status':'pending'}
+    result=json.loads(p.read_text())
+    faq=ROOT/'reports'/'faq-evaluation.json'
+    if faq.exists():
+        evaluation=json.loads(faq.read_text())
+        result['faq_evaluation']={
+            'provenance':evaluation['provenance'],
+            'modes':[{k:v for k,v in mode.items() if k!='outcomes'} for mode in evaluation['modes']]}
+    return result
+@app.post('/api/experiments/route')
+def research_route(body:ResearchQuery,request:Request):
+    """Stateless technical demo: no student history, provider calls or global mode change."""
+    limit(request,'research',30)
+    if not normalize(body.question):raise HTTPException(422,'Bạn hãy nhập một câu hỏi có nội dung.')
+    if body.model_mode in ('mlp','linearsvc') and body.model_mode not in ENGINE.models:
+        raise HTTPException(503,'Chưa có pipeline cho mô hình đã chọn; cần chạy thực nghiệm.')
+    result=ENGINE.route(body.question,model_mode=body.model_mode)
+    result.pop('evidence',None)
+    return result
 @app.get('/api/ai-status')
 def ai_status():
     s=read_settings()

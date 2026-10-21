@@ -1,6 +1,25 @@
 {
   "selected": "LinearSVC",
+  "selected_at": "2026-10-21T05:10:30.083280+00:00",
   "validation_macro_f1": 1.0,
-  "reason": "Highest validation macro-F1; LinearSVC wins ties for lower runtime complexity.",
-  "test_seen": false
+  "configuration": {
+    "C": 0.1
+  },
+  "dataset_sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b",
+  "research_primary": "MLP",
+  "test_previously_seen": true,
+  "test_evaluated_in_this_run": false,
+  "reason": "Macro-F1 Validation cao nhất; hòa ưu tiên LinearSVC vì suy luận tuyến tính đơn giản. Không chọn bằng Test.",
+  "evaluation_status": "Tái thực nghiệm trên tập Test đã từng được xem; không phải đánh giá độc lập mới.",
+  "family_selections": {
+    "MLP": {
+      "hidden_layer_sizes": [
+        16
+      ],
+      "alpha": 0.001
+    },
+    "LinearSVC": {
+      "C": 0.1
+    }
+  }
 }

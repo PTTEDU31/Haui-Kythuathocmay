@@ -1,0 +1,74 @@
+{
+  "created_at": "2026-10-21T05:16:38.344768+00:00",
+  "scope": "Current worktree only; no commit, push, merge, deploy or service changes.",
+  "source_documents_and_original_dataset_unchanged": true,
+  "pipelines_metadata_predictions_and_reports_synchronized": true,
+  "intent_alias_matches_selected_pipeline": true,
+  "full_pytest": {
+    "command": "timeout 120 .venv/bin/python -m pytest tests -q",
+    "attempts": 2,
+    "exit_code": 124,
+    "tests_collected": 54,
+    "initial_checks_passed_before_hang": 22,
+    "status": "environment_blocked_pending_host",
+    "log": "reports/report-alignment-pytest.txt",
+    "minimal_reproduction": "Minimal FastAPI app also hangs during TestClient.__enter__, in Starlette/AnyIO blocking portal, before serving a route."
+  },
+  "compute_pytest": {
+    "passed": 41,
+    "exit_code": 0,
+    "selection": "All existing/new tests without client/logged fixtures",
+    "log": "reports/report-alignment-pytest-compute.txt"
+  },
+  "inprocess_api": {
+    "groups_passed": 9,
+    "exit_code": 0,
+    "log": "reports/report-alignment-inprocess.json"
+  },
+  "ui_component": {
+    "groups_passed": 6,
+    "exit_code": 0,
+    "log": "reports/report-alignment-ui.json",
+    "limitation": "Node VM / DOM stubs do not verify browser layout."
+  },
+  "javascript_syntax": {
+    "command": "node --check app/static/app.js",
+    "exit_code": 0
+  },
+  "python_compile": {
+    "command": ".venv/bin/python -m compileall -q app scripts/train.py scripts/evaluate_faq.py scripts/check_alignment_inprocess.py tests",
+    "exit_code": 0
+  },
+  "git_diff_check": {
+    "command": "git diff --check",
+    "exit_code": 0
+  },
+  "environment_limits": {
+    "ipv4_socket": "PermissionError: [Errno 1] Operation not permitted",
+    "chromium": "Headless launch with chromium_sandbox=True failed: sandbox_host_linux.cc:41 shutdown: Operation not permitted (1). No sandbox bypass attempted.",
+    "browser_layout": "Not verified for this revision; historical screenshots are not current validation."
+  },
+  "research_limits": [
+    "Previously seen Test; not an independent new evaluation.",
+    "Twenty FAQ cases are constructed technical checks, not real student feedback.",
+    "FAQ selection errors and conservative refusals remain measured quality limitations, preserved in faq-evaluation.json.",
+    "BiLSTM/PhoBERT and field quality/OOD calibration have not been evaluated."
+  ],
+  "handoff": "Ready permits host to start final tests only. Host must pass full pytest before creating complete marker or local commit.",
+  "followup_verification": {
+    "created_at": "2026-10-21T17:23:44.690483+00:00",
+    "full_pytest": {
+      "command": "timeout 120 .venv/bin/python -B -m pytest tests -q -p no:cacheprovider",
+      "passed": 54,
+      "exit_code": 0
+    },
+    "javascript_syntax": {
+      "exit_code": 0
+    },
+    "ui_component": {
+      "groups_passed": 6,
+      "exit_code": 0
+    },
+    "note": "Follow-up check before promotion to main; original environment-blocked results above are historical. Browser layout was not checked."
+  }
+}

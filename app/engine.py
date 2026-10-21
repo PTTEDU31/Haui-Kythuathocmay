@@ -6,13 +6,23 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 import httpx
+from .text import normalize_classification
 
 ROOT=Path(os.getenv('STUDENT_ROOT',Path(__file__).resolve().parents[1]))
 LABELS={'hoc_phi':'Học phí','dang_ky_hoc_phan':'Đăng ký học phần','lich_thi':'Lịch thi','hoc_bong':'Học bổng','diem_hoc_tap':'Điểm học tập','cong_tac_sinh_vien':'Công tác sinh viên','ky_tuc_xa':'Ký túc xá'}
+RESEARCH_LABELS=('hoc_phi','dang_ky_hoc_phan','lich_thi','hoc_bong','diem_hoc_tap')
+RETRIEVAL_MIN_GLOBAL=.30
+RETRIEVAL_MIN_TOPIC=.13
+RETRIEVAL_MIN_MARGIN=.025
+# A conservative lexical guard supplements cosine, which can match only a topic.
+# These are uncalibrated engineering rules, not an OOD detector.
+EVIDENCE_STOP=set('em toi minh ban sinh vien cho cua va voi la thi ma nay nhung da duoc chua khong the co can muon hoi biet giup lam sao nao o dau khi bao nhieu vay con ve xem tra cuu thong tin huong dan quy dinh nam hoc ky'.split())
+EVIDENCE_TOPIC=set('hoc phi dang ky phan lich thi bong diem tap cong tac sinh vien tuc xa'.split())
 ALIASES={'sv':'sinh viên','ktx':'ký túc xá','hp':'học phí','hb':'học bổng','dkhp':'đăng ký học phần','đkhp':'đăng ký học phần','gpa':'điểm trung bình','tc':'tín chỉ'}
 
 def normalize(s):
-    s=unicodedata.normalize('NFC',s).lower()
+    """Accent-insensitive retrieval transform, never used to train classifiers."""
+    s=normalize_classification(s)
     for a,b in ALIASES.items(): s=re.sub(r'\b'+a+r'\b',b,s)
     s=''.join(c for c in unicodedata.normalize('NFD',s.replace('đ','d')) if unicodedata.category(c)!='Mn')
     return re.sub(r'\s+',' ',re.sub(r'[^a-z0-9\s]',' ',s)).strip()
@@ -27,14 +37,25 @@ def safe_url(url):
 def active(r):
     return r.get('status')=='approved' and (not r.get('valid_until') or r['valid_until']>=date.today().isoformat())
 
+def evidence_matches(question,row):
+    text=normalize(row['question']+' '+row.get('aliases','')+' '+row['answer'])
+    query=normalize(question)
+    terms=set(query.split())-EVIDENCE_STOP-EVIDENCE_TOPIC
+    years=set(re.findall(r'\b20\d{2}\b',query))
+    if not years<=set(re.findall(r'\b20\d{2}\b',text)):return False
+    return len(terms)<2 or len(terms & set(text.split()))/len(terms)>=.25
+
 class Engine:
     def __init__(self):
         self.lock=threading.RLock()
         self.generator_lock=threading.Lock()
         self.rows=[]; self.version=0
-        self.model=None
-        p=ROOT/'models'/'intent.joblib'
-        if p.exists(): self.model=joblib.load(p)
+        self.models={}
+        for name in ('mlp','linearsvc'):
+            p=ROOT/'models'/f'{name}.joblib'
+            if p.exists(): self.models[name]=joblib.load(p)
+        p=ROOT/'reports'/'selection.json'
+        self.default_model=json.loads(p.read_text())['selected'].lower() if p.exists() else 'linearsvc'
 
     def rebuild(self,rows):
         rows=[dict(r) for r in rows if active(dict(r))]
@@ -61,12 +82,23 @@ class Engine:
                 if len(ranked)>=limit: break
             return ranked
 
-    def classify(self,q):
-        if self.model is None:return None
-        pred=self.model.predict([q])[0]
-        return {'intent':str(pred),'model':type(self.model.named_steps['clf']).__name__,'note':'Nhãn mô hình thực nghiệm; điểm truy hồi được đánh giá riêng.'}
+    def classify(self,q,model_mode='auto'):
+        if model_mode not in ('auto','mlp','linearsvc','retrieval'):
+            raise ValueError('Unknown research model mode')
+        name=self.default_model if model_mode=='auto' else model_mode
+        model=self.models.get(name)
+        if model is None:return None
+        pred=str(model.predict([q])[0])
+        if pred not in RESEARCH_LABELS:return None
+        kind='predict_proba' if name=='mlp' else 'decision_function'
+        scores=getattr(model,kind)([q])[0]
+        return {'intent':pred,'model':type(model.named_steps['clf']).__name__,
+                'score_type':kind,'scores':{str(k):float(v) for k,v in zip(model.classes_,scores)},
+                'note':'Điểm phân loại chưa hiệu chỉnh; không phải xác suất câu trả lời đúng, không so trực tiếp giữa hai mô hình.'}
 
-    def route(self,q,history=None):
+    def route(self,q,history=None,model_mode='auto'):
+        if model_mode not in ('auto','mlp','linearsvc','retrieval'):
+            raise ValueError('Unknown research model mode')
         n=normalize(q)
         if n in ['chao','xin chao','hello','hi','alo','cam on','thank you']:
             return {'status':'greeting','answer':'Chào bạn! Mình là HaUI Assist. Bạn cần hỗ trợ học phí, học phần, lịch thi, học bổng, điểm học tập, công tác sinh viên hay ký túc xá?','sources':[],'suggestions':['Xem quy định học phí năm 2026–2027','Điều kiện xét học bổng','Đăng ký ký túc xá như thế nào?']}
@@ -85,24 +117,44 @@ class Engine:
         topics=[k for k,p in topic_patterns.items() if re.search(p,n)]
         context_used=False
         if not topics and len(n.split())<=12 and history and re.search(r'^(vay |the |con |o dau|khi nao|bao nhieu|ho so|lien he|thu tuc|han nop|can gi)',n):
-            last=[h for h in history if h.get('intent') in LABELS]
+            last=[history[-1]] if history[-1].get('status','answered')=='answered' and history[-1].get('intent') in LABELS else []
             if last:
                 q=LABELS[last[-1]['intent']]+' '+q
                 topics=[last[-1]['intent']];context_used=True
         if len(topics)>1:
             return {'status':'clarify','answer':'Bạn muốn tìm hiểu nội dung nào trước: '+', '.join(LABELS[t].lower() for t in topics)+'? Mỗi lần mình sẽ tra một nội dung để dẫn nguồn chính xác.','sources':[],'suggestions':[LABELS[t] for t in topics]}
-        if not topics and (len(n.split())<5 or re.search(r'phi|tien|nop|dong|han|ho so|thu tuc|giup',n)):
+        if not topics and (len(n.split())<5 or re.search(r'\b(phi|tien|nop|dong|han|ho so|thu tuc|giup)\b',n)):
             ranked=self.search(q)
-            if not ranked or ranked[0]['score']<.30:
+            if not ranked or ranked[0]['score']<RETRIEVAL_MIN_GLOBAL:
                 return {'status':'clarify','answer':'Bạn đang hỏi về học phí, học bổng, học phần hay ký túc xá? Bạn cho mình biết nội dung và học kỳ/năm học nếu có nhé.','sources':[],'suggestions':['Học phí','Học bổng','Ký túc xá']}
-        ranked=self.search(q,topics[0] if topics else None)
-        if not ranked or (not topics and ranked[0]['score']<.30):
-            return {'status':'out_of_scope','answer':'Mình chưa có nguồn đã duyệt để trả lời câu hỏi này. Mình hỗ trợ thông tin sinh viên của Đại học Công nghiệp Hà Nội. Bạn có thể hỏi rõ hơn hoặc liên hệ đơn vị phụ trách trên website trường.','sources':[],'suggestions':['Quy định học phí','Học bổng HaUI','Đăng ký ký túc xá']}
+        # Rules/context protect explicit topics and the two untrained extensions.
+        # For implicit research topics, the classifier actually restricts search.
+        classification=None
+        category=topics[0] if topics else None
+        route_reason='context' if context_used else 'explicit_topic' if topics else 'retrieval_only'
+        if not context_used and (not category or category in RESEARCH_LABELS):
+            classification=self.classify(q,model_mode)
+        global_ranked=self.search(q)
+        if classification and not category:
+            category=classification['intent'];route_reason='classifier'
+            # Do not force an implicitly retrieved extension into a research class.
+            if global_ranked and global_ranked[0]['intent'] not in RESEARCH_LABELS and global_ranked[0]['score']>=RETRIEVAL_MIN_GLOBAL:
+                category=global_ranked[0]['intent'];classification=None;route_reason='extension_retrieval'
+        elif classification:
+            route_reason='classifier_agrees' if classification['intent']==category else 'explicit_overrides_classifier'
+        ranked=self.search(q,category) if category else global_ranked
+        trace={'model_mode':model_mode,'reason':route_reason,'category':category,
+               'classifier_used':route_reason=='classifier'}
+        detail={'classification':classification,'routing':trace,'context_used':context_used}
+        if not ranked or (not topics and ranked[0]['score']<RETRIEVAL_MIN_GLOBAL):
+            return {**detail,'status':'out_of_scope','fallback_reason':'insufficient_retrieval_evidence','answer':'Mình chưa có nguồn đã duyệt đủ khớp để trả lời câu hỏi này. Bạn có thể hỏi rõ hơn hoặc liên hệ đơn vị phụ trách trên website trường.','sources':[],'suggestions':['Quy định học phí','Học bổng HaUI','Đăng ký ký túc xá']}
         top=ranked[0]
-        if top['score']<.13:
-            return {'status':'clarify','answer':'Mình đã xác định chủ đề '+LABELS[top['intent']].lower()+', nhưng chưa tìm được câu trả lời đủ khớp. Bạn mô tả rõ thủ tục hoặc vấn đề cần hỗ trợ nhé.','sources':[],'suggestions':[r['question'] for r in ranked[:3]]}
+        conflict=not topics and global_ranked and global_ranked[0]['intent']!=top['intent'] and global_ranked[0]['score']>top['score']+RETRIEVAL_MIN_MARGIN
+        close_topics=not topics and len(global_ranked)>1 and global_ranked[0]['intent']!=global_ranked[1]['intent'] and global_ranked[0]['score']-global_ranked[1]['score']<RETRIEVAL_MIN_MARGIN
+        if top['score']<RETRIEVAL_MIN_TOPIC or conflict or close_topics or not evidence_matches(q,top):
+            return {**detail,'status':'clarify','fallback_reason':'weak_or_conflicting_evidence','answer':'Mình chưa tìm được câu trả lời đủ khớp hoặc còn nhiều chủ đề phù hợp. Bạn mô tả rõ thủ tục, học kỳ hoặc vấn đề cần hỗ trợ nhé.','sources':[],'suggestions':[r['question'] for r in ranked[:3]]}
         source={'id':top['id'],'title':top['source_title'],'url':top['source_url'],'reviewed_at':top['reviewed_at'],'valid_until':top.get('valid_until'),'kind':top.get('kind','guidance')}
-        return {'status':'answered','answer':top['answer'],'sources':[source],'intent':top['intent'],'intent_label':LABELS[top['intent']],'retrieval_score':top['score'],'score_note':'Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.','suggestions':[r['question'] for r in ranked[1:4]],'context_used':context_used,'classification':self.classify(q),'evidence':top['answer']}
+        return {**detail,'status':'answered','answer':top['answer'],'sources':[source],'intent':top['intent'],'intent_label':LABELS[top['intent']],'retrieval_score':top['score'],'score_note':'Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.','suggestions':[r['question'] for r in ranked[1:4]],'evidence':top['answer']}
 
     def generate(self,question,result,settings):
         """Return grounded prose; citations are attached by the server, never invented by the LLM."""
