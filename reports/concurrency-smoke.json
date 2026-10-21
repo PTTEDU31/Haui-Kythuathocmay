@@ -1,0 +1,7 @@
+{
+  "requests": 24,
+  "concurrency": 8,
+  "all_status_200": true,
+  "client_latency_median_ms": 11.077695500262053,
+  "note": "Read-only health check smoke test; not a capacity benchmark."
+}

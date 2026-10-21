@@ -1,0 +1,51 @@
+id,question,intent,split,group_id
+Q001,Khi nào sinh viên phải đóng học phí học kỳ này?,hoc_phi,Train,Q001
+Q002,Em có thể xem số tiền học phí ở đâu?,hoc_phi,Train,Q002
+Q003,Có những hình thức nộp học phí nào?,hoc_phi,Train,Q003
+Q004,Làm thế nào để kiểm tra học phí đã được ghi nhận?,hoc_phi,Train,Q004
+Q005,Em cần làm gì nếu chuyển khoản học phí nhưng chưa cập nhật?,hoc_phi,Train,Q005
+Q006,Học phí được tính theo số tín chỉ như thế nào?,hoc_phi,Train,Q006
+Q007,Nơi nào hỗ trợ sinh viên khi có thắc mắc về học phí?,hoc_phi,Validation,Q007
+Q008,Em có thể tra cứu hạn nộp học phí bằng cách nào?,hoc_phi,Validation,Q008
+Q009,Nếu đóng học phí muộn thì em cần liên hệ bộ phận nào?,hoc_phi,Test,Q009
+Q010,Làm sao để lấy thông tin các khoản phải nộp của học kỳ?,hoc_phi,Test,Q010
+Q011,Lịch mở đăng ký học phần được thông báo ở đâu?,dang_ky_hoc_phan,Train,Q011
+Q012,Làm sao để đăng ký môn học trong học kỳ mới?,dang_ky_hoc_phan,Train,Q012
+Q013,Em có thể thay đổi lớp học phần đã đăng ký không?,dang_ky_hoc_phan,Train,Q013
+Q014,Cách kiểm tra các môn học đã đăng ký thành công là gì?,dang_ky_hoc_phan,Train,Q014
+Q015,Nếu lớp học phần đã đủ sĩ số thì em phải làm sao?,dang_ky_hoc_phan,Train,Q015
+Q016,Em muốn hủy một học phần đã đăng ký thì làm thế nào?,dang_ky_hoc_phan,Train,Q016
+Q017,Điều kiện để đăng ký học phần có môn tiên quyết là gì?,dang_ky_hoc_phan,Validation,Q017
+Q018,Cổng đăng ký học phần không truy cập được thì liên hệ ai?,dang_ky_hoc_phan,Validation,Q018
+Q019,Làm sao xem thời khóa biểu sau khi đăng ký học phần?,dang_ky_hoc_phan,Test,Q019
+Q020,Em có thể đăng ký bổ sung học phần vào thời điểm nào?,dang_ky_hoc_phan,Test,Q020
+Q021,Em có thể xem lịch thi cuối kỳ ở đâu?,lich_thi,Train,Q021
+Q022,Lịch thi giữa kỳ được công bố trên hệ thống nào?,lich_thi,Train,Q022
+Q023,Làm sao biết phòng thi của môn học?,lich_thi,Train,Q023
+Q024,Em cần kiểm tra ca thi bằng cách nào?,lich_thi,Train,Q024
+Q025,Nếu hai môn bị trùng lịch thi thì em phải làm sao?,lich_thi,Train,Q025
+Q026,Em muốn xác nhận lại ngày thi của học phần đã đăng ký.,lich_thi,Train,Q026
+Q027,Lịch thi có thể được điều chỉnh sau khi công bố không?,lich_thi,Validation,Q027
+Q028,Em liên hệ bộ phận nào khi thông tin lịch thi bị sai?,lich_thi,Validation,Q028
+Q029,Làm thế nào để kiểm tra địa điểm thi?,lich_thi,Test,Q029
+Q030,Em cần xem thông báo đổi lịch thi ở đâu?,lich_thi,Test,Q030
+Q031,Sinh viên cần đáp ứng điều kiện nào để xét học bổng?,hoc_bong,Train,Q031
+Q032,Thông báo học bổng được đăng ở đâu?,hoc_bong,Train,Q032
+Q033,Hồ sơ đăng ký học bổng gồm những giấy tờ gì?,hoc_bong,Train,Q033
+Q034,Thời hạn nộp hồ sơ học bổng là khi nào?,hoc_bong,Train,Q034
+Q035,Em có thể tìm danh sách học bổng đang nhận hồ sơ ở đâu?,hoc_bong,Train,Q035
+Q036,Làm thế nào để biết kết quả xét học bổng?,hoc_bong,Train,Q036
+Q037,Sinh viên năm nhất có thể tìm học bổng bằng cách nào?,hoc_bong,Validation,Q037
+Q038,Nếu thiếu giấy tờ học bổng thì em cần hỏi ai?,hoc_bong,Validation,Q038
+Q039,Em muốn biết quy trình xét học bổng khuyến khích học tập.,hoc_bong,Test,Q039
+Q040,Bộ phận nào tiếp nhận câu hỏi về học bổng sinh viên?,hoc_bong,Test,Q040
+Q041,Em có thể xem điểm học phần ở đâu?,diem_hoc_tap,Train,Q041
+Q042,Làm sao để tra cứu điểm trung bình học kỳ?,diem_hoc_tap,Train,Q042
+Q043,Điểm tổng kết học phần được cập nhật trên hệ thống nào?,diem_hoc_tap,Train,Q043
+Q044,Nếu điểm hiển thị không đúng thì em nên làm gì?,diem_hoc_tap,Train,Q044
+Q045,Em muốn biết cách xem bảng điểm tích lũy.,diem_hoc_tap,Train,Q045
+Q046,Có thể kiểm tra điểm chuyên cần ở đâu?,diem_hoc_tap,Train,Q046
+Q047,Cách xem kết quả học tập của học kỳ trước là gì?,diem_hoc_tap,Validation,Q047
+Q048,Em liên hệ ai để hỏi về việc điều chỉnh điểm?,diem_hoc_tap,Validation,Q048
+Q049,Em có thể tra cứu điểm của từng môn theo cách nào?,diem_hoc_tap,Test,Q049
+Q050,Làm sao để biết mình đã có kết quả thi cuối kỳ?,diem_hoc_tap,Test,Q050

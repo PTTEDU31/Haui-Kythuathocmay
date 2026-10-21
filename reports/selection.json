@@ -1,0 +1,6 @@
+{
+  "selected": "LinearSVC",
+  "validation_macro_f1": 1.0,
+  "reason": "Highest validation macro-F1; LinearSVC wins ties for lower runtime complexity.",
+  "test_seen": false
+}

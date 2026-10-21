@@ -1,0 +1,357 @@
+{
+  "created_at": "2026-10-20T18:13:07.290982+00:00",
+  "dataset": {
+    "total": 50,
+    "train": 30,
+    "validation": 10,
+    "test": 10,
+    "origin": "50 câu minh họa do tác giả biên soạn trong báo cáo; không phải câu hỏi thực tế độc lập.",
+    "sha256": "4f1dd703b699bd79bf752035b83b981fb0087590c4a405bbc6d9ab0b1f30650b"
+  },
+  "method": "TF-IDF học trên 30 câu Train. Mỗi họ mô hình chọn cấu hình theo Macro-F1 trên 10 câu Validation; chốt lựa chọn trước khi đánh giá 10 câu Test. Không tăng dữ liệu bằng câu diễn đạt lại từ Test.",
+  "seed": 42,
+  "labels": [
+    "dang_ky_hoc_phan",
+    "diem_hoc_tap",
+    "hoc_bong",
+    "hoc_phi",
+    "lich_thi"
+  ],
+  "label_names": {
+    "dang_ky_hoc_phan": "Đăng ký học phần",
+    "diem_hoc_tap": "Điểm học tập",
+    "hoc_bong": "Học bổng",
+    "hoc_phi": "Học phí",
+    "lich_thi": "Lịch thi"
+  },
+  "models": [
+    {
+      "name": "MLP",
+      "configuration": {
+        "hidden_layer_sizes": [
+          16
+        ],
+        "alpha": 0.001
+      },
+      "validation_macro_f1": 1.0,
+      "test_accuracy": 0.7,
+      "test_macro_f1": 0.7133333333333333,
+      "fit_seconds": 0.0146,
+      "latency_p50_ms": 0.355,
+      "latency_p95_ms": 0.381,
+      "confusion_matrix": [
+        [
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1
+        ]
+      ],
+      "per_class": {
+        "dang_ky_hoc_phan": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 2.0
+        },
+        "diem_hoc_tap": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1-score": 0.5,
+          "support": 2.0
+        },
+        "hoc_bong": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 2.0
+        },
+        "hoc_phi": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1-score": 0.6666666666666666,
+          "support": 2.0
+        },
+        "lich_thi": {
+          "precision": 0.3333333333333333,
+          "recall": 0.5,
+          "f1-score": 0.4,
+          "support": 2.0
+        },
+        "accuracy": 0.7,
+        "macro avg": {
+          "precision": 0.7666666666666667,
+          "recall": 0.7,
+          "f1-score": 0.7133333333333333,
+          "support": 10.0
+        },
+        "weighted avg": {
+          "precision": 0.7666666666666667,
+          "recall": 0.7,
+          "f1-score": 0.7133333333333333,
+          "support": 10.0
+        }
+      },
+      "predictions": [
+        {
+          "id": "Q009",
+          "question": "Nếu đóng học phí muộn thì em cần liên hệ bộ phận nào?",
+          "true": "hoc_phi",
+          "predicted": "hoc_phi"
+        },
+        {
+          "id": "Q010",
+          "question": "Làm sao để lấy thông tin các khoản phải nộp của học kỳ?",
+          "true": "hoc_phi",
+          "predicted": "lich_thi"
+        },
+        {
+          "id": "Q019",
+          "question": "Làm sao xem thời khóa biểu sau khi đăng ký học phần?",
+          "true": "dang_ky_hoc_phan",
+          "predicted": "dang_ky_hoc_phan"
+        },
+        {
+          "id": "Q020",
+          "question": "Em có thể đăng ký bổ sung học phần vào thời điểm nào?",
+          "true": "dang_ky_hoc_phan",
+          "predicted": "dang_ky_hoc_phan"
+        },
+        {
+          "id": "Q029",
+          "question": "Làm thế nào để kiểm tra địa điểm thi?",
+          "true": "lich_thi",
+          "predicted": "diem_hoc_tap"
+        },
+        {
+          "id": "Q030",
+          "question": "Em cần xem thông báo đổi lịch thi ở đâu?",
+          "true": "lich_thi",
+          "predicted": "lich_thi"
+        },
+        {
+          "id": "Q039",
+          "question": "Em muốn biết quy trình xét học bổng khuyến khích học tập.",
+          "true": "hoc_bong",
+          "predicted": "hoc_bong"
+        },
+        {
+          "id": "Q040",
+          "question": "Bộ phận nào tiếp nhận câu hỏi về học bổng sinh viên?",
+          "true": "hoc_bong",
+          "predicted": "hoc_bong"
+        },
+        {
+          "id": "Q049",
+          "question": "Em có thể tra cứu điểm của từng môn theo cách nào?",
+          "true": "diem_hoc_tap",
+          "predicted": "diem_hoc_tap"
+        },
+        {
+          "id": "Q050",
+          "question": "Làm sao để biết mình đã có kết quả thi cuối kỳ?",
+          "true": "diem_hoc_tap",
+          "predicted": "lich_thi"
+        }
+      ]
+    },
+    {
+      "name": "LinearSVC",
+      "configuration": {
+        "C": 0.1
+      },
+      "validation_macro_f1": 1.0,
+      "test_accuracy": 0.7,
+      "test_macro_f1": 0.6933333333333332,
+      "fit_seconds": 0.0019,
+      "latency_p50_ms": 0.312,
+      "latency_p95_ms": 0.332,
+      "confusion_matrix": [
+        [
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          1
+        ]
+      ],
+      "per_class": {
+        "dang_ky_hoc_phan": {
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1-score": 0.8,
+          "support": 2.0
+        },
+        "diem_hoc_tap": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1-score": 0.5,
+          "support": 2.0
+        },
+        "hoc_bong": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 2.0
+        },
+        "hoc_phi": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1-score": 0.6666666666666666,
+          "support": 2.0
+        },
+        "lich_thi": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1-score": 0.5,
+          "support": 2.0
+        },
+        "accuracy": 0.7,
+        "macro avg": {
+          "precision": 0.7333333333333333,
+          "recall": 0.7,
+          "f1-score": 0.6933333333333332,
+          "support": 10.0
+        },
+        "weighted avg": {
+          "precision": 0.7333333333333333,
+          "recall": 0.7,
+          "f1-score": 0.6933333333333332,
+          "support": 10.0
+        }
+      },
+      "predictions": [
+        {
+          "id": "Q009",
+          "question": "Nếu đóng học phí muộn thì em cần liên hệ bộ phận nào?",
+          "true": "hoc_phi",
+          "predicted": "hoc_phi"
+        },
+        {
+          "id": "Q010",
+          "question": "Làm sao để lấy thông tin các khoản phải nộp của học kỳ?",
+          "true": "hoc_phi",
+          "predicted": "dang_ky_hoc_phan"
+        },
+        {
+          "id": "Q019",
+          "question": "Làm sao xem thời khóa biểu sau khi đăng ký học phần?",
+          "true": "dang_ky_hoc_phan",
+          "predicted": "dang_ky_hoc_phan"
+        },
+        {
+          "id": "Q020",
+          "question": "Em có thể đăng ký bổ sung học phần vào thời điểm nào?",
+          "true": "dang_ky_hoc_phan",
+          "predicted": "dang_ky_hoc_phan"
+        },
+        {
+          "id": "Q029",
+          "question": "Làm thế nào để kiểm tra địa điểm thi?",
+          "true": "lich_thi",
+          "predicted": "diem_hoc_tap"
+        },
+        {
+          "id": "Q030",
+          "question": "Em cần xem thông báo đổi lịch thi ở đâu?",
+          "true": "lich_thi",
+          "predicted": "lich_thi"
+        },
+        {
+          "id": "Q039",
+          "question": "Em muốn biết quy trình xét học bổng khuyến khích học tập.",
+          "true": "hoc_bong",
+          "predicted": "hoc_bong"
+        },
+        {
+          "id": "Q040",
+          "question": "Bộ phận nào tiếp nhận câu hỏi về học bổng sinh viên?",
+          "true": "hoc_bong",
+          "predicted": "hoc_bong"
+        },
+        {
+          "id": "Q049",
+          "question": "Em có thể tra cứu điểm của từng môn theo cách nào?",
+          "true": "diem_hoc_tap",
+          "predicted": "diem_hoc_tap"
+        },
+        {
+          "id": "Q050",
+          "question": "Làm sao để biết mình đã có kết quả thi cuối kỳ?",
+          "true": "diem_hoc_tap",
+          "predicted": "lich_thi"
+        }
+      ]
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "sklearn": "1.9.1",
+    "cpu": ""
+  },
+  "limitations": [
+    "Test chỉ có 10 câu, hai câu mỗi nhãn; một lỗi làm accuracy thay đổi 10 điểm phần trăm.",
+    "Điểm mô hình phân loại không đo độ đúng của câu trả lời AI.",
+    "Dữ liệu minh họa nhỏ chưa chứng minh khả năng dùng ổn định trên câu hỏi sinh viên thực tế.",
+    "BiLSTM/PhoBERT chưa chạy; cần thêm dữ liệu độc lập trước khi so sánh."
+  ],
+  "selected_model": "LinearSVC",
+  "application_retrieval": "Truy hồi kết hợp TF-IDF word n-gram và char n-gram, hỗ trợ câu không dấu; 7 chủ đề. Nhãn mô hình 5 lớp thực nghiệm được hiển thị riêng, không dùng để tuyên bố câu trả lời đúng."
+}

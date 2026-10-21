@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://dsa.haui.edu.vn/vn",
+    "status": 200,
+    "final_url": "https://dsa.haui.edu.vn/vn"
+  },
+  {
+    "url": "https://ssc.haui.edu.vn/vn/tin-tuc/bang-gia-phong-o-ky-tuc-xa-nam-hoc-2026-2027/69583",
+    "status": 200,
+    "final_url": "https://ssc.haui.edu.vn/vn/tin-tuc/bang-gia-phong-o-ky-tuc-xa-nam-hoc-2026-2027/69583"
+  },
+  {
+    "url": "https://ssc.haui.edu.vn/vn/tin-tuc/huong-dan-dang-ky-phong-o-ky-tuc-xa-truc-tuyen-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69582",
+    "status": 200,
+    "final_url": "https://ssc.haui.edu.vn/vn/tin-tuc/huong-dan-dang-ky-phong-o-ky-tuc-xa-truc-tuyen-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69582"
+  },
+  {
+    "url": "https://ssc.haui.edu.vn/vn/tin-tuc/lich-dang-ky-ky-tuc-xa-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69584",
+    "status": 200,
+    "final_url": "https://ssc.haui.edu.vn/vn/tin-tuc/lich-dang-ky-ky-tuc-xa-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69584"
+  },
+  {
+    "url": "https://ssc.haui.edu.vn/vn/tin-tuc/thong-bao-ve-viec-tiep-nhan-sinh-vien-nhan-phong-ky-tuc-xa-co-so-3/69590",
+    "status": 200,
+    "final_url": "https://ssc.haui.edu.vn/vn/tin-tuc/thong-bao-ve-viec-tiep-nhan-sinh-vien-nhan-phong-ky-tuc-xa-co-so-3/69590"
+  },
+  {
+    "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/ho-tro-tai-chinh-va-hoc-bong-danh-cho-sinh-vien-haui/68191",
+    "status": 200,
+    "final_url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/ho-tro-tai-chinh-va-hoc-bong-danh-cho-sinh-vien-haui/68191"
+  },
+  {
+    "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/quyet-dinh-ve-viec-ban-hanh-muc-thu-hoc-phi-doi-voi-cac-chuong-trinh-dao-tao-tai-dhcn-ha-noi-nam-hoc-2026-2027/68147",
+    "status": 200,
+    "final_url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/quyet-dinh-ve-viec-ban-hanh-muc-thu-hoc-phi-doi-voi-cac-chuong-trinh-dao-tao-tai-dhcn-ha-noi-nam-hoc-2026-2027/68147"
+  },
+  {
+    "url": "https://www.haui.edu.vn/vn/html/ban-dao-tao",
+    "status": 200,
+    "final_url": "https://www.haui.edu.vn/vn/html/ban-dao-tao"
+  }
+]

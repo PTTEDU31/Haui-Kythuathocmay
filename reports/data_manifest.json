@@ -1,0 +1,65 @@
+{
+  "created_at": "2026-10-21",
+  "original_dataset": "50 manually authored illustrative questions from supplied DOCX; original 30/10/10 split preserved. Not real student traffic.",
+  "taxonomy_resolution": "DOCX five intents retained for experiments. CTSV and dormitory from presentation added to application retrieval.",
+  "faq_count": 25,
+  "source_document_sha256": "7775b4962a05d8d186e70cdd1327b26f8cede75d0612a8c3d050a6e540158859",
+  "sources": [
+    {
+      "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/ho-tro-tai-chinh-va-hoc-bong-danh-cho-sinh-vien-haui/68191",
+      "title": "Hỗ trợ tài chính và học bổng dành cho sinh viên HaUI",
+      "sha256": "8353643dd55f04fba1f47cd30d902852b97fa913397a02b700960860b604e145"
+    },
+    {
+      "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/quyet-dinh-ve-viec-ban-hanh-muc-thu-hoc-phi-doi-voi-cac-chuong-trinh-dao-tao-tai-dhcn-ha-noi-nam-hoc-2026-2027/68147",
+      "title": "Quyết định về việc ban hành mức thu học phí đối với các chương trình đào tạo tại ĐHCN Hà Nội năm học 2026-2027",
+      "sha256": "e043b12d3a2dd6d45630a886ad3bb64a68357c021c7fe4b7cc17222888d4ffd2"
+    },
+    {
+      "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/hoc-bong-khuyen-khich-hoc-tap-haui-dong-luc-trong-hanh-trinh-trinh-phuc-tuong-lai-cua-sinh-vien/67396",
+      "title": "Học bổng khuyến khích học tập HaUI - Động lực trong hành trình trinh phục tương lai của sinh viên",
+      "sha256": "f3be655001679de1a2e9d889071534ed1d4ad53819bf2541f823f9c62667bad0"
+    },
+    {
+      "url": "https://dttc.haui.edu.vn/vn/quy-che-dao-tao/huong-dan-mo-lop-hoc-phan-theo-yeu-cau-cua-sinh-vien/49837",
+      "title": "Hướng dẫn mở lớp học phần theo yêu cầu của sinh viên",
+      "sha256": "e87383be6821cf61bcf3a87aab614272140c0c3c96a9b649131db68af1edd5c9"
+    },
+    {
+      "url": "https://dttc.haui.edu.vn/vn/quy-che-dao-tao/quyet-dinh-sua-doi-bo-sung-mot-so-noi-dung-cua-quy-che-dao-tao-dai-hoc-cao-dang-theo-hoc-che-tin-chi-ban-hanh-tai-quyet-dinh-so-787-qd-dhcn-ngay-09-08-2018-cua-hieu-truong-truong-dhcn-hn/49838",
+      "title": "Quyết định sửa đổi, bổ sung một số nội dung của Quy chế đào tạo đại học, cao đẳng theo học chế tín chỉ ban hành tại Quyết định số 787/QĐ-DHCN ngày 09/08/2018 của Hiệu trưởng Trường ĐHCN HN",
+      "sha256": "fd07fc962ff423cc529caa3ccbbd7e297e4612bb076d93b28b0c4db07f602237"
+    },
+    {
+      "url": "https://ssc.haui.edu.vn/vn/tin-tuc/thong-bao-ve-viec-tiep-nhan-sinh-vien-nhan-phong-ky-tuc-xa-co-so-3/69590",
+      "title": "Thông báo về việc tiếp nhận sinh viên nhận phòng Ký túc xá cơ sở 3",
+      "sha256": "9d443791e3d2316cf30236a38e624cac0a0713d9563d6aa351ebb59a24bf5806"
+    },
+    {
+      "url": "https://ssc.haui.edu.vn/vn/tin-tuc/cam-nang-tan-sinh-vien-noi-tru-haui-nam-hoc-2026-2027/69585",
+      "title": "» Cẩm nang Tân sinh viên nội trú HaUI năm học 2026 - 2027 (21/08/2026)",
+      "sha256": "36f413c2202d00a18d2b588aaa8607390ed2ae43be800d9ac3b38b47b38da57f"
+    },
+    {
+      "url": "https://ssc.haui.edu.vn/vn/tin-tuc/lich-dang-ky-ky-tuc-xa-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69584",
+      "title": "» Lịch đăng ký Ký túc xá dành cho tân sinh viên năm học 2026-2027 (13/08/2026)",
+      "sha256": "3556f907937283dc570d1335131cabe2f89d38d34810e7a39866b74fe25c4b43"
+    },
+    {
+      "url": "https://ssc.haui.edu.vn/vn/tin-tuc/huong-dan-dang-ky-phong-o-ky-tuc-xa-truc-tuyen-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69582",
+      "title": "» Hướng dẫn đăng ký phòng ở Ký túc xá trực tuyến dành cho tân sinh viên năm học 2026-2027 (07/08/2026)",
+      "sha256": "856a73dd169e3b66340a3f493a4c39208a020ac0b4dcdc3dbf0490976f1aac6e"
+    },
+    {
+      "url": "https://ssc.haui.edu.vn/vn/tin-tuc/bang-gia-phong-o-ky-tuc-xa-nam-hoc-2026-2027/69583",
+      "title": "» Bảng giá phòng ở Ký túc xá năm học 2026 - 2027 (06/08/2026)",
+      "sha256": "6e548d9b27ffd6d84544756a8c416344387c1f8ca9043e8fade9a4c0ecd4026e"
+    }
+  ],
+  "limitations": [
+    "Private student records are not connected.",
+    "Guidance records point to official responsible units and do not invent portal menus or deadlines.",
+    "No independent real-world student evaluation set supplied.",
+    "Automatic retrieval and generation do not replace a university policy approval."
+  ]
+}

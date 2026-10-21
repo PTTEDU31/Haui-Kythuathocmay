@@ -1,0 +1,16 @@
+{
+  "passed": 10,
+  "checks": [
+    "Desktop landing, model status and seven topics",
+    "Chat without accents, answer and official citation",
+    "Feedback persisted",
+    "Knowledge filter, expand and source link",
+    "Experimental comparison and confusion matrices",
+    "Admin login and knowledge management",
+    "Local and external generative AI settings",
+    "Admin logout",
+    "390px mobile layout without horizontal overflow",
+    "Mobile navigation"
+  ],
+  "javascript_errors": []
+}

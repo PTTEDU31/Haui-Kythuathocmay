@@ -1,0 +1,189 @@
+[
+  {
+    "status": "answered",
+    "answer": "HaUI đã đăng Quyết định ban hành mức thu học phí đối với các chương trình đào tạo năm học 2026–2027. Bạn cần mở văn bản chính thức trong nguồn bên dưới và đối chiếu đúng chương trình, hệ đào tạo và khóa học để tra cứu thông tin học phí.",
+    "sources": [
+      {
+        "id": "FAQ-001",
+        "title": "Quyết định về việc ban hành mức thu học phí đối với các chương trình đào tạo tại ĐHCN Hà Nội năm học 2026-2027",
+        "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/quyet-dinh-ve-viec-ban-hanh-muc-thu-hoc-phi-doi-voi-cac-chuong-trinh-dao-tao-tai-dhcn-ha-noi-nam-hoc-2026-2027/68147",
+        "reviewed_at": "2026-10-21",
+        "valid_until": "2027-08-31",
+        "kind": "guidance"
+      }
+    ],
+    "intent": "hoc_phi",
+    "intent_label": "Học phí",
+    "retrieval_score": 0.4175,
+    "score_note": "Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.",
+    "suggestions": [
+      "Hạn nộp học phí của học kỳ này là khi nào?",
+      "Tìm chính sách miễn giảm học phí và hỗ trợ tài chính ở đâu?",
+      "Đã chuyển khoản học phí nhưng chưa cập nhật thì làm gì?"
+    ],
+    "context_used": false,
+    "classification": {
+      "intent": "hoc_phi",
+      "model": "LinearSVC",
+      "note": "Nhãn mô hình thực nghiệm; điểm truy hồi được đánh giá riêng."
+    },
+    "generation": {
+      "used": true,
+      "model": "qwen3:4b",
+      "provider": "ollama",
+      "latency_ms": 621,
+      "reason": null
+    },
+    "latency_ms": 623,
+    "id": "c82eed88f0d3d9dc1424bbb1",
+    "question": "Quy định học phí năm 2026–2027 ở đâu?",
+    "elapsed_seconds": 0.636
+  },
+  {
+    "status": "answered",
+    "answer": "Điều kiện xét học bổng khuyến khích học tập là xếp loại căn cứ kết quả học tập và rèn luyện của sinh viên hệ đại học và cao đẳng chính quy. Bạn cần mở phần \"Học bổng khuyến khích học tập\" trong nguồn để đối chiếu đúng thang điểm và xếp loại.",
+    "sources": [
+      {
+        "id": "FAQ-014",
+        "title": "Hỗ trợ tài chính và học bổng dành cho sinh viên HaUI",
+        "url": "https://www.haui.edu.vn/vn/hoc-bong-hoc-phi/ho-tro-tai-chinh-va-hoc-bong-danh-cho-sinh-vien-haui/68191",
+        "reviewed_at": "2026-10-21",
+        "valid_until": "2027-08-31",
+        "kind": "policy"
+      }
+    ],
+    "intent": "hoc_bong",
+    "intent_label": "Học bổng",
+    "retrieval_score": 0.5427,
+    "score_note": "Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.",
+    "suggestions": [
+      "HaUI có những loại học bổng và hỗ trợ tài chính nào?",
+      "Điều kiện duy trì học bổng HaUI là gì?",
+      "Học bổng Nguyễn Thanh Bình dành cho đối tượng nào?"
+    ],
+    "context_used": false,
+    "classification": {
+      "intent": "hoc_bong",
+      "model": "LinearSVC",
+      "note": "Nhãn mô hình thực nghiệm; điểm truy hồi được đánh giá riêng."
+    },
+    "generation": {
+      "used": true,
+      "model": "qwen3:4b",
+      "provider": "ollama",
+      "latency_ms": 614,
+      "reason": null
+    },
+    "latency_ms": 616,
+    "id": "b36a9870631c6dfabe48f585",
+    "question": "Điều kiện xét học bổng khuyến khích học tập là gì?",
+    "elapsed_seconds": 0.623
+  },
+  {
+    "status": "answered",
+    "answer": "Bạn cần đọc thông báo 'Lịch đăng ký Ký túc xá dành cho tân sinh viên năm học 2026–2027' để biết ngày tiếp nhận và đối tượng. Lưu ý rằng thông báo đã công bố không đồng nghĩa với việc đăng ký vẫn mở. Để hỏi về đợt bổ sung hoặc phòng trống, hãy liên hệ Trung tâm Hỗ trợ sinh viên.",
+    "sources": [
+      {
+        "id": "FAQ-024",
+        "title": "Lịch đăng ký Ký túc xá dành cho tân sinh viên năm học 2026-2027",
+        "url": "https://ssc.haui.edu.vn/vn/tin-tuc/lich-dang-ky-ky-tuc-xa-danh-cho-tan-sinh-vien-nam-hoc-2026-2027/69584",
+        "reviewed_at": "2026-10-21",
+        "valid_until": "2027-08-31",
+        "kind": "guidance"
+      }
+    ],
+    "intent": "ky_tuc_xa",
+    "intent_label": "Ký túc xá",
+    "retrieval_score": 0.3767,
+    "score_note": "Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.",
+    "suggestions": [
+      "Đăng ký ký túc xá HaUI trực tuyến như thế nào?",
+      "Giá phòng và phí ký túc xá năm 2026–2027 xem ở đâu?",
+      "Chưa nhận được tin nhắn nhận phòng ký túc xá cơ sở 3 thì sao?"
+    ],
+    "context_used": false,
+    "classification": {
+      "intent": "dang_ky_hoc_phan",
+      "model": "LinearSVC",
+      "note": "Nhãn mô hình thực nghiệm; điểm truy hồi được đánh giá riêng."
+    },
+    "generation": {
+      "used": true,
+      "model": "qwen3:4b",
+      "provider": "ollama",
+      "latency_ms": 741,
+      "reason": null
+    },
+    "latency_ms": 743,
+    "id": "bc9571f64b4119102ece7d40",
+    "question": "Em muốn đăng ký ktx",
+    "elapsed_seconds": 0.751
+  },
+  {
+    "status": "answered",
+    "answer": "Giá phòng tại Ký túc xá năm học 2026–2027 cần tra cứu theo cơ sở và loại phòng cụ thể trong bảng chính thức của Trung tâm Hỗ trợ sinh viên HaUI. Hiện chưa có dữ liệu để tính chi phí cá nhân hoặc xác định còn chỗ không.",
+    "sources": [
+      {
+        "id": "FAQ-023",
+        "title": "Bảng giá phòng ở Ký túc xá năm học 2026 - 2027",
+        "url": "https://ssc.haui.edu.vn/vn/tin-tuc/bang-gia-phong-o-ky-tuc-xa-nam-hoc-2026-2027/69583",
+        "reviewed_at": "2026-10-21",
+        "valid_until": "2027-08-31",
+        "kind": "guidance"
+      }
+    ],
+    "intent": "ky_tuc_xa",
+    "intent_label": "Ký túc xá",
+    "retrieval_score": 0.4282,
+    "score_note": "Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.",
+    "suggestions": [
+      "Đăng ký ký túc xá HaUI trực tuyến như thế nào?",
+      "Lịch đăng ký ký túc xá dành cho tân sinh viên ở đâu?",
+      "Chưa nhận được tin nhắn nhận phòng ký túc xá cơ sở 3 thì sao?"
+    ],
+    "context_used": true,
+    "classification": {
+      "intent": "lich_thi",
+      "model": "LinearSVC",
+      "note": "Nhãn mô hình thực nghiệm; điểm truy hồi được đánh giá riêng."
+    },
+    "generation": {
+      "used": true,
+      "model": "qwen3:4b",
+      "provider": "ollama",
+      "latency_ms": 617,
+      "reason": null
+    },
+    "latency_ms": 618,
+    "id": "2b66a6eb678212d3d8def864",
+    "question": "Vậy giá phòng bao nhiêu?",
+    "elapsed_seconds": 0.625
+  },
+  {
+    "status": "clarify",
+    "answer": "Bạn đang hỏi về học phí, học bổng, học phần hay ký túc xá? Bạn cho mình biết nội dung và học kỳ/năm học nếu có nhé.",
+    "sources": [],
+    "suggestions": [
+      "Học phí",
+      "Học bổng",
+      "Ký túc xá"
+    ],
+    "latency_ms": 2,
+    "id": "3858d1d84aefcd61a781ea1c",
+    "question": "Em cần đóng tiền không?",
+    "elapsed_seconds": 0.006
+  },
+  {
+    "status": "out_of_scope",
+    "answer": "Nội dung này nằm ngoài phạm vi hỗ trợ sinh viên HaUI. Mình có thể giúp tra cứu học phí, học phần, lịch thi, học bổng, điểm, công tác sinh viên và ký túc xá.",
+    "sources": [],
+    "suggestions": [
+      "Quy định học phí",
+      "Điều kiện học bổng"
+    ],
+    "latency_ms": 0,
+    "id": "4a4f8e2d304663ffe276c5e8",
+    "question": "Dự đoán giá cổ phiếu giúp em",
+    "elapsed_seconds": 0.004
+  }
+]
