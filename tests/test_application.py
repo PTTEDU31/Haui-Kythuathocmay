@@ -52,6 +52,18 @@ def test_history_isolation_and_feedback(client):
     assert client.get('/api/history').json()==[]
 def test_admin_requires_auth(client):
     client.cookies.clear();assert client.get('/api/admin/overview').status_code==401
+@pytest.mark.parametrize('scheme,expected_secure',[('http',False),('https',True)])
+def test_session_cookies_follow_transport(scheme,expected_secure,monkeypatch):
+    monkeypatch.delenv('COOKIE_SECURE',raising=False)
+    with TestClient(app,base_url=scheme+'://testserver',client=(scheme+'-transport-test',50000)) as c:
+        bootstrap=c.get('/api/bootstrap')
+        login=c.post('/api/admin/login',json={'password':'Test-Admin-Password-2026'})
+        assert login.status_code==200
+        for response,name in [(bootstrap,'haui_visitor'),(login,'haui_admin')]:
+            cookie=next(cookie for cookie in response.cookies.jar if cookie.name==name)
+            assert cookie.secure is expected_secure
+            assert cookie.has_nonstandard_attr('HttpOnly')
+        assert c.get('/api/admin/overview').status_code==200
 def test_admin_crud_draft_and_expiry(logged):
     body={'question':'Câu hỏi kiểm thử nguồn mới','answer':'Câu trả lời thử nghiệm có nguồn chính thức.','intent':'hoc_phi','source_url':'https://www.haui.edu.vn/vn','source_title':'HaUI kiểm thử','reviewed_at':date.today().isoformat(),'status':'draft'}
     r=logged.post('/api/admin/faqs',json=body);assert r.status_code==200

@@ -1,0 +1,17 @@
+[Unit]
+Description=Cloudflare Tunnel for ttech.io.vn
+Wants=network-online.target student-support.service
+After=network-online.target student-support.service
+ConditionPathExists=/home/phamtung/.cloudflared/ttech.yml
+
+[Service]
+Type=simple
+ExecStart=/home/phamtung/.local/bin/cloudflared tunnel --no-autoupdate --config /home/phamtung/.cloudflared/ttech.yml run
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077
+
+[Install]
+WantedBy=default.target

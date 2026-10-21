@@ -63,7 +63,7 @@ def visitor(request,response):
         if not found:
             raw=secrets.token_urlsafe(32);sid=digest(raw)
             c.execute('INSERT INTO sessions VALUES(?,?)',(sid,now()))
-            response.set_cookie('haui_visitor',raw,max_age=2592000,httponly=True,samesite='strict',secure=os.getenv('COOKIE_SECURE')=='1')
+            response.set_cookie('haui_visitor',raw,max_age=2592000,httponly=True,samesite='strict',secure=request.url.scheme=='https' or os.getenv('COOKIE_SECURE')=='1')
     return sid
 def admin(request:Request):
     token=request.cookies.get('haui_admin','')
@@ -215,7 +215,7 @@ def login(body:Login,request:Request,response:Response):
     with conn() as c:
         c.execute('DELETE FROM admin_sessions WHERE expires<?',(time.time(),))
         c.execute('INSERT INTO admin_sessions VALUES(?,?)',(digest(token),time.time()+8*3600));audit(c,'login')
-    response.set_cookie('haui_admin',token,max_age=8*3600,httponly=True,samesite='strict',secure=os.getenv('COOKIE_SECURE')=='1')
+    response.set_cookie('haui_admin',token,max_age=8*3600,httponly=True,samesite='strict',secure=request.url.scheme=='https' or os.getenv('COOKIE_SECURE')=='1')
     return {'ok':True}
 @app.post('/api/admin/logout')
 def logout(request:Request,response:Response):

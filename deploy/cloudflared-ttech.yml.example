@@ -1,0 +1,8 @@
+# Replace TUNNEL_UUID after creating the named tunnel.
+tunnel: TUNNEL_UUID
+credentials-file: /home/phamtung/.cloudflared/TUNNEL_UUID.json
+metrics: 127.0.0.1:20245
+ingress:
+  - hostname: ttech.io.vn
+    service: http://127.0.0.1:8088
+  - service: http_status:404
