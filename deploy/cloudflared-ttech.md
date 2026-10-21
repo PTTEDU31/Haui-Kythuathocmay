@@ -7,6 +7,22 @@ tài khoản có quyền quản lý `ttech.io.vn` trước khi tạo tunnel và 
 Binary `cloudflared` đặt trong `/home/phamtung/.local/bin/`. Phiên bản đã
 cài là 2026.10.3, SHA-256 đã đối chiếu với metadata bản phát hành GitHub.
 
+## Bản triển khai hiện tại
+
+- URL: https://ttech.io.vn
+- Tunnel: `ttech-student-support` (`9ee89f6e-0774-46c5-b3a5-cd630755ddf6`).
+- Dịch vụ `cloudflared-ttech.service` đã enable; user linger đã bật.
+- Cấu hình thực tế: `~/.cloudflared/ttech.yml`, quyền 0600.
+- Kiểm tra HTTPS trang chủ, health, hai chế độ phân loại, cookie Secure,
+  quản trị yêu cầu đăng nhập và trò chuyện thật qua Qwen đã đạt.
+- DNS authoritative, Cloudflare 1.1.1.1 và Google 8.8.8.8 đã trả bản ghi mới.
+  DNS của router LAN còn cache kết quả cũ tại thời điểm triển khai. Kiểm tra
+  HTTPS đã dùng IP edge được DNS công khai trả về qua `curl --resolve`;
+  vẫn giữ kiểm tra chứng chỉ TLS, không dùng `-k`.
+
+Chi tiết kiểm tra có trong `reports/public-deployment.json`. Không chạy lại
+bước tạo tunnel cho bản triển khai hiện tại; các bước dưới dành cho cài mới.
+
 ## Thiết lập
 
 1. Chạy `~/.local/bin/cloudflared tunnel login`, mở liên kết được in và
@@ -41,7 +57,7 @@ systemctl --user restart cloudflared-ttech
 journalctl --user -u cloudflared-ttech -n 50
 ```
 
-Dừng truy cập Internet: `systemctl --user disable --now cloudflared-ttech`.
+Dừng tunnel tên miền: `systemctl --user disable --now cloudflared-ttech`.
 Dịch vụ ứng dụng trong LAN vẫn chạy. Máy chủ cần đang bật và có Internet.
 
 Các file cấu hình mẫu không chứng minh tunnel đã hoạt động. Chỉ công bố

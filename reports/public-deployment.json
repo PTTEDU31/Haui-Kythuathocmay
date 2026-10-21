@@ -1,0 +1,98 @@
+{
+  "verified_at": "2026-10-21T17:38:41.977029+00:00",
+  "url": "https://ttech.io.vn",
+  "branch": "main",
+  "tunnel": {
+    "name": "ttech-student-support",
+    "id": "9ee89f6e-0774-46c5-b3a5-cd630755ddf6",
+    "service": "cloudflared-ttech.service",
+    "enabled": true,
+    "ready_connections": 4,
+    "origin": "http://127.0.0.1:8088",
+    "config_path": "/home/phamtung/.cloudflared/ttech.yml",
+    "credentials_stored_outside_repository": true
+  },
+  "checks": {
+    "frontend": 200,
+    "health": {
+      "status_code": 200,
+      "status": "ok",
+      "version": "1.0.0",
+      "knowledge_items": 25,
+      "index_version": 1
+    },
+    "mlp": {
+      "status_code": 200,
+      "faq_id": "FAQ-004",
+      "routing": {
+        "model_mode": "mlp",
+        "reason": "classifier",
+        "category": "hoc_phi",
+        "classifier_used": true
+      }
+    },
+    "linearsvc": {
+      "status_code": 200,
+      "faq_id": "FAQ-004",
+      "routing": {
+        "model_mode": "linearsvc",
+        "reason": "classifier",
+        "category": "hoc_phi",
+        "classifier_used": true
+      }
+    },
+    "ai": {
+      "enabled": true,
+      "ready": true,
+      "provider": "ollama",
+      "model": "qwen3:4b"
+    },
+    "secure_cookie": true,
+    "unauthenticated_admin": 401
+  },
+  "ai_chat_smoke": {
+    "status": "answered",
+    "intent": "hoc_phi",
+    "routing": {
+      "model_mode": "auto",
+      "reason": "classifier",
+      "category": "hoc_phi",
+      "classifier_used": true
+    },
+    "generation": {
+      "used": true,
+      "model": "qwen3:4b",
+      "provider": "ollama",
+      "latency_ms": 562,
+      "reason": null
+    },
+    "latency_ms": 564,
+    "source_id": "FAQ-004",
+    "answer_length": 238
+  },
+  "dns": {
+    "authoritative": "pass",
+    "cloudflare_1_1_1_1": "pass",
+    "google_8_8_8_8": "pass",
+    "local_recursive_resolver": "cached previous negative response at verification time"
+  },
+  "https_validation": {
+    "method": "curl --resolve using Cloudflare edge IP returned by public DNS",
+    "tls_certificate_verification": true,
+    "local_dns_cache_limitation": true
+  },
+  "prior_code_validation": {
+    "pytest_passed": 56,
+    "note": "Full suite passed after HTTP/HTTPS cookie change; subsequent changes are deployment configuration and documentation."
+  },
+  "temporary_preview": {
+    "url": "https://nearest-versus-nails-solved.trycloudflare.com",
+    "service": "student-support-preview.service",
+    "cleanup_timer": "student-support-preview-cleanup.timer",
+    "scheduled_stop_after_minutes": 30
+  },
+  "limits": [
+    "Server must remain powered on with Internet access.",
+    "No large-scale load or independent student evaluation performed."
+  ]
+}

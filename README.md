@@ -4,8 +4,9 @@
 
 ## Sử dụng
 
-- Ứng dụng: http://192.168.1.118:8088
-- Quản trị: http://192.168.1.118:8088/#admin
+- Ứng dụng qua Internet: https://ttech.io.vn
+- Quản trị: https://ttech.io.vn/#admin
+- Truy cập trong LAN: http://192.168.1.118:8088
 - Mô hình AI mặc định: Qwen3 4B Q4_K_M qua Ollama, sử dụng GPU trên máy chủ. Ollama chỉ lắng nghe localhost:11435.
 - Thư mục cài đặt: `/home/phamtung/student-support`.
 - Không cần cài phần mềm hoặc mô hình trên máy người dùng.
@@ -65,6 +66,8 @@ curl http://127.0.0.1:8088/api/ai-status
 
 Các dịch vụ systemd user đã enable; `loginctl enable-linger phamtung` cho phép chạy khi chưa đăng nhập. Cổng 8088 được mở cho nguồn IPv4 192.168.1.0/24 trong firewalld. Địa chỉ IP phụ thuộc DHCP của mạng; nên giữ DHCP reservation theo MAC D8-43-AE-90-79-77 khi cấu hình router.
 
+Truy cập Internet dùng Cloudflare Tunnel `ttech-student-support`, dịch vụ `cloudflared-ttech.service` đã bật tự khởi động. Tunnel đưa `https://ttech.io.vn` về `http://127.0.0.1:8088`, không cần mở cổng router. Máy chủ cần đang bật và có Internet. Xem [hướng dẫn tunnel](deploy/cloudflared-ttech.md) và [kết quả kiểm tra triển khai](reports/public-deployment.json). Chứng chỉ và thông tin xác thực được lưu ngoài repository trong `~/.cloudflared/`.
+
 Quên mật khẩu quản trị:
 
 ```bash
@@ -113,6 +116,6 @@ node scripts/check_alignment_ui.js
 
 Tests dùng DB tạm và pipeline đã lưu, không dùng hội thoại hay tài khoản thật. Môi trường `.venv` liên kết từ dự án chính chỉ được dùng để chạy; không cài/nâng cấp gói trong phiên chỉnh sửa này. Phiên kiểm chứng ban đầu gặp giới hạn sandbox, được giữ trong báo cáo lịch sử. Lần kiểm chứng bổ sung trước khi đưa vào main đạt toàn bộ **54 tests**; kiểm tra cú pháp JavaScript và renderer Thực nghiệm bằng Node (6 nhóm) cũng đạt. Node không kiểm tra bố cục trình duyệt. Xem `reports/report-alignment-verification.json` để phân biệt kết quả lịch sử và lần kiểm tra bổ sung.
 
-Kết quả phiên này có tiền tố `reports/report-alignment-*`; `reports/pytest.txt`, ảnh và browser QA cũ là bằng chứng của lần triển khai trước, không xác nhận thay đổi hiện tại. `scripts/browser_qa.py` là script kiểm tra bản triển khai cũ, phụ thuộc máy chủ/tài khoản thật; không chạy script đó trong worktree này. Chưa kiểm chứng lại bố cục bằng Chromium vì sandbox chặn khởi động.
+Kết quả phiên nghiên cứu có tiền tố `reports/report-alignment-*`; `reports/pytest.txt`, ảnh và browser QA cũ là bằng chứng của lần triển khai trước, không xác nhận thay đổi hiện tại. `scripts/browser_qa.py` là script kiểm tra bản triển khai cũ, phụ thuộc máy chủ/tài khoản thật; không chạy script đó trong worktree này. Khi triển khai công khai, bộ kiểm thử bổ sung cho cookie HTTP/HTTPS đạt tổng cộng **56 tests**. Đã thử chọn MLP và nhận FAQ trên trang Thực nghiệm bằng Chrome; chưa đánh giá đầy đủ bố cục desktop/mobile.
 
-Triển khai hiện dùng HTTP trong LAN. Chưa cấu hình tên miền và chứng chỉ TLS. Đó là phạm vi vận hành được bàn giao; chưa kiểm thử tải lớn hoặc đánh giá độc lập bởi nhà trường.
+Truy cập công khai dùng HTTPS tại `ttech.io.vn`, TLS do Cloudflare phục vụ. Kết nối từ tunnel đến ứng dụng trên cùng máy và truy cập LAN dùng HTTP. Chưa kiểm thử tải lớn hoặc đánh giá độc lập bởi nhà trường.

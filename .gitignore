@@ -18,3 +18,5 @@ application.tar.gz
 reports/*.zip
 .aws/
 .codex/
+*.pem
+.cloudflared/
