@@ -1,0 +1,649 @@
+{
+  "architecture": {
+    "browser": [
+      {
+        "path": "app/static/app.js",
+        "line": 6,
+        "end_line": 21
+      },
+      {
+        "path": "app/static/app.js",
+        "line": 70,
+        "end_line": 71
+      },
+      {
+        "path": "app/static/index.html",
+        "line": 2,
+        "end_line": 2
+      }
+    ],
+    "api": [
+      {
+        "path": "app/main.py",
+        "line": 74,
+        "end_line": 95
+      },
+      {
+        "path": "app/main.py",
+        "line": 146,
+        "end_line": 161
+      },
+      {
+        "path": "app/main.py",
+        "line": 254,
+        "end_line": 294
+      }
+    ],
+    "db": [
+      {
+        "path": "app/main.py",
+        "line": 15,
+        "end_line": 47
+      },
+      {
+        "path": "app/main.py",
+        "line": 158,
+        "end_line": 168
+      },
+      {
+        "path": "app/main.py",
+        "line": 292,
+        "end_line": 294
+      }
+    ],
+    "engine": [
+      {
+        "path": "app/engine.py",
+        "line": 60,
+        "end_line": 97
+      },
+      {
+        "path": "app/engine.py",
+        "line": 99,
+        "end_line": 157
+      },
+      {
+        "path": "app/engine.py",
+        "line": 159,
+        "end_line": 187
+      }
+    ],
+    "config": [
+      {
+        "path": "app/main.py",
+        "line": 22,
+        "end_line": 25
+      },
+      {
+        "path": "app/main.py",
+        "line": 295,
+        "end_line": 311
+      }
+    ],
+    "models": [
+      {
+        "path": "app/engine.py",
+        "line": 49,
+        "end_line": 58
+      },
+      {
+        "path": "scripts/train.py",
+        "line": 118,
+        "end_line": 160
+      }
+    ],
+    "provider": [
+      {
+        "path": "app/engine.py",
+        "line": 169,
+        "end_line": 185
+      },
+      {
+        "path": "deploy/student-ai.service",
+        "line": 6,
+        "end_line": 11
+      }
+    ],
+    "train": [
+      {
+        "path": "scripts/train.py",
+        "line": 59,
+        "end_line": 126
+      },
+      {
+        "path": "scripts/train.py",
+        "line": 129,
+        "end_line": 165
+      },
+      {
+        "path": "scripts/evaluate_faq.py",
+        "line": 14,
+        "end_line": 53
+      }
+    ],
+    "tunnel": [
+      {
+        "path": "deploy/cloudflared-ttech.service",
+        "line": 3,
+        "end_line": 9
+      },
+      {
+        "path": "deploy/cloudflared-ttech.yml.example",
+        "line": 1,
+        "end_line": 8
+      }
+    ]
+  },
+  "startup": {
+    "asgi": [
+      {
+        "path": "deploy/student-support.service",
+        "line": 6,
+        "end_line": 10
+      }
+    ],
+    "main": [
+      {
+        "path": "app/main.py",
+        "line": 15,
+        "end_line": 47
+      },
+      {
+        "path": "app/main.py",
+        "line": 74,
+        "end_line": 77
+      },
+      {
+        "path": "app/main.py",
+        "line": 312,
+        "end_line": 314
+      }
+    ],
+    "engine": [
+      {
+        "path": "app/engine.py",
+        "line": 49,
+        "end_line": 69
+      }
+    ],
+    "disk": [
+      {
+        "path": "app/main.py",
+        "line": 26,
+        "end_line": 47
+      },
+      {
+        "path": "app/engine.py",
+        "line": 54,
+        "end_line": 58
+      }
+    ],
+    "web": [
+      {
+        "path": "app/static/index.html",
+        "line": 2,
+        "end_line": 2
+      },
+      {
+        "path": "app/static/app.js",
+        "line": 10,
+        "end_line": 11
+      },
+      {
+        "path": "app/static/app.js",
+        "line": 70,
+        "end_line": 71
+      }
+    ]
+  },
+  "chat": {
+    "web": [
+      {
+        "path": "app/static/app.js",
+        "line": 6,
+        "end_line": 17
+      }
+    ],
+    "main": [
+      {
+        "path": "app/main.py",
+        "line": 79,
+        "end_line": 95
+      },
+      {
+        "path": "app/main.py",
+        "line": 146,
+        "end_line": 161
+      }
+    ],
+    "db": [
+      {
+        "path": "app/main.py",
+        "line": 59,
+        "end_line": 67
+      },
+      {
+        "path": "app/main.py",
+        "line": 151,
+        "end_line": 160
+      }
+    ],
+    "engine": [
+      {
+        "path": "app/engine.py",
+        "line": 99,
+        "end_line": 157
+      },
+      {
+        "path": "app/engine.py",
+        "line": 159,
+        "end_line": 187
+      }
+    ],
+    "llm": [
+      {
+        "path": "app/engine.py",
+        "line": 169,
+        "end_line": 185
+      }
+    ]
+  },
+  "knowledge-admin": {
+    "web": [
+      {
+        "path": "app/static/app.js",
+        "line": 59,
+        "end_line": 68
+      }
+    ],
+    "main": [
+      {
+        "path": "app/main.py",
+        "line": 68,
+        "end_line": 72
+      },
+      {
+        "path": "app/main.py",
+        "line": 207,
+        "end_line": 219
+      },
+      {
+        "path": "app/main.py",
+        "line": 246,
+        "end_line": 294
+      }
+    ],
+    "db": [
+      {
+        "path": "app/main.py",
+        "line": 210,
+        "end_line": 218
+      },
+      {
+        "path": "app/main.py",
+        "line": 254,
+        "end_line": 294
+      }
+    ],
+    "engine": [
+      {
+        "path": "app/main.py",
+        "line": 45,
+        "end_line": 47
+      },
+      {
+        "path": "app/engine.py",
+        "line": 60,
+        "end_line": 69
+      }
+    ]
+  },
+  "research-training": {
+    "train": [
+      {
+        "path": "scripts/train.py",
+        "line": 59,
+        "end_line": 126
+      },
+      {
+        "path": "scripts/train.py",
+        "line": 129,
+        "end_line": 165
+      }
+    ],
+    "pipe": [
+      {
+        "path": "scripts/train.py",
+        "line": 92,
+        "end_line": 115
+      },
+      {
+        "path": "app/text.py",
+        "line": 8,
+        "end_line": 10
+      }
+    ],
+    "disk": [
+      {
+        "path": "scripts/train.py",
+        "line": 60,
+        "end_line": 66
+      },
+      {
+        "path": "scripts/train.py",
+        "line": 118,
+        "end_line": 160
+      },
+      {
+        "path": "scripts/evaluate_faq.py",
+        "line": 14,
+        "end_line": 47
+      }
+    ],
+    "api": [
+      {
+        "path": "app/main.py",
+        "line": 175,
+        "end_line": 196
+      },
+      {
+        "path": "app/engine.py",
+        "line": 49,
+        "end_line": 58
+      },
+      {
+        "path": "app/engine.py",
+        "line": 85,
+        "end_line": 97
+      }
+    ],
+    "web": [
+      {
+        "path": "app/static/app.js",
+        "line": 23,
+        "end_line": 31
+      },
+      {
+        "path": "app/static/app.js",
+        "line": 44,
+        "end_line": 58
+      }
+    ]
+  },
+  "operations": {
+    "sys": [
+      {
+        "path": "deploy/student-support.service",
+        "line": 1,
+        "end_line": 17
+      },
+      {
+        "path": "deploy/student-backup.timer",
+        "line": 1,
+        "end_line": 7
+      },
+      {
+        "path": "deploy/student-ai.service",
+        "line": 1,
+        "end_line": 17
+      }
+    ],
+    "app": [
+      {
+        "path": "deploy/student-support.service",
+        "line": 10,
+        "end_line": 10
+      },
+      {
+        "path": "deploy/student-ai.service",
+        "line": 6,
+        "end_line": 11
+      }
+    ],
+    "backup": [
+      {
+        "path": "deploy/student-backup.service",
+        "line": 3,
+        "end_line": 8
+      },
+      {
+        "path": "scripts/backup.py",
+        "line": 1,
+        "end_line": 16
+      }
+    ],
+    "disk": [
+      {
+        "path": "scripts/backup.py",
+        "line": 3,
+        "end_line": 16
+      },
+      {
+        "path": "scripts/initialize_auth.py",
+        "line": 4,
+        "end_line": 10
+      },
+      {
+        "path": "scripts/reset_admin.py",
+        "line": 5,
+        "end_line": 13
+      }
+    ]
+  },
+  "routing": {
+    "input": [
+      {
+        "path": "app/engine.py",
+        "line": 99,
+        "end_line": 102
+      }
+    ],
+    "rules": [
+      {
+        "path": "app/engine.py",
+        "line": 103,
+        "end_line": 108
+      }
+    ],
+    "topics": [
+      {
+        "path": "app/engine.py",
+        "line": 109,
+        "end_line": 123
+      }
+    ],
+    "multiple": [
+      {
+        "path": "app/engine.py",
+        "line": 124,
+        "end_line": 125
+      }
+    ],
+    "vague": [
+      {
+        "path": "app/engine.py",
+        "line": 126,
+        "end_line": 129
+      }
+    ],
+    "classify": [
+      {
+        "path": "app/engine.py",
+        "line": 130,
+        "end_line": 136
+      }
+    ],
+    "global": [
+      {
+        "path": "app/engine.py",
+        "line": 137,
+        "end_line": 137
+      }
+    ],
+    "category": [
+      {
+        "path": "app/engine.py",
+        "line": 138,
+        "end_line": 144
+      }
+    ],
+    "ranked": [
+      {
+        "path": "app/engine.py",
+        "line": 145,
+        "end_line": 148
+      }
+    ],
+    "enough": [
+      {
+        "path": "app/engine.py",
+        "line": 149,
+        "end_line": 150
+      }
+    ],
+    "conflict": [
+      {
+        "path": "app/engine.py",
+        "line": 151,
+        "end_line": 154
+      }
+    ],
+    "lexical": [
+      {
+        "path": "app/engine.py",
+        "line": 40,
+        "end_line": 46
+      }
+    ],
+    "answer": [
+      {
+        "path": "app/engine.py",
+        "line": 156,
+        "end_line": 157
+      }
+    ],
+    "multiple-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 124,
+        "end_line": 155
+      }
+    ],
+    "vague-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 124,
+        "end_line": 155
+      }
+    ],
+    "enough-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 105,
+        "end_line": 150
+      }
+    ],
+    "conflict-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 124,
+        "end_line": 155
+      }
+    ],
+    "lexical-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 124,
+        "end_line": 155
+      }
+    ],
+    "rules-greeting-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 103,
+        "end_line": 104
+      }
+    ],
+    "rules-out-exit": [
+      {
+        "path": "app/engine.py",
+        "line": 105,
+        "end_line": 108
+      }
+    ]
+  },
+  "modules": {
+    "main": [
+      {
+        "path": "app/main.py",
+        "line": 8,
+        "end_line": 16
+      }
+    ],
+    "engine": [
+      {
+        "path": "app/engine.py",
+        "line": 2,
+        "end_line": 9
+      }
+    ],
+    "text": [
+      {
+        "path": "app/text.py",
+        "line": 1,
+        "end_line": 10
+      }
+    ],
+    "api-tools": [
+      {
+        "path": "scripts/initialize_auth.py",
+        "line": 3,
+        "end_line": 4
+      },
+      {
+        "path": "scripts/reset_admin.py",
+        "line": 4,
+        "end_line": 5
+      },
+      {
+        "path": "scripts/check_alignment_inprocess.py",
+        "line": 96,
+        "end_line": 98
+      }
+    ],
+    "model-tools": [
+      {
+        "path": "scripts/train.py",
+        "line": 26,
+        "end_line": 29
+      },
+      {
+        "path": "scripts/evaluate_faq.py",
+        "line": 9,
+        "end_line": 18
+      },
+      {
+        "path": "scripts/prepare_data.py",
+        "line": 5,
+        "end_line": 10
+      }
+    ],
+    "tests": [
+      {
+        "path": "tests/conftest.py",
+        "line": 11,
+        "end_line": 22
+      },
+      {
+        "path": "tests/test_application.py",
+        "line": 3,
+        "end_line": 6
+      },
+      {
+        "path": "tests/test_research_routing.py",
+        "line": 12,
+        "end_line": 14
+      }
+    ]
+  }
+}

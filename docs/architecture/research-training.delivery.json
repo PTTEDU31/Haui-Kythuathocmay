@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "eda71835-44b5-485b-b5b6-358a3644db78",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/research-training.json",
+  "output": "/home/phamtung/student-support/docs/architecture/research-training.html",
+  "specification": {
+    "sha256": "a10feed2888d52c312116636d2a8d2906cbf36d4f95410b407e315995fb24bed",
+    "bytes": 5634
+  },
+  "artifact": {
+    "sha256": "e351e76fcee5318e39a46388ca67021360b4f037742bd2690d2d2f7750f1a976",
+    "bytes": 818200
+  }
+}

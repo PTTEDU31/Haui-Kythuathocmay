@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Chat · JavaScript → Python → provider → persistence",
+    "output": "docs/architecture/chat.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "ask() / api()",
+      "sublabel": "app/static/app.js"
+    },
+    {
+      "id": "main",
+      "type": "backend",
+      "label": "chat()",
+      "sublabel": "app/main.py"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "SQLite",
+      "sublabel": "visitor + messages"
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Engine",
+      "sublabel": "route() / generate()"
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "AI provider",
+      "sublabel": "HTTP JSON boundary"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "web",
+      "to": "main",
+      "y": 160,
+      "label": "POST /api/chat {question,use_ai}",
+      "note": "Submit/Enter/suggestion callbacks → ask(); api() uses same-origin credentials. guard() checks mutating requests."
+    },
+    {
+      "id": "m2",
+      "from": "main",
+      "to": "db",
+      "y": 242,
+      "label": "limit(); visitor(); read last 4 assistant results"
+    },
+    {
+      "id": "m3",
+      "from": "main",
+      "to": "engine",
+      "y": 284,
+      "label": "route(q, history)"
+    },
+    {
+      "id": "m4",
+      "from": "engine",
+      "to": "main",
+      "y": 326,
+      "label": "status + FAQ + sources + internal evidence",
+      "variant": "return"
+    },
+    {
+      "id": "m5",
+      "from": "main",
+      "to": "engine",
+      "y": 368,
+      "label": "If use_ai: generate(q,result,read_settings())",
+      "note": "Else generation.reason=disabled_for_request. Non-answered or disabled settings return immediately."
+    },
+    {
+      "id": "m6",
+      "from": "engine",
+      "to": "llm",
+      "y": 450,
+      "label": "If answered + enabled + lock acquired: POST",
+      "note": "Ollama /api/chat OR configured /chat/completions. Lock waits 2 s; HTTP timeout 55 s, connect 5 s."
+    },
+    {
+      "id": "m7",
+      "from": "llm",
+      "to": "engine",
+      "y": 532,
+      "label": "JSON answer + supported",
+      "variant": "return",
+      "note": "Validate boolean, length, no URL, and numbers subset. Busy/error/invalid output keeps FAQ answer; finally release lock."
+    },
+    {
+      "id": "m8",
+      "from": "engine",
+      "to": "main",
+      "y": 614,
+      "label": "Result; generated prose only if valid",
+      "variant": "return"
+    },
+    {
+      "id": "m9",
+      "from": "main",
+      "to": "db",
+      "y": 656,
+      "label": "Remove evidence; insert user + assistant messages"
+    },
+    {
+      "id": "m10",
+      "from": "main",
+      "to": "web",
+      "y": 698,
+      "label": "Return JSON; message() renders citations",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "web",
+      "to": "main",
+      "y": 740,
+      "label": "Later vote callback: POST /api/feedback"
+    },
+    {
+      "id": "m12",
+      "from": "main",
+      "to": "db",
+      "y": 782,
+      "label": "feedback(): verify session ownership; upsert"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Transport and callback evidence",
+      "items": [
+        "app.js:16 is the POST call site; app/main.py:146–161 registers and handles that exact path.",
+        "This cross-language edge is source-verified even though GitNexus does not resolve it as an ordinary CALLS edge.",
+        "Synchronous chat() makes a blocking HTTP provider call; browser fetch is asynchronous. No streaming is implemented."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · ask() / api()",
+      "items": [
+        "app/static/app.js:6–17"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · chat()",
+      "items": [
+        "app/main.py:79–95",
+        "app/main.py:146–161"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · SQLite",
+      "items": [
+        "app/main.py:59–67",
+        "app/main.py:151–160"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Engine",
+      "items": [
+        "app/engine.py:99–157",
+        "app/engine.py:159–187"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · AI provider",
+      "items": [
+        "app/engine.py:169–185"
+      ]
+    }
+  ]
+}

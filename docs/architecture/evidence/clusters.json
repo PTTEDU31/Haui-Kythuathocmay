@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "gitnexus://repo/student-support/clusters",
+      "mimeType": "text/yaml",
+      "text": "modules:\n  - name: \"App\"\n    symbols: 45\n    cohesion: 67%\n  - name: \"Static\"\n    symbols: 22\n    cohesion: 80%\n  - name: \"Scripts\"\n    symbols: 8\n    cohesion: 100%\n  - name: \"Tests\"\n    symbols: 8\n    cohesion: 61%"
+    }
+  ]
+}

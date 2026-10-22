@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/phamtung/student-support/docs/architecture/candidates/chat.json",
+    "sha256": "a0d46edaec5a09ff459d2e29111517126460645eed0466abc2c32d567896473a",
+    "bytes": 4941
+  },
+  "artifact": {
+    "path": "/home/phamtung/student-support/docs/architecture/chat.html",
+    "sha256": "cc10b6e27d5d0c7f488b771089785a9e60b4a6a2e890d459ace969a0c90020b2",
+    "bytes": 817177
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/phamtung/student-support/docs/architecture/chat.finalize.json",
+    "summaryReceipt": "/home/phamtung/student-support/docs/architecture/chat.finalize-summary.json",
+    "browserCheckReceipt": "/home/phamtung/student-support/docs/architecture/chat.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-21T17:59:57.894Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1742,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

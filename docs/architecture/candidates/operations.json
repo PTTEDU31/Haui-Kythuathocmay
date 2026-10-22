@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Operations · services, backup and maintenance entry points",
+    "output": "docs/architecture/operations.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "sys",
+      "type": "external",
+      "label": "systemd / operator",
+      "sublabel": "deploy/*.service · timer"
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "Uvicorn / Ollama",
+      "sublabel": "configured process launch"
+    },
+    {
+      "id": "backup",
+      "type": "backend",
+      "label": "backup.py",
+      "sublabel": "module-level entry point"
+    },
+    {
+      "id": "disk",
+      "type": "database",
+      "label": "Local files",
+      "sublabel": "student.db · backups/*.tar.gz"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "sys",
+      "to": "app",
+      "y": 160,
+      "label": "ExecStart: uvicorn app.main:app; Ollama serve",
+      "note": "Configuration-verified launch commands; current service activation/health is not measured."
+    },
+    {
+      "id": "m2",
+      "from": "sys",
+      "to": "backup",
+      "y": 242,
+      "label": "03:00 Asia/Ho_Chi_Minh timer → backup service"
+    },
+    {
+      "id": "m3",
+      "from": "backup",
+      "to": "disk",
+      "y": 284,
+      "label": "SQLite connection.backup() → snapshot DB"
+    },
+    {
+      "id": "m4",
+      "from": "backup",
+      "to": "disk",
+      "y": 326,
+      "label": "Tar snapshot + existing allowlisted files",
+      "note": "Allowlist includes auth/settings, faqs.json, intent.joblib, experiments.json. It omits mlp/linearsvc.joblib and selection.json."
+    },
+    {
+      "id": "m5",
+      "from": "backup",
+      "to": "disk",
+      "y": 408,
+      "label": "chmod 0600; delete snapshot; keep latest 14 archives"
+    },
+    {
+      "id": "m6",
+      "from": "sys",
+      "to": "disk",
+      "y": 450,
+      "label": "initialize_auth.py → password_hash(); write once",
+      "note": "Importing app.main also constructs ENGINE; existing credentials are preserved."
+    },
+    {
+      "id": "m7",
+      "from": "sys",
+      "to": "disk",
+      "y": 532,
+      "label": "reset_admin.py → prompt/hash/replace; clear admin_sessions"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Tooling and development flows",
+      "items": [
+        "scripts/check_alignment_inprocess.py:main() copies public inputs to a temp root, sets STUDENT_ROOT and invokes check() through asyncio.run().",
+        "scripts/check_alignment_ui.js loads renderer source into node:vm with stub api/DOM; tests/conftest.py creates a temporary app root and TestClient fixtures.",
+        "scripts/browser_qa.py uses Playwright callbacks against a live deployment and real admin credentials; analyzed only, not executed."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Historical automation entry",
+      "items": [
+        "scripts/start_report_alignment.sh creates a snapshot/worktree/tmux session, then --worker invokes codex using prompts/report-alignment.md.",
+        "The shell worker subsequently runs pytest and commits if its ready marker passes; this workflow was inspected, not launched.",
+        "Python → SQLite/sklearn/NumPy and browser automation libraries use external native runtimes; their implementation is outside this repository."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · systemd / operator",
+      "items": [
+        "deploy/student-support.service:1–17",
+        "deploy/student-backup.timer:1–7",
+        "deploy/student-ai.service:1–17"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Uvicorn / Ollama",
+      "items": [
+        "deploy/student-support.service:10–10",
+        "deploy/student-ai.service:6–11"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · backup.py",
+      "items": [
+        "deploy/student-backup.service:3–8",
+        "scripts/backup.py:1–16"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Local files",
+      "items": [
+        "scripts/backup.py:3–16",
+        "scripts/initialize_auth.py:4–10",
+        "scripts/reset_admin.py:5–13"
+      ]
+    }
+  ]
+}

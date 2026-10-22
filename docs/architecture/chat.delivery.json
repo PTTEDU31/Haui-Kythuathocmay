@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "f3378445-6e11-4ab6-9bc1-30e59fe217f9",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/chat.json",
+  "output": "/home/phamtung/student-support/docs/architecture/chat.html",
+  "specification": {
+    "sha256": "a0d46edaec5a09ff459d2e29111517126460645eed0466abc2c32d567896473a",
+    "bytes": 4941
+  },
+  "artifact": {
+    "sha256": "cc10b6e27d5d0c7f488b771089785a9e60b4a6a2e890d459ace969a0c90020b2",
+    "bytes": 817177
+  }
+}

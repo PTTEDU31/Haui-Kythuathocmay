@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"status\": \"found\",\n  \"symbol\": {\n    \"uid\": \"Function:app/main.py:lifespan\",\n    \"name\": \"lifespan\",\n    \"kind\": \"Function\",\n    \"filePath\": \"app/main.py\",\n    \"startLine\": 75,\n    \"endLine\": 76\n  },\n  \"epistemic\": \"exact\",\n  \"incoming\": {},\n  \"outgoing\": {\n    \"calls\": [\n      {\n        \"uid\": \"Function:app/main.py:init_db\",\n        \"name\": \"init_db\",\n        \"filePath\": \"app/main.py\"\n      }\n    ]\n  },\n  \"processes\": []\n}\n\n---\n**Next:** If planning changes, use impact({target: \"lifespan\", direction: \"upstream\", repo: \"student-support\"}) to check blast radius. To see execution flows, READ gitnexus://repo/student-support/processes."
+    }
+  ]
+}

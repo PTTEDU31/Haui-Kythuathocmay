@@ -1,0 +1,254 @@
+[
+  {
+    "id": "proc_0_start",
+    "name": "Start → Api",
+    "stepCount": "6",
+    "entry": "Function:app/static/app.js:start",
+    "terminal": "Function:app/static/app.js:api"
+  },
+  {
+    "id": "proc_1_loadknowledge",
+    "name": "LoadKnowledge → $",
+    "stepCount": "6",
+    "entry": "Function:app/static/app.js:loadKnowledge",
+    "terminal": "Function:app/static/app.js:$"
+  },
+  {
+    "id": "proc_2_start",
+    "name": "Start → FormatDate",
+    "stepCount": "6",
+    "entry": "Function:app/static/app.js:start",
+    "terminal": "Function:app/static/app.js:formatDate"
+  },
+  {
+    "id": "proc_3_chat",
+    "name": "Chat → Active",
+    "stepCount": "4",
+    "entry": "Function:app/main.py:chat",
+    "terminal": "Function:app/engine.py:active"
+  },
+  {
+    "id": "proc_4_ai_settings",
+    "name": "Ai_settings → Now",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:ai_settings",
+    "terminal": "Function:app/main.py:now"
+  },
+  {
+    "id": "proc_5_bootstrap",
+    "name": "Bootstrap → Conn",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:bootstrap",
+    "terminal": "Function:app/main.py:conn"
+  },
+  {
+    "id": "proc_6_bootstrap",
+    "name": "Bootstrap → Digest",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:bootstrap",
+    "terminal": "Function:app/main.py:digest"
+  },
+  {
+    "id": "proc_7_chat",
+    "name": "Chat → Nums",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:chat",
+    "terminal": "Function:app/engine.py:Engine.generate.nums@179:12"
+  },
+  {
+    "id": "proc_8_chat",
+    "name": "Chat → Classify",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:chat",
+    "terminal": "Method:app/engine.py:Engine.classify#2"
+  },
+  {
+    "id": "proc_9_create_faq",
+    "name": "Create_faq → Safe_url",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:create_faq",
+    "terminal": "Function:app/engine.py:safe_url"
+  },
+  {
+    "id": "proc_10_research_route",
+    "name": "Research_route → Normalize_classification",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:research_route",
+    "terminal": "Function:app/text.py:normalize_classification"
+  },
+  {
+    "id": "proc_11_ask",
+    "name": "Ask → QuestionButtons",
+    "stepCount": "3",
+    "entry": "Function:app/static/app.js:ask",
+    "terminal": "Function:app/static/app.js:questionButtons"
+  },
+  {
+    "id": "proc_12_loadknowledge",
+    "name": "LoadKnowledge → Api",
+    "stepCount": "5",
+    "entry": "Function:app/static/app.js:loadKnowledge",
+    "terminal": "Function:app/static/app.js:api"
+  },
+  {
+    "id": "proc_13_start",
+    "name": "Start → $",
+    "stepCount": "6",
+    "entry": "Function:app/static/app.js:start",
+    "terminal": "Function:app/static/app.js:$"
+  },
+  {
+    "id": "proc_14_renderlogin",
+    "name": "RenderLogin → FormatDate",
+    "stepCount": "4",
+    "entry": "Function:app/static/app.js:renderLogin",
+    "terminal": "Function:app/static/app.js:formatDate"
+  },
+  {
+    "id": "proc_15_create_faq",
+    "name": "Create_faq → Active",
+    "stepCount": "4",
+    "entry": "Function:app/main.py:create_faq",
+    "terminal": "Function:app/engine.py:active"
+  },
+  {
+    "id": "proc_16_bootstrap",
+    "name": "Bootstrap → Now",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:bootstrap",
+    "terminal": "Function:app/main.py:now"
+  },
+  {
+    "id": "proc_17_chat",
+    "name": "Chat → Conn",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:chat",
+    "terminal": "Function:app/main.py:conn"
+  },
+  {
+    "id": "proc_18_chat",
+    "name": "Chat → Digest",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:chat",
+    "terminal": "Function:app/main.py:digest"
+  },
+  {
+    "id": "proc_19_research_route",
+    "name": "Research_route → Classify",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:research_route",
+    "terminal": "Method:app/engine.py:Engine.classify#2"
+  },
+  {
+    "id": "proc_20_update_faq",
+    "name": "Update_faq → Safe_url",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:update_faq",
+    "terminal": "Function:app/engine.py:safe_url"
+  },
+  {
+    "id": "proc_21_message",
+    "name": "Message → Api",
+    "stepCount": "4",
+    "entry": "Function:app/static/app.js:message",
+    "terminal": "Function:app/static/app.js:api"
+  },
+  {
+    "id": "proc_22_message",
+    "name": "Message → $",
+    "stepCount": "5",
+    "entry": "Function:app/static/app.js:message",
+    "terminal": "Function:app/static/app.js:$"
+  },
+  {
+    "id": "proc_23_research_route",
+    "name": "Research_route → Active",
+    "stepCount": "4",
+    "entry": "Function:app/main.py:research_route",
+    "terminal": "Function:app/engine.py:active"
+  },
+  {
+    "id": "proc_24_chat",
+    "name": "Chat → Now",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:chat",
+    "terminal": "Function:app/main.py:now"
+  },
+  {
+    "id": "proc_25_create_faq",
+    "name": "Create_faq → Conn",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:create_faq",
+    "terminal": "Function:app/main.py:conn"
+  },
+  {
+    "id": "proc_26_feedback",
+    "name": "Feedback → Digest",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:feedback",
+    "terminal": "Function:app/main.py:digest"
+  },
+  {
+    "id": "proc_27_renderadmin",
+    "name": "RenderAdmin → Api",
+    "stepCount": "4",
+    "entry": "Function:app/static/app.js:renderAdmin",
+    "terminal": "Function:app/static/app.js:api"
+  },
+  {
+    "id": "proc_28_renderadmin",
+    "name": "RenderAdmin → $",
+    "stepCount": "4",
+    "entry": "Function:app/static/app.js:renderAdmin",
+    "terminal": "Function:app/static/app.js:$"
+  },
+  {
+    "id": "proc_29_update_faq",
+    "name": "Update_faq → Active",
+    "stepCount": "4",
+    "entry": "Function:app/main.py:update_faq",
+    "terminal": "Function:app/engine.py:active"
+  },
+  {
+    "id": "proc_30_create_faq",
+    "name": "Create_faq → Now",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:create_faq",
+    "terminal": "Function:app/main.py:now"
+  },
+  {
+    "id": "proc_31_feedback",
+    "name": "Feedback → Conn",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:feedback",
+    "terminal": "Function:app/main.py:conn"
+  },
+  {
+    "id": "proc_32_renderlogin",
+    "name": "RenderLogin → Api",
+    "stepCount": "4",
+    "entry": "Function:app/static/app.js:renderLogin",
+    "terminal": "Function:app/static/app.js:api"
+  },
+  {
+    "id": "proc_33_feedback",
+    "name": "Feedback → Now",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:feedback",
+    "terminal": "Function:app/main.py:now"
+  },
+  {
+    "id": "proc_34_update_faq",
+    "name": "Update_faq → Conn",
+    "stepCount": "3",
+    "entry": "Function:app/main.py:update_faq",
+    "terminal": "Function:app/main.py:conn"
+  },
+  {
+    "id": "proc_35_ask",
+    "name": "Ask → Api",
+    "stepCount": "3",
+    "entry": "Function:app/static/app.js:ask",
+    "terminal": "Function:app/static/app.js:api"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "gitnexus://repo/student-support/processes",
+      "mimeType": "text/yaml",
+      "text": "processes:\n  - name: \"Start → Api\"\n    type: cross_community\n    steps: 6\n  - name: \"Start → $\"\n    type: cross_community\n    steps: 6\n  - name: \"LoadKnowledge → $\"\n    type: cross_community\n    steps: 6\n  - name: \"Start → FormatDate\"\n    type: cross_community\n    steps: 6\n  - name: \"LoadKnowledge → Api\"\n    type: cross_community\n    steps: 5\n  - name: \"Message → $\"\n    type: cross_community\n    steps: 5\n  - name: \"RenderLogin → FormatDate\"\n    type: intra_community\n    steps: 4\n  - name: \"Create_faq → Active\"\n    type: cross_community\n    steps: 4\n  - name: \"Message → Api\"\n    type: cross_community\n    steps: 4\n  - name: \"Research_route → Active\"\n    type: cross_community\n    steps: 4\n  - name: \"RenderAdmin → Api\"\n    type: intra_community\n    steps: 4\n  - name: \"RenderAdmin → $\"\n    type: intra_community\n    steps: 4\n  - name: \"Update_faq → Active\"\n    type: cross_community\n    steps: 4\n  - name: \"RenderLogin → Api\"\n    type: intra_community\n    steps: 4\n  - name: \"Chat → Active\"\n    type: cross_community\n    steps: 4\n  - name: \"Research_route → Normalize_classification\"\n    type: intra_community\n    steps: 3\n  - name: \"Ask → QuestionButtons\"\n    type: intra_community\n    steps: 3\n  - name: \"Bootstrap → Now\"\n    type: cross_community\n    steps: 3\n  - name: \"Chat → Conn\"\n    type: intra_community\n    steps: 3\n  - name: \"Chat → Digest\"\n    type: intra_community\n    steps: 3\n\n# Showing top 20 of 36 processes. Use the query tool for deeper search."
+    }
+  ]
+}

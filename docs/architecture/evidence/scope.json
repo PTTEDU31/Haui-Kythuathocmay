@@ -1,0 +1,29 @@
+{
+  "repository": "student-support",
+  "revision": "ded15187b5fe25dc9eb6733c64292097943f3f1d",
+  "origin": null,
+  "tracked_files": 73,
+  "gitnexus": {
+    "version": "1.6.12",
+    "indexed_files": 65,
+    "nodes": 458,
+    "edges": 1074,
+    "clusters": 15,
+    "processes": 36,
+    "calls": 343,
+    "imports_including_markdown": 18,
+    "warnings": {
+      "cross_language_property_sites_unlinked": 48,
+      "entry_points_unexplored": 29,
+      "callees_dropped": 295,
+      "walks_cut_by_budget": 1,
+      "processes_dropped": 2
+    }
+  },
+  "verification": "Static graph + inspected committed source; no application/services executed. Archify origin verification unavailable; reference bounds independently checked against git blobs.",
+  "preexisting_untracked": [
+    ".claude/",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ]
+}

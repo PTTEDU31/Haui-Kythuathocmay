@@ -1,0 +1,546 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Engine.route() · verified decision and fallback paths",
+    "output": "docs/architecture/routing.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "decision",
+      "label": "Engine.route() · ordered checks; each side exit terminates"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "input",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "Engine.route()",
+      "sublabel": "mode + normalize(q)",
+      "yOffset": -696
+    },
+    {
+      "id": "rules",
+      "lane": "decision",
+      "col": 1,
+      "type": "security",
+      "label": "Early rules",
+      "sublabel": "greeting / unsafe / out of scope",
+      "yOffset": -580
+    },
+    {
+      "id": "topics",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "Topics + history",
+      "sublabel": "regex; latest answered context",
+      "yOffset": -464
+    },
+    {
+      "id": "multiple",
+      "lane": "decision",
+      "col": 1,
+      "type": "security",
+      "label": "Multiple topics?",
+      "sublabel": "return clarify if > 1",
+      "yOffset": -348
+    },
+    {
+      "id": "vague",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "Vague query?",
+      "sublabel": "search; global score >= .30",
+      "yOffset": -232
+    },
+    {
+      "id": "classify",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "classify() if eligible",
+      "sublabel": "not context; no/5-class topic",
+      "yOffset": -116
+    },
+    {
+      "id": "global",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "search(q)",
+      "sublabel": "global word/char .55/.45",
+      "yOffset": 0
+    },
+    {
+      "id": "category",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "Choose category",
+      "sublabel": "explicit > classifier; extension wins",
+      "yOffset": 116
+    },
+    {
+      "id": "ranked",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "search(q,category)",
+      "sublabel": "or reuse global ranked",
+      "yOffset": 232
+    },
+    {
+      "id": "enough",
+      "lane": "decision",
+      "col": 1,
+      "type": "security",
+      "label": "Enough evidence?",
+      "sublabel": "rows; implicit score >= .30",
+      "yOffset": 348
+    },
+    {
+      "id": "conflict",
+      "lane": "decision",
+      "col": 1,
+      "type": "security",
+      "label": "Conflict + tie checks",
+      "sublabel": "topic score .13; margin .025",
+      "yOffset": 464
+    },
+    {
+      "id": "lexical",
+      "lane": "decision",
+      "col": 1,
+      "type": "security",
+      "label": "evidence_matches()",
+      "sublabel": "year subset; lexical overlap",
+      "yOffset": 580
+    },
+    {
+      "id": "answer",
+      "lane": "decision",
+      "col": 1,
+      "type": "backend",
+      "label": "answered",
+      "sublabel": "FAQ answer + source + evidence",
+      "yOffset": 696
+    },
+    {
+      "id": "rules-greeting-exit",
+      "lane": "decision",
+      "col": 0,
+      "type": "backend",
+      "label": "greeting",
+      "sublabel": "greeting",
+      "yOffset": -580
+    },
+    {
+      "id": "rules-out-exit",
+      "lane": "decision",
+      "col": 2,
+      "type": "security",
+      "label": "out_of_scope",
+      "sublabel": "unsafe / excluded",
+      "yOffset": -580
+    },
+    {
+      "id": "multiple-exit",
+      "lane": "decision",
+      "col": 2,
+      "type": "security",
+      "label": "clarify",
+      "sublabel": "> 1 topic",
+      "yOffset": -348
+    },
+    {
+      "id": "vague-exit",
+      "lane": "decision",
+      "col": 2,
+      "type": "security",
+      "label": "clarify",
+      "sublabel": "weak global match",
+      "yOffset": -232
+    },
+    {
+      "id": "enough-exit",
+      "lane": "decision",
+      "col": 2,
+      "type": "security",
+      "label": "out_of_scope",
+      "sublabel": "insufficient",
+      "yOffset": 348
+    },
+    {
+      "id": "conflict-exit",
+      "lane": "decision",
+      "col": 2,
+      "type": "security",
+      "label": "clarify",
+      "sublabel": "weak / conflict / tie",
+      "yOffset": 464
+    },
+    {
+      "id": "lexical-exit",
+      "lane": "decision",
+      "col": 2,
+      "type": "security",
+      "label": "clarify",
+      "sublabel": "no match",
+      "yOffset": 580
+    }
+  ],
+  "edges": [
+    {
+      "id": "input-to-rules",
+      "from": "input",
+      "to": "rules",
+      "label": "valid mode",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "rules-to-topics",
+      "from": "rules",
+      "to": "topics",
+      "label": "continue",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "topics-to-multiple",
+      "from": "topics",
+      "to": "multiple",
+      "label": "topics resolved",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "multiple-to-vague",
+      "from": "multiple",
+      "to": "vague",
+      "label": "<= 1",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "vague-to-classify",
+      "from": "vague",
+      "to": "classify",
+      "label": "continue",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "classify-to-global",
+      "from": "classify",
+      "to": "global",
+      "label": "model or None",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "global-to-category",
+      "from": "global",
+      "to": "category",
+      "label": "ranked",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "category-to-ranked",
+      "from": "category",
+      "to": "ranked",
+      "label": "chosen",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "ranked-to-enough",
+      "from": "ranked",
+      "to": "enough",
+      "label": "candidates",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "enough-to-conflict",
+      "from": "enough",
+      "to": "conflict",
+      "label": "enough",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "conflict-to-lexical",
+      "from": "conflict",
+      "to": "lexical",
+      "label": "no conflict",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "lexical-to-answer",
+      "from": "lexical",
+      "to": "answer",
+      "label": "match",
+      "variant": "default",
+      "role": "main",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "rules-to-rules-greeting-exit",
+      "from": "rules",
+      "to": "rules-greeting-exit",
+      "label": "greeting",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "rules-to-rules-out-exit",
+      "from": "rules",
+      "to": "rules-out-exit",
+      "label": "unsafe / excluded",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "multiple-to-multiple-exit",
+      "from": "multiple",
+      "to": "multiple-exit",
+      "label": "> 1 topic",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "vague-to-vague-exit",
+      "from": "vague",
+      "to": "vague-exit",
+      "label": "weak global match",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "enough-to-enough-exit",
+      "from": "enough",
+      "to": "enough-exit",
+      "label": "insufficient",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "conflict-to-conflict-exit",
+      "from": "conflict",
+      "to": "conflict-exit",
+      "label": "weak / conflict / tie",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "lexical-to-lexical-exit",
+      "from": "lexical",
+      "to": "lexical-exit",
+      "label": "no match",
+      "variant": "default",
+      "role": "branch",
+      "fromSide": "right",
+      "toSide": "left"
+    }
+  ],
+  "mainPath": [
+    "input",
+    "rules",
+    "topics",
+    "multiple",
+    "vague",
+    "classify",
+    "global",
+    "category",
+    "ranked",
+    "enough",
+    "conflict",
+    "lexical",
+    "answer"
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Execution details",
+      "items": [
+        "normalize() expands abbreviations and strips accents; classifier normalization retains accents/negation.",
+        "Early returns stop later work. Classification only selects a search category and never supplies answer evidence.",
+        "search() holds an RLock and rechecks active() on each row; no database or provider I/O occurs inside route()."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Fallback thresholds",
+      "items": [
+        "Implicit questions need top score >= .30. Topic-specific answers need >= .13. Cross-topic conflict/tie margin is .025.",
+        "evidence_matches(): query years must exist in FAQ; if >=2 non-topic terms remain, overlap must be >=25%.",
+        "Thresholds are engineering rules rather than calibrated probabilities."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Engine.route()",
+      "items": [
+        "app/engine.py:99–102"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Early rules",
+      "items": [
+        "app/engine.py:103–108"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Topics + history",
+      "items": [
+        "app/engine.py:109–123"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Multiple topics?",
+      "items": [
+        "app/engine.py:124–125"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Vague query?",
+      "items": [
+        "app/engine.py:126–129"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · classify() if eligible",
+      "items": [
+        "app/engine.py:130–136"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · search(q)",
+      "items": [
+        "app/engine.py:137–137"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Choose category",
+      "items": [
+        "app/engine.py:138–144"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · search(q,category)",
+      "items": [
+        "app/engine.py:145–148"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Enough evidence?",
+      "items": [
+        "app/engine.py:149–150"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Conflict + tie checks",
+      "items": [
+        "app/engine.py:151–154"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · evidence_matches()",
+      "items": [
+        "app/engine.py:40–46"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · answered",
+      "items": [
+        "app/engine.py:156–157"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · clarify",
+      "items": [
+        "app/engine.py:124–155"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · out_of_scope",
+      "items": [
+        "app/engine.py:105–150"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · greeting",
+      "items": [
+        "app/engine.py:103–104"
+      ]
+    }
+  ]
+}

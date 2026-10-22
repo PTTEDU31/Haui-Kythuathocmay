@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"markdown\": \"| type | count |\\n| --- | --- |\\n| CALLS | 343 |\\n| DEFINES | 224 |\\n| STEP_IN_PROCESS | 133 |\\n| CONTAINS | 116 |\\n| MEMBER_OF | 83 |\\n| ACCESSES | 54 |\\n| HANDLES_ROUTE | 38 |\\n| HAS_PROPERTY | 29 |\\n| ENTRY_POINT_OF | 23 |\\n| IMPORTS | 18 |\\n| HAS_METHOD | 11 |\\n| FETCHES | 1 |\\n| USES | 1 |\",\n  \"row_count\": 13\n}\n\n---\n**Next:** To explore a result symbol, use context({name: \"<name>\", repo: \"student-support\"}). For schema reference, READ gitnexus://repo/student-support/schema."
+    }
+  ]
+}

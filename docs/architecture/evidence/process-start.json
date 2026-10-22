@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "gitnexus://repo/student-support/process/Start → Api",
+      "mimeType": "text/yaml",
+      "text": "name: \"Start → Api\"\ntype: cross_community\nstep_count: 6\n\ntrace:\n  1: start (app/static/app.js)\n  2: loadKnowledge (app/static/app.js)\n  3: questionButtons (app/static/app.js)\n  4: ask (app/static/app.js)\n  5: message (app/static/app.js)\n  6: api (app/static/app.js)"
+    }
+  ]
+}

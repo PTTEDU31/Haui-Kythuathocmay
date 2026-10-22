@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "HaUI Assist · runtime architecture",
+    "output": "docs/architecture/architecture.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "frontend",
+      "label": "Browser JavaScript",
+      "sublabel": "start() · ask() · api()",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "FastAPI app",
+      "sublabel": "guard() · chat() · admin()",
+      "pos": [
+        400,
+        40
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "SQLite · WAL",
+      "sublabel": "data/student.db · conn()",
+      "pos": [
+        780,
+        40
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Engine",
+      "sublabel": "route() · search() · generate()",
+      "pos": [
+        400,
+        250
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "config",
+      "type": "database",
+      "label": "AI configuration",
+      "sublabel": "read_settings() · ai_settings()",
+      "pos": [
+        40,
+        250
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "models",
+      "type": "database",
+      "label": "Classifier artifacts",
+      "sublabel": "models/*.joblib · selection.json",
+      "pos": [
+        780,
+        250
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "provider",
+      "type": "external",
+      "label": "Generation provider",
+      "sublabel": "Ollama OR configured HTTPS API",
+      "pos": [
+        400,
+        460
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "train",
+      "type": "backend",
+      "label": "Offline experiments",
+      "sublabel": "train.main() · evaluate_faq.main()",
+      "pos": [
+        780,
+        460
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "tunnel",
+      "type": "cloud",
+      "label": "Cloudflare Tunnel",
+      "sublabel": "deployment example; live config external",
+      "pos": [
+        40,
+        460
+      ],
+      "size": [
+        220,
+        64
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "browser-to-api",
+      "from": "browser",
+      "to": "api",
+      "label": "HTTP JSON",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-to-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL read/write",
+      "variant": "default"
+    },
+    {
+      "id": "api-to-engine",
+      "from": "api",
+      "to": "engine",
+      "label": "Python calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-to-config",
+      "from": "api",
+      "to": "config",
+      "label": "read / write",
+      "variant": "default"
+    },
+    {
+      "id": "engine-to-models",
+      "from": "engine",
+      "to": "models",
+      "label": "load at import",
+      "variant": "default"
+    },
+    {
+      "id": "engine-to-provider",
+      "from": "engine",
+      "to": "provider",
+      "label": "answered + enabled",
+      "variant": "default"
+    },
+    {
+      "id": "train-to-models",
+      "from": "train",
+      "to": "models",
+      "label": "write models",
+      "variant": "default"
+    },
+    {
+      "id": "tunnel-to-api",
+      "from": "tunnel",
+      "to": "api",
+      "label": "INFERRED: HTTP :8088",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Ownership",
+      "items": [
+        "app.main owns SQLite I/O; Engine receives FAQ rows and searches memory.",
+        "chat() calls generate() only when use_ai; generate() requires answered + enabled.",
+        "Only question + selected FAQ evidence go to the provider; failures retain the stored FAQ answer."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Deployment qualification",
+      "items": [
+        "The tunnel service reads ~/.cloudflared/ttech.yml, which is outside this repository.",
+        "The checked-in example points to localhost:8088; actual deployment topology is INFERRED.",
+        "Systemd invokes uvicorn app.main:app; Python calls Ollama over HTTP, with no direct FFI."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Browser JavaScript",
+      "items": [
+        "app/static/app.js:6–21",
+        "app/static/app.js:70–71",
+        "app/static/index.html:2–2"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · FastAPI app",
+      "items": [
+        "app/main.py:74–95",
+        "app/main.py:146–161",
+        "app/main.py:254–294"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · SQLite · WAL",
+      "items": [
+        "app/main.py:15–47",
+        "app/main.py:158–168",
+        "app/main.py:292–294"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Engine",
+      "items": [
+        "app/engine.py:60–97",
+        "app/engine.py:99–157",
+        "app/engine.py:159–187"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · AI configuration",
+      "items": [
+        "app/main.py:22–25",
+        "app/main.py:295–311"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Classifier artifacts",
+      "items": [
+        "app/engine.py:49–58",
+        "scripts/train.py:118–160"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Generation provider",
+      "items": [
+        "app/engine.py:169–185",
+        "deploy/student-ai.service:6–11"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Offline experiments",
+      "items": [
+        "scripts/train.py:59–126",
+        "scripts/train.py:129–165",
+        "scripts/evaluate_faq.py:14–53"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Cloudflare Tunnel",
+      "items": [
+        "deploy/cloudflared-ttech.service:3–9",
+        "deploy/cloudflared-ttech.yml.example:1–8"
+      ]
+    }
+  ]
+}

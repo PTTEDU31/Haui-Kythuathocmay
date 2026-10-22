@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Startup · import, lifespan and browser callbacks",
+    "output": "docs/architecture/startup.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "asgi",
+      "type": "external",
+      "label": "Uvicorn",
+      "sublabel": "app.main:app"
+    },
+    {
+      "id": "main",
+      "type": "backend",
+      "label": "app.main",
+      "sublabel": "lifespan() · init_db()"
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Engine",
+      "sublabel": "__init__() · rebuild()"
+    },
+    {
+      "id": "disk",
+      "type": "database",
+      "label": "Local state",
+      "sublabel": "SQLite · JSON · joblib"
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "app.js",
+      "sublabel": "start() · setView()"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "asgi",
+      "to": "main",
+      "y": 160,
+      "label": "Import app.main:app"
+    },
+    {
+      "id": "m2",
+      "from": "main",
+      "to": "engine",
+      "y": 202,
+      "label": "ENGINE = Engine() at import"
+    },
+    {
+      "id": "m3",
+      "from": "engine",
+      "to": "disk",
+      "y": 244,
+      "label": "Read model files + selection.json"
+    },
+    {
+      "id": "m4",
+      "from": "asgi",
+      "to": "main",
+      "y": 286,
+      "label": "Framework invokes lifespan(app)"
+    },
+    {
+      "id": "m5",
+      "from": "main",
+      "to": "disk",
+      "y": 328,
+      "label": "init_db(): WAL + schema; seed if faqs empty"
+    },
+    {
+      "id": "m6",
+      "from": "main",
+      "to": "engine",
+      "y": 370,
+      "label": "reload_engine() → rebuild(rows)",
+      "note": "active() filters approved, unexpired FAQ; word/char TF-IDF fit callbacks use normalize."
+    },
+    {
+      "id": "m7",
+      "from": "web",
+      "to": "main",
+      "y": 452,
+      "label": "GET / → index(); /static/app.js"
+    },
+    {
+      "id": "m8",
+      "from": "web",
+      "to": "main",
+      "y": 494,
+      "label": "start() → api(/api/bootstrap)"
+    },
+    {
+      "id": "m9",
+      "from": "main",
+      "to": "disk",
+      "y": 536,
+      "label": "bootstrap() → visitor(): cookie/session"
+    },
+    {
+      "id": "m10",
+      "from": "web",
+      "to": "main",
+      "y": 578,
+      "label": "GET /api/history → history()"
+    },
+    {
+      "id": "m11",
+      "from": "web",
+      "to": "main",
+      "y": 620,
+      "label": "refreshAI() → GET /api/ai-status"
+    },
+    {
+      "id": "m12",
+      "from": "main",
+      "to": "web",
+      "y": 662,
+      "label": "JSON → message(); then setView()",
+      "variant": "return",
+      "note": "hashchange calls setView; selected view loads knowledge, experiments or admin."
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Two entry phases",
+      "items": [
+        "Engine models load during Python import, before lifespan initializes the database.",
+        "start() is called at app.js:71 after the deferred script loads.",
+        "ai_status() checks Ollama /api/tags, or only checks external API configuration presence."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Uvicorn",
+      "items": [
+        "deploy/student-support.service:6–10"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · app.main",
+      "items": [
+        "app/main.py:15–47",
+        "app/main.py:74–77",
+        "app/main.py:312–314"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Engine",
+      "items": [
+        "app/engine.py:49–69"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Local state",
+      "items": [
+        "app/main.py:26–47",
+        "app/engine.py:54–58"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · app.js",
+      "items": [
+        "app/static/index.html:2–2",
+        "app/static/app.js:10–11",
+        "app/static/app.js:70–71"
+      ]
+    }
+  ]
+}

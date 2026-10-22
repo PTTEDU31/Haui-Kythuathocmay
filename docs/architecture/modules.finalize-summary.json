@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/phamtung/student-support/docs/architecture/candidates/modules.json",
+    "sha256": "0135218c5cccc033d589d0c0115ea6fdc18ac38903f6cdb1bb02d11d2600b763",
+    "bytes": 4897
+  },
+  "artifact": {
+    "path": "/home/phamtung/student-support/docs/architecture/modules.html",
+    "sha256": "6b989b45ccafddb4c15a76df241fc58f34a3fc3977708308b6fed0fcdde6892a",
+    "bytes": 821153
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/phamtung/student-support/docs/architecture/modules.finalize.json",
+    "summaryReceipt": "/home/phamtung/student-support/docs/architecture/modules.finalize-summary.json",
+    "browserCheckReceipt": "/home/phamtung/student-support/docs/architecture/modules.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-21T17:59:57.894Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1666,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "resolvedCrossovers": 1,
+      "routesOverSuggestedBends": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [
+        {
+          "left": {
+            "id": "model-tools-to-text",
+            "from": "model-tools",
+            "to": "text",
+            "label": "train imports callback",
+            "collectionIndex": 4,
+            "artifactIndex": 5
+          },
+          "right": {
+            "id": "tests-to-engine",
+            "from": "tests",
+            "to": "engine",
+            "label": "imports Engine / helpers",
+            "collectionIndex": 6,
+            "artifactIndex": 7
+          },
+          "point": [
+            690,
+            256
+          ]
+        }
+      ],
+      "detours": [
+        {
+          "relationship": {
+            "id": "tests-to-main",
+            "from": "tests",
+            "to": "main",
+            "label": "imports API / fixtures",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "bends": 3,
+          "stretch": 1.055
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "model-tools → text crosses tests → engine: move the node of whichever is a branch, return, or second entrance to the other side of the main path, so that relationship runs through an empty corridor.",
+      "tests → main needs 3 bends: move node tests or main so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

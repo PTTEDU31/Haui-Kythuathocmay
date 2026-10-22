@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Offline model training · artifacts and stateless research UI",
+    "output": "docs/architecture/research-training.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "train",
+      "type": "backend",
+      "label": "train.main()",
+      "sublabel": "scripts/train.py"
+    },
+    {
+      "id": "pipe",
+      "type": "backend",
+      "label": "sklearn Pipeline",
+      "sublabel": "normalize_classification callback"
+    },
+    {
+      "id": "disk",
+      "type": "database",
+      "label": "Artifacts / reports",
+      "sublabel": "CSV · joblib · JSON"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "research_route()",
+      "sublabel": "Engine.route(model_mode)"
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "loadExperiments()",
+      "sublabel": "research-form.onsubmit"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "train",
+      "to": "disk",
+      "y": 160,
+      "label": "Read original_50.csv; fixed 30/10/10 splits"
+    },
+    {
+      "id": "m2",
+      "from": "train",
+      "to": "pipe",
+      "y": 202,
+      "label": "Fit 4 MLP + 2 LinearSVC candidates on Train",
+      "note": "TfidfVectorizer(preprocessor=normalize_classification); measure Validation Macro-F1. No Train+Validation refit."
+    },
+    {
+      "id": "m3",
+      "from": "pipe",
+      "to": "train",
+      "y": 284,
+      "label": "Validation results → family winners",
+      "variant": "return"
+    },
+    {
+      "id": "m4",
+      "from": "train",
+      "to": "disk",
+      "y": 326,
+      "label": "Write selection.json BEFORE any Test predict",
+      "note": "Choose highest Validation Macro-F1; tie favors LinearSVC. Within family, first maximum wins."
+    },
+    {
+      "id": "m5",
+      "from": "train",
+      "to": "pipe",
+      "y": 408,
+      "label": "measure(Test), measure(Train), prediction latency"
+    },
+    {
+      "id": "m6",
+      "from": "train",
+      "to": "disk",
+      "y": 450,
+      "label": "Write mlp/linearsvc/intent.joblib + experiments.json"
+    },
+    {
+      "id": "m7",
+      "from": "api",
+      "to": "disk",
+      "y": 492,
+      "label": "At process import: load mlp + linearsvc + selection",
+      "note": "Artifact handoff; training does not invoke or reload the running server. New artifacts require new Engine/process."
+    },
+    {
+      "id": "m8",
+      "from": "web",
+      "to": "api",
+      "y": 574,
+      "label": "GET /api/experiments → experiments()"
+    },
+    {
+      "id": "m9",
+      "from": "api",
+      "to": "disk",
+      "y": 616,
+      "label": "Read experiments.json + faq-evaluation.json"
+    },
+    {
+      "id": "m10",
+      "from": "api",
+      "to": "web",
+      "y": 658,
+      "label": "Reports returned to renderer",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "web",
+      "to": "api",
+      "y": 700,
+      "label": "Submit → POST /api/experiments/route"
+    },
+    {
+      "id": "m12",
+      "from": "api",
+      "to": "web",
+      "y": 742,
+      "label": "research_route() → route() → strip evidence → JSON",
+      "variant": "return",
+      "note": "Per-request mode only. Missing explicit model → 503; no generation, history writes or default mode mutation."
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Separate FAQ evaluation",
+      "items": [
+        "evaluate_faq.main() creates Engine(), rebuilds from data/faqs.json and routes technical cases for all four modes.",
+        "It writes reports/faq-evaluation.json without loading the student conversation DB or calling generate().",
+        "intent.joblib is a selected copy for reporting/backup; Engine.__init__ actually loads the two named pipelines."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Preparation is optional",
+      "items": [
+        "scripts/prepare_data.py reads supplied DOCX tables + saved article/dorm JSON, writes original_50.csv, faqs.json and data_manifest.json.",
+        "prepare_data.py is a curation utility; normal startup seeds from existing faqs.json only when the FAQ table is empty."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · train.main()",
+      "items": [
+        "scripts/train.py:59–126",
+        "scripts/train.py:129–165"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · sklearn Pipeline",
+      "items": [
+        "scripts/train.py:92–115",
+        "app/text.py:8–10"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Artifacts / reports",
+      "items": [
+        "scripts/train.py:60–66",
+        "scripts/train.py:118–160",
+        "scripts/evaluate_faq.py:14–47"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · research_route()",
+      "items": [
+        "app/main.py:175–196",
+        "app/engine.py:49–58",
+        "app/engine.py:85–97"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · loadExperiments()",
+      "items": [
+        "app/static/app.js:23–31",
+        "app/static/app.js:44–58"
+      ]
+    }
+  ]
+}

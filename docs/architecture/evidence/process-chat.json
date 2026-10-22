@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "gitnexus://repo/student-support/process/Chat → Active",
+      "mimeType": "text/yaml",
+      "text": "name: \"Chat → Active\"\ntype: cross_community\nstep_count: 4\n\ntrace:\n  1: chat (app/main.py)\n  2: route (app/engine.py)\n  3: search (app/engine.py)\n  4: active (app/engine.py)"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "gitnexus://repo/student-support/process/Create_faq → Active",
+      "mimeType": "text/yaml",
+      "text": "name: \"Create_faq → Active\"\ntype: cross_community\nstep_count: 4\n\ntrace:\n  1: create_faq (app/main.py)\n  2: reload_engine (app/main.py)\n  3: rebuild (app/engine.py)\n  4: active (app/engine.py)"
+    }
+  ]
+}

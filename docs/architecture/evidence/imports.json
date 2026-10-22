@@ -1,0 +1,114 @@
+[
+  {
+    "sourcePath": "app/engine.py",
+    "targetPath": "app/text.py",
+    "line": 9,
+    "names": "normalize_classification",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "app/main.py",
+    "targetPath": "app/engine.py",
+    "line": 13,
+    "names": "Engine, ROOT, LABELS, safe_url, normalize, active",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/check_alignment_inprocess.py",
+    "targetPath": "app/main.py",
+    "line": 97,
+    "names": "app, ENGINE, password_hash",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/evaluate_faq.py",
+    "targetPath": "app/engine.py",
+    "line": 11,
+    "names": "Engine",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/initialize_auth.py",
+    "targetPath": "app/main.py",
+    "line": 4,
+    "names": "password_hash",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/prepare_data.py",
+    "targetPath": "app/engine.py",
+    "line": 7,
+    "names": "LABELS",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/reset_admin.py",
+    "targetPath": "app/main.py",
+    "line": 5,
+    "names": "password_hash, conn",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/train.py",
+    "targetPath": "app/text.py",
+    "line": 28,
+    "names": "NORMALIZATION_VERSION, normalize_classification",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "scripts/train.py",
+    "targetPath": "app/engine.py",
+    "line": 29,
+    "names": "LABELS, RESEARCH_LABELS",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/conftest.py",
+    "targetPath": "app/main.py",
+    "line": 13,
+    "names": "password_hash, init_db",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/conftest.py",
+    "targetPath": "app/main.py",
+    "line": 19,
+    "names": "app",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/test_application.py",
+    "targetPath": "app/main.py",
+    "line": 5,
+    "names": "app, ENGINE, conn, read_settings, rates",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/test_application.py",
+    "targetPath": "app/engine.py",
+    "line": 6,
+    "names": "normalize, safe_url",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/test_research_routing.py",
+    "targetPath": "app/engine.py",
+    "line": 13,
+    "names": "Engine, RESEARCH_LABELS, normalize",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/test_research_routing.py",
+    "targetPath": "app/text.py",
+    "line": 14,
+    "names": "normalize_classification",
+    "status": "VERIFIED"
+  },
+  {
+    "sourcePath": "tests/test_research_routing.py",
+    "targetPath": "app/main.py",
+    "line": 179,
+    "names": "ENGINE",
+    "status": "VERIFIED"
+  }
+]

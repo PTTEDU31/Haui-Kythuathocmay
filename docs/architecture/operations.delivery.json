@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "71535e03-5252-4713-bb75-a680642f0496",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/operations.json",
+  "output": "/home/phamtung/student-support/docs/architecture/operations.html",
+  "specification": {
+    "sha256": "1876baa87624226bbdf3fdbdfc2d52d0220214a40471ff4e43c377539ae5397b",
+    "bytes": 4708
+  },
+  "artifact": {
+    "sha256": "0d1e137185a4d10c91f16518e3049b0783bde7b24477081a3c51eca62d39d2a9",
+    "bytes": 812861
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"status\": \"found\",\n  \"symbol\": {\n    \"uid\": \"Function:scripts/train.py:main\",\n    \"name\": \"main\",\n    \"kind\": \"Function\",\n    \"filePath\": \"scripts/train.py\",\n    \"startLine\": 59,\n    \"endLine\": 161\n  },\n  \"epistemic\": \"exact\",\n  \"incoming\": {\n    \"calls\": [\n      {\n        \"uid\": \"File:scripts/train.py\",\n        \"name\": \"train.py\",\n        \"filePath\": \"scripts/train.py\"\n      }\n    ]\n  },\n  \"outgoing\": {\n    \"calls\": [\n      {\n        \"uid\": \"Function:scripts/train.py:measure\",\n        \"name\": \"measure\",\n        \"filePath\": \"scripts/train.py\"\n      },\n      {\n        \"uid\": \"Function:scripts/train.py:sha\",\n        \"name\": \"sha\",\n        \"filePath\": \"scripts/train.py\"\n      },\n      {\n        \"uid\": \"Function:scripts/train.py:timestamp\",\n        \"name\": \"timestamp\",\n        \"filePath\": \"scripts/train.py\"\n      },\n      {\n        \"uid\": \"Function:scripts/train.py:write\",\n        \"name\": \"write\",\n        \"filePath\": \"scripts/train.py\"\n      }\n    ]\n  },\n  \"processes\": []\n}\n\n---\n**Next:** If planning changes, use impact({target: \"main\", direction: \"upstream\", repo: \"student-support\"}) to check blast radius. To see execution flows, READ gitnexus://repo/student-support/processes."
+    }
+  ]
+}

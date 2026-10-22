@@ -1,0 +1,173 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/health",
+    "handler": "health",
+    "file": "app/main.py",
+    "line": 125,
+    "end": 128,
+    "protected": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/bootstrap",
+    "handler": "bootstrap",
+    "file": "app/main.py",
+    "line": 129,
+    "end": 133,
+    "protected": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/history",
+    "handler": "history",
+    "file": "app/main.py",
+    "line": 134,
+    "end": 138,
+    "protected": false
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/history",
+    "handler": "clear_history",
+    "file": "app/main.py",
+    "line": 139,
+    "end": 145,
+    "protected": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/chat",
+    "handler": "chat",
+    "file": "app/main.py",
+    "line": 146,
+    "end": 161,
+    "protected": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/feedback",
+    "handler": "feedback",
+    "file": "app/main.py",
+    "line": 162,
+    "end": 169,
+    "protected": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/knowledge",
+    "handler": "knowledge",
+    "file": "app/main.py",
+    "line": 170,
+    "end": 174,
+    "protected": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/experiments",
+    "handler": "experiments",
+    "file": "app/main.py",
+    "line": 175,
+    "end": 186,
+    "protected": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/experiments/route",
+    "handler": "research_route",
+    "file": "app/main.py",
+    "line": 187,
+    "end": 196,
+    "protected": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/ai-status",
+    "handler": "ai_status",
+    "file": "app/main.py",
+    "line": 197,
+    "end": 206,
+    "protected": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/login",
+    "handler": "login",
+    "file": "app/main.py",
+    "line": 207,
+    "end": 219,
+    "protected": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/logout",
+    "handler": "logout",
+    "file": "app/main.py",
+    "line": 220,
+    "end": 223,
+    "protected": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/password",
+    "handler": "change_password",
+    "file": "app/main.py",
+    "line": 224,
+    "end": 236,
+    "protected": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/admin/overview",
+    "handler": "overview",
+    "file": "app/main.py",
+    "line": 237,
+    "end": 245,
+    "protected": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/faqs",
+    "handler": "create_faq",
+    "file": "app/main.py",
+    "line": 254,
+    "end": 259,
+    "protected": true
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/faqs/{id}",
+    "handler": "update_faq",
+    "file": "app/main.py",
+    "line": 260,
+    "end": 266,
+    "protected": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/admin/documents",
+    "handler": "upload_document",
+    "file": "app/main.py",
+    "line": 267,
+    "end": 294,
+    "protected": true
+  },
+  {
+    "method": "PUT",
+    "path": "/api/admin/ai",
+    "handler": "ai_settings",
+    "file": "app/main.py",
+    "line": 295,
+    "end": 311,
+    "protected": true
+  },
+  {
+    "method": "GET",
+    "path": "/",
+    "handler": "index",
+    "file": "app/main.py",
+    "line": 312,
+    "end": 313,
+    "protected": false
+  }
+]

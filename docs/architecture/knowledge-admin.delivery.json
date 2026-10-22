@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "a9060d10-509b-4c1b-bc9b-59124252ef4b",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/knowledge-admin.json",
+  "output": "/home/phamtung/student-support/docs/architecture/knowledge-admin.html",
+  "specification": {
+    "sha256": "9c014e5adf3fc1829d55982b24898522489227bdb72ab0174584e783fe1c4746",
+    "bytes": 4937
+  },
+  "artifact": {
+    "sha256": "7fadc1690337d31fb2f02a319d86f136bfbd7c41fbe91916ef6ac6c2d334e12b",
+    "bytes": 817707
+  }
+}

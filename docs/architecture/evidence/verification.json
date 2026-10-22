@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "native_diagrams": 8,
+  "all_finalize_receipts_pass": true,
+  "source_ranges_checked": 103,
+  "local_html_links_checked": 20,
+  "companion_script_syntax": "pass",
+  "application_tests": "not run; documentation-only change",
+  "native_diagram_perceptual_review": "not performed; automated browser gates passed",
+  "companion_browser_checks": {
+    "overview_links": "pass",
+    "relationship_search": "pass",
+    "verified_filter": "pass",
+    "source_link_to_app_js_line_17": "pass",
+    "browser_warnings_errors": []
+  },
+  "post_generation_gitnexus_status": {
+    "source_files_changed": 0,
+    "reason": "New docs/architecture files are unindexed; analysis remains pinned to original application source snapshot."
+  }
+}

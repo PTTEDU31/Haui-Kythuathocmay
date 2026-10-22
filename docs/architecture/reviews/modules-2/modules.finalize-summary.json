@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/phamtung/student-support/docs/architecture/candidates/modules.json",
+    "sha256": "b4de7c03a850065e3e08cc90142f307449b5b1f446200c4b31f246d57c34a468",
+    "bytes": 4899
+  },
+  "artifact": {
+    "path": "/home/phamtung/student-support/docs/architecture/modules.html",
+    "sha256": "ce1bcf50d6753a66fce40cea129a08a934cfe246bb4b8de1967ac7478e60ca9d",
+    "bytes": 821200
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/phamtung/student-support/docs/architecture/reviews/modules-2/modules.finalize.json",
+    "summaryReceipt": "/home/phamtung/student-support/docs/architecture/reviews/modules-2/modules.finalize-summary.json",
+    "browserCheckReceipt": "/home/phamtung/student-support/docs/architecture/reviews/modules-2/modules.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-21T17:59:57.894Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1881,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "routesOverSuggestedBends": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [],
+      "detours": [
+        {
+          "relationship": {
+            "id": "engine-to-text",
+            "from": "engine",
+            "to": "text",
+            "label": "imports normalization",
+            "collectionIndex": 1,
+            "artifactIndex": 2
+          },
+          "bends": 3,
+          "stretch": 1.175
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "engine → text needs 3 bends: move node engine or text so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "520b0fe8-b19e-4530-a939-30015a5f4d5f",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/modules.json",
+  "output": "/home/phamtung/student-support/docs/architecture/modules.html",
+  "specification": {
+    "sha256": "b4de7c03a850065e3e08cc90142f307449b5b1f446200c4b31f246d57c34a468",
+    "bytes": 4899
+  },
+  "artifact": {
+    "sha256": "ce1bcf50d6753a66fce40cea129a08a934cfe246bb4b8de1967ac7478e60ca9d",
+    "bytes": 821200
+  }
+}

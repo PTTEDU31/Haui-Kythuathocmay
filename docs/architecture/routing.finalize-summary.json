@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/phamtung/student-support/docs/architecture/candidates/routing.json",
+    "sha256": "d003ec0ed3dfd3ccbf737fc6f254b2a0e687e29bbaabf2b1ee8359af71d5d5f3",
+    "bytes": 12535
+  },
+  "artifact": {
+    "path": "/home/phamtung/student-support/docs/architecture/routing.html",
+    "sha256": "8398b5e13a169f40b9ca74efad561af23541f925c4ac3acae8af38bfe5d69e48",
+    "bytes": 849214
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/phamtung/student-support/docs/architecture/routing.finalize.json",
+    "summaryReceipt": "/home/phamtung/student-support/docs/architecture/routing.finalize-summary.json",
+    "browserCheckReceipt": "/home/phamtung/student-support/docs/architecture/routing.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-21T17:59:57.894Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1745,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

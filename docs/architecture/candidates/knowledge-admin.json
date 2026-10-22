@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Knowledge administration · draft import and explicit approval",
+    "output": "docs/architecture/knowledge-admin.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Admin callbacks",
+      "sublabel": "renderLogin() · renderAdmin()"
+    },
+    {
+      "id": "main",
+      "type": "backend",
+      "label": "FastAPI handlers",
+      "sublabel": "admin() · upload_document()"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "SQLite + auth file",
+      "sublabel": "sessions · documents · faqs"
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "Engine.rebuild()",
+      "sublabel": "live in-memory index"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "web",
+      "to": "main",
+      "y": 160,
+      "label": "POST /api/admin/login → login()"
+    },
+    {
+      "id": "m2",
+      "from": "main",
+      "to": "db",
+      "y": 202,
+      "label": "scrypt compare; store token digest + 8h expiry"
+    },
+    {
+      "id": "m3",
+      "from": "main",
+      "to": "web",
+      "y": 244,
+      "label": "Set HttpOnly haui_admin cookie",
+      "variant": "return"
+    },
+    {
+      "id": "m4",
+      "from": "web",
+      "to": "main",
+      "y": 286,
+      "label": "Upload callback → POST /api/admin/documents",
+      "note": "guard() + Depends(admin); TXT/PDF/DOCX; 8 MB upload, DOCX expansion 40 MB, PDF 150 pages."
+    },
+    {
+      "id": "m5",
+      "from": "main",
+      "to": "db",
+      "y": 368,
+      "label": "Extract text; INSERT documents(status=draft)"
+    },
+    {
+      "id": "m6",
+      "from": "main",
+      "to": "web",
+      "y": 410,
+      "label": "Draft text returned; loadAdmin() refreshes",
+      "variant": "return"
+    },
+    {
+      "id": "m7",
+      "from": "web",
+      "to": "main",
+      "y": 452,
+      "label": "Human edits openFaq(); POST / PUT FAQ",
+      "note": "No automatic publish from upload. Form explicitly chooses approved, draft or archived; official HTTPS source required."
+    },
+    {
+      "id": "m8",
+      "from": "main",
+      "to": "db",
+      "y": 534,
+      "label": "validate_faq(); write faqs + audit"
+    },
+    {
+      "id": "m9",
+      "from": "main",
+      "to": "engine",
+      "y": 576,
+      "label": "reload_engine() → SELECT faqs → rebuild(rows)"
+    },
+    {
+      "id": "m10",
+      "from": "engine",
+      "to": "main",
+      "y": 618,
+      "label": "active() retains approved + unexpired only",
+      "variant": "return"
+    },
+    {
+      "id": "m11",
+      "from": "main",
+      "to": "web",
+      "y": 660,
+      "label": "Updated FAQ; loadAdmin() refreshes",
+      "variant": "return"
+    },
+    {
+      "id": "m12",
+      "from": "web",
+      "to": "main",
+      "y": 702,
+      "label": "Public: loadKnowledge() → GET /api/knowledge"
+    },
+    {
+      "id": "m13",
+      "from": "main",
+      "to": "engine",
+      "y": 744,
+      "label": "knowledge(): search(q,intent,50) or active rows"
+    },
+    {
+      "id": "m14",
+      "from": "main",
+      "to": "web",
+      "y": 786,
+      "label": "items + topics → escaped FAQ cards",
+      "variant": "return"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Other administration paths",
+      "items": [
+        "change_password() atomically replaces admin-auth.json and revokes other sessions (app/main.py:224–236).",
+        "ai_settings() validates provider/base URL, preserves omitted key, atomically writes ai-settings.json and audits (295–311).",
+        "overview() removes the actual api_key from its response (237–245); logout() deletes the token digest (220–223)."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Admin callbacks",
+      "items": [
+        "app/static/app.js:59–68"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · FastAPI handlers",
+      "items": [
+        "app/main.py:68–72",
+        "app/main.py:207–219",
+        "app/main.py:246–294"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · SQLite + auth file",
+      "items": [
+        "app/main.py:210–218",
+        "app/main.py:254–294"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Engine.rebuild()",
+      "items": [
+        "app/main.py:45–47",
+        "app/engine.py:60–69"
+      ]
+    }
+  ]
+}

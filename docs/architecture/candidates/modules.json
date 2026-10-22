@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Python module dependencies · source-verified imports",
+    "output": "docs/architecture/modules.html",
+    "locale": "en",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "main",
+      "type": "backend",
+      "label": "app.main",
+      "sublabel": "FastAPI handlers + persistence",
+      "pos": [
+        40,
+        250
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "engine",
+      "type": "backend",
+      "label": "app.engine",
+      "sublabel": "Engine + retrieval helpers",
+      "pos": [
+        400,
+        250
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "text",
+      "type": "backend",
+      "label": "app.text",
+      "sublabel": "normalize_classification()",
+      "pos": [
+        760,
+        250
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "api-tools",
+      "type": "backend",
+      "label": "API maintenance scripts",
+      "sublabel": "initialize_auth / reset_admin / smoke",
+      "pos": [
+        40,
+        460
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "model-tools",
+      "type": "backend",
+      "label": "Model and data scripts",
+      "sublabel": "train / evaluate_faq / prepare_data",
+      "pos": [
+        760,
+        40
+      ],
+      "size": [
+        220,
+        64
+      ]
+    },
+    {
+      "id": "tests",
+      "type": "backend",
+      "label": "pytest tests",
+      "sublabel": "conftest / application / research",
+      "pos": [
+        400,
+        460
+      ],
+      "size": [
+        220,
+        64
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "main-to-engine",
+      "from": "main",
+      "to": "engine",
+      "label": "imports Engine + helpers"
+    },
+    {
+      "id": "engine-to-text",
+      "from": "engine",
+      "to": "text",
+      "label": "imports normalization"
+    },
+    {
+      "id": "api-tools-to-main",
+      "from": "api-tools",
+      "to": "main",
+      "label": "imports API / auth"
+    },
+    {
+      "id": "model-tools-to-engine",
+      "from": "model-tools",
+      "to": "engine",
+      "label": "imports Engine / labels"
+    },
+    {
+      "id": "model-tools-to-text",
+      "from": "model-tools",
+      "to": "text",
+      "label": "train imports callback"
+    },
+    {
+      "id": "tests-to-main",
+      "from": "tests",
+      "to": "main",
+      "label": "imports API / fixtures"
+    },
+    {
+      "id": "tests-to-engine",
+      "from": "tests",
+      "to": "engine",
+      "label": "imports Engine / helpers"
+    },
+    {
+      "id": "tests-to-text",
+      "from": "tests",
+      "to": "text",
+      "label": "research imports callback"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Evidence and uncertainty",
+      "items": [
+        "VERIFIED = inspected source at ded15187b5fe; source references are static evidence, not runtime traces.",
+        "INFERRED = configuration-based deployment assumption; explicitly prefixed on its arrow.",
+        "No origin remote exists. Source paths and pinned excerpts are available in source.html; no remote identity is invented."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Verified dependency map",
+      "items": [
+        "All arrows are source-verified Python imports; grouped nodes preserve the module ownership.",
+        "train imports app.text and app.engine; evaluate_faq and prepare_data import app.engine.",
+        "All three API maintenance scripts import app.main; its import constructs ENGINE, even outside Uvicorn.",
+        "No JavaScript/Python source import exists; browser calls cross HTTP instead. backup.py is standalone stdlib code."
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · app.main",
+      "items": [
+        "app/main.py:8–16"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · app.engine",
+      "items": [
+        "app/engine.py:2–9"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · app.text",
+      "items": [
+        "app/text.py:1–10"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · API maintenance scripts",
+      "items": [
+        "scripts/initialize_auth.py:3–4",
+        "scripts/reset_admin.py:4–5",
+        "scripts/check_alignment_inprocess.py:96–98"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · Model and data scripts",
+      "items": [
+        "scripts/train.py:26–29",
+        "scripts/evaluate_faq.py:9–18",
+        "scripts/prepare_data.py:5–10"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Source · pytest tests",
+      "items": [
+        "tests/conftest.py:11–22",
+        "tests/test_application.py:3–6",
+        "tests/test_research_routing.py:12–14"
+      ]
+    }
+  ]
+}

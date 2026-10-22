@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "0e9c834d-7a29-4dc6-bb2b-23a03abff498",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/startup.json",
+  "output": "/home/phamtung/student-support/docs/architecture/startup.html",
+  "specification": {
+    "sha256": "6f537f00b7c1e49b8aec6fcad61c3800342381a155e3e75d0c13c352fe252168",
+    "bytes": 4482
+  },
+  "artifact": {
+    "sha256": "ea3311e97a0066779482888071d340115c4642586382fc4a50bbd13aec95d9af",
+    "bytes": 816252
+  }
+}

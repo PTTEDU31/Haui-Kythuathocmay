@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ba9f6c86-5ae3-405a-a0f4-8e79b94329b0",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/home/phamtung/student-support/docs/architecture/candidates/routing.json",
+  "output": "/home/phamtung/student-support/docs/architecture/routing.html",
+  "specification": {
+    "sha256": "d003ec0ed3dfd3ccbf737fc6f254b2a0e687e29bbaabf2b1ee8359af71d5d5f3",
+    "bytes": 12535
+  },
+  "artifact": {
+    "sha256": "8398b5e13a169f40b9ca74efad561af23541f925c4ac3acae8af38bfe5d69e48",
+    "bytes": 849214
+  }
+}
