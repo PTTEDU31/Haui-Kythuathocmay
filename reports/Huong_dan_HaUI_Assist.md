@@ -1,13 +1,13 @@
 # Bàn giao HaUI Assist
 
-Ứng dụng đã triển khai và chạy trên máy chủ 192.168.1.118, ngày 21/10/2026.
+Ứng dụng đã triển khai và chạy trên máy chủ <IP-máy-chủ>, ngày 21/10/2026.
 
 ## Mở ứng dụng
 
-- Trò chuyện: http://192.168.1.118:8088
-- Kho thông tin: http://192.168.1.118:8088/#knowledge
-- Thực nghiệm: http://192.168.1.118:8088/#experiments
-- Quản trị: http://192.168.1.118:8088/#admin
+- Trò chuyện: http://<IP-máy-chủ>:8088
+- Kho thông tin: http://<IP-máy-chủ>:8088/#knowledge
+- Thực nghiệm: http://<IP-máy-chủ>:8088/#experiments
+- Quản trị: http://<IP-máy-chủ>:8088/#admin
 
 Máy tính hoặc điện thoại cần ở mạng nội bộ truy cập được máy chủ. Không cần cài mô hình trên máy Windows này.
 
@@ -65,7 +65,7 @@ Dữ liệu nghiên cứu nhỏ và do tác giả biên soạn; chưa đánh gi�
 
 Ứng dụng hỗ trợ thông tin công khai, chưa kết nối hệ thống cá nhân để lấy điểm, công nợ, lịch thi hay phòng trống. Một số nguồn chỉ đủ để hướng dẫn tra cứu, chưa đủ để đưa số tiền hoặc hạn cụ thể. Người quản trị cần bổ sung và xác nhận quy định hiện hành theo từng chương trình. Ngày ngừng dùng FAQ là hạn nội bộ để rà soát lại, không thay thế thời hạn pháp lý của nguồn.
 
-Ứng dụng hiện dùng HTTP trong mạng LAN, chưa có tên miền/chứng chỉ TLS. IP có thể thay đổi nếu DHCP đổi; có thể cố định trên router theo MAC D8-43-AE-90-79-77.
+Ứng dụng hiện dùng HTTP trong mạng LAN, chưa có tên miền/chứng chỉ TLS. IP có thể thay đổi nếu DHCP đổi; có thể cố định trên router.
 
 ## Lệnh vận hành nhanh qua SSH
 

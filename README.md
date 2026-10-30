@@ -6,7 +6,7 @@
 
 - Ứng dụng qua Internet: https://ttech.io.vn
 - Quản trị: https://ttech.io.vn/#admin
-- Truy cập trong LAN: http://192.168.1.118:8088
+- Truy cập trong LAN: http://<IP-máy-chủ>:8088
 - Mô hình AI mặc định: Qwen3 4B Q4_K_M qua Ollama, sử dụng GPU trên máy chủ. Ollama chỉ lắng nghe localhost:11435.
 - Thư mục cài đặt: `/home/phamtung/student-support`.
 - Không cần cài phần mềm hoặc mô hình trên máy người dùng.
@@ -64,7 +64,7 @@ curl http://127.0.0.1:8088/api/health
 curl http://127.0.0.1:8088/api/ai-status
 ```
 
-Các dịch vụ systemd user đã enable; `loginctl enable-linger phamtung` cho phép chạy khi chưa đăng nhập. Cổng 8088 được mở cho nguồn IPv4 192.168.1.0/24 trong firewalld. Địa chỉ IP phụ thuộc DHCP của mạng; nên giữ DHCP reservation theo MAC D8-43-AE-90-79-77 khi cấu hình router.
+Các dịch vụ systemd user đã enable; `loginctl enable-linger phamtung` cho phép chạy khi chưa đăng nhập. Cổng 8088 được mở cho nguồn IPv4 mạng LAN nội bộ trong firewalld. Địa chỉ IP phụ thuộc DHCP của mạng; nên giữ DHCP reservation khi cấu hình router.
 
 Truy cập Internet dùng Cloudflare Tunnel `ttech-student-support`, dịch vụ `cloudflared-ttech.service` đã bật tự khởi động. Tunnel đưa `https://ttech.io.vn` về `http://127.0.0.1:8088`, không cần mở cổng router. Máy chủ cần đang bật và có Internet. Xem [hướng dẫn tunnel](deploy/cloudflared-ttech.md) và [kết quả kiểm tra triển khai](reports/public-deployment.json). Chứng chỉ và thông tin xác thực được lưu ngoài repository trong `~/.cloudflared/`.
 
