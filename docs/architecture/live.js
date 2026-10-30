@@ -146,6 +146,10 @@
     $('#output-value').replaceChildren(values(record.error || (record.finished ? record.output : 'Đang chạy… chưa có output.')));
     const source = record.source;
     $('#source-label').textContent = source ? `${source.path}:${source.line || '?'}${source.end_line ? '–'+source.end_line : ''} · mã nguồn hiện tại` : 'Mã nguồn';
+    // Live code is read at runtime, so link to main rather than a pinned commit.
+    const github = $('#source-github');
+    github.hidden = !source?.path;
+    if (source?.path) github.href = `https://github.com/PTTEDU31/Haui-Kythuathocmay/blob/main/${source.path}#L${source.line || 1}${source.end_line ? '-L' + source.end_line : ''}`;
     $('#source-code').textContent = source?.code || 'Tham chiếu tới vị trí gọi ở trên. Đây là thao tác I/O tại call site.';
     window.DefenseGuide.render($('#defense-step'), record.function, {mode:'live',record});
     for (const item of records.values()) item.button.classList.toggle('selected',item === record);
