@@ -1,0 +1,1009 @@
+{
+  "summary": {
+    "changed_count": 115,
+    "affected_count": 11,
+    "changed_files": 22,
+    "risk_level": "high"
+  },
+  "changed_symbols": [
+    {
+      "id": "Class:app/engine.py:Engine",
+      "name": "Engine",
+      "type": "Class",
+      "filePath": "app/engine.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/engine.py:Engine.generate#3",
+      "name": "generate",
+      "type": "Method",
+      "filePath": "app/engine.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/live_trace.py:DOCS",
+      "name": "DOCS",
+      "type": "Variable",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/live_trace.py:SLOTS",
+      "name": "SLOTS",
+      "type": "Variable",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/live_trace.py:_workers",
+      "name": "_workers",
+      "type": "Variable",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:require_enabled",
+      "name": "require_enabled",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace",
+      "name": "install_live_trace",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.live_page@27:4",
+      "name": "live_page",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.live_asset@32:4",
+      "name": "live_asset",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.trace_chat@39:4",
+      "name": "trace_chat",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.trace_chat@39:4.enqueue@57:8",
+      "name": "enqueue",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.trace_chat@39:4.emit@61:8",
+      "name": "emit",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.trace_chat@39:4.execute@65:8",
+      "name": "execute",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/live_trace.py:install_live_trace.trace_chat@39:4.stream@77:8",
+      "name": "stream",
+      "type": "Function",
+      "filePath": "app/live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/main.py:chat",
+      "name": "chat",
+      "type": "Function",
+      "filePath": "app/main.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/tracing.py:PROJECT",
+      "name": "PROJECT",
+      "type": "Variable",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/tracing.py:_current",
+      "name": "_current",
+      "type": "Variable",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:app/tracing.py:PRIVATE",
+      "name": "PRIVATE",
+      "type": "Variable",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/tracing.py:snapshot",
+      "name": "snapshot",
+      "type": "Function",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/tracing.py:source_ref",
+      "name": "source_ref",
+      "type": "Function",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/tracing.py:Recorder",
+      "name": "Recorder",
+      "type": "Class",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/tracing.py:Recorder.__init__#1",
+      "name": "__init__",
+      "type": "Method",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/tracing.py:Recorder.send",
+      "name": "send",
+      "type": "Method",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/tracing.py:span",
+      "name": "span",
+      "type": "Class",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/tracing.py:span.__init__#4",
+      "name": "__init__",
+      "type": "Method",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/tracing.py:span.__enter__#0",
+      "name": "__enter__",
+      "type": "Method",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:app/tracing.py:span.__exit__#3",
+      "name": "__exit__",
+      "type": "Method",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/tracing.py:traced",
+      "name": "traced",
+      "type": "Function",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/tracing.py:traced.decorate@99:4",
+      "name": "decorate",
+      "type": "Function",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/tracing.py:traced.decorate@99:4.observe@102:8",
+      "name": "observe",
+      "type": "Function",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/tracing.py:record_call",
+      "name": "record_call",
+      "type": "Function",
+      "filePath": "app/tracing.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/architecture/README.md:L1:HaUI Assist architecture",
+      "name": "HaUI Assist architecture",
+      "type": "Section",
+      "filePath": "docs/architecture/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/architecture/README.md:L5:Trace chạy thật theo thời gian thực",
+      "name": "Trace chạy thật theo thời gian thực",
+      "type": "Section",
+      "filePath": "docs/architecture/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/architecture/README.md:L25:Trình diễn input/output cho giáo viên",
+      "name": "Trình diễn input/output cho giáo viên",
+      "type": "Section",
+      "filePath": "docs/architecture/README.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:docs/architecture/build_live.py:ROOT",
+      "name": "ROOT",
+      "type": "Variable",
+      "filePath": "docs/architecture/build_live.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/build_live.py:build_live",
+      "name": "build_live",
+      "type": "Function",
+      "filePath": "docs/architecture/build_live.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:docs/architecture/build_presentation.py:ROOT",
+      "name": "ROOT",
+      "type": "Variable",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:docs/architecture/build_presentation.py:PROJECT",
+      "name": "PROJECT",
+      "type": "Variable",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:docs/architecture/build_presentation.py:SOURCE_REVISION",
+      "name": "SOURCE_REVISION",
+      "type": "Variable",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/build_presentation.py:committed_json",
+      "name": "committed_json",
+      "type": "Function",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/build_presentation.py:step",
+      "name": "step",
+      "type": "Function",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/build_presentation.py:scenario",
+      "name": "scenario",
+      "type": "Function",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/build_presentation.py:build",
+      "name": "build",
+      "type": "Function",
+      "filePath": "docs/architecture/build_presentation.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.$@3:2",
+      "name": "$",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.db@4:42",
+      "name": "db",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.engine@4:50",
+      "name": "engine",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.llm@4:66",
+      "name": "llm",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.main@4:31",
+      "name": "main",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.web@4:17",
+      "name": "web",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.db@5:53",
+      "name": "db",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.engine@5:65",
+      "name": "engine",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.llm@5:81",
+      "name": "llm",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.main@5:35",
+      "name": "main",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.web@5:17",
+      "name": "web",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.setStatus@11:2",
+      "name": "setStatus",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.values@16:2",
+      "name": "values",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.focusGraph@34:2",
+      "name": "focusGraph",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.selectRecord@55:2",
+      "name": "selectRecord",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.renderRow@71:2",
+      "name": "renderRow",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.receive@79:2",
+      "name": "receive",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.receive@79:2.finished@89:65",
+      "name": "finished",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.receive@79:2.origin@89:32",
+      "name": "origin",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.showAnswer@107:2",
+      "name": "showAnswer",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.runLiveChat@119:2",
+      "name": "runLiveChat",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.runLiveChat@119:2.question@129:16",
+      "name": "question",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.runLiveChat@119:2.use_ai@129:25",
+      "name": "use_ai",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.runLiveChat@119:2.code@133:126",
+      "name": "code",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.runLiveChat@119:2.end_line@133:74",
+      "name": "end_line",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.runLiveChat@119:2.line@133:58",
+      "name": "line",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Property:docs/architecture/live.js:fn@1:1.runLiveChat@119:2.path@133:25",
+      "name": "path",
+      "type": "Property",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/live.js:fn@1:1.choose@184:4",
+      "name": "choose",
+      "type": "Function",
+      "filePath": "docs/architecture/live.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.$@4:2",
+      "name": "$",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.diagram@16:2",
+      "name": "diagram",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.scenario@17:2",
+      "name": "scenario",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.steps@18:2",
+      "name": "steps",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.stop@20:2",
+      "name": "stop",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.schedule@28:2",
+      "name": "schedule",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.valueCard@42:2",
+      "name": "valueCard",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.updateIO@65:2",
+      "name": "updateIO",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.focusGraph@88:2",
+      "name": "focusGraph",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.showStep@118:2",
+      "name": "showStep",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.selectNode@137:2",
+      "name": "selectNode",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.loadScenario@153:2",
+      "name": "loadScenario",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.loadDiagram@169:2",
+      "name": "loadDiagram",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:docs/architecture/presentation.js:fn@1:1.togglePlayback@191:2",
+      "name": "togglePlayback",
+      "type": "Function",
+      "filePath": "docs/architecture/presentation.js",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:tests/test_live_trace.py:HTTPClient",
+      "name": "HTTPClient",
+      "type": "Variable",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Variable:tests/test_live_trace.py:QUESTION",
+      "name": "QUESTION",
+      "type": "Variable",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:enabled",
+      "name": "enabled",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:events",
+      "name": "events",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:starts",
+      "name": "starts",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_trace_is_opt_in_and_normal_chat_keeps_its_contract",
+      "name": "test_trace_is_opt_in_and_normal_chat_keeps_its_contract",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_trace_requires_own_visitor_session_and_retains_request_guards",
+      "name": "test_trace_requires_own_visitor_session_and_retains_request_guards",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_trace_uses_real_results_sources_scores_and_committed_history",
+      "name": "test_trace_uses_real_results_sources_scores_and_committed_history",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_early_returns_do_not_invent_unexecuted_steps",
+      "name": "test_early_returns_do_not_invent_unexecuted_steps",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_stream_errors_are_terminal_and_do_not_write_history",
+      "name": "test_stream_errors_are_terminal_and_do_not_write_history",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_stream_errors_are_terminal_and_do_not_write_history.deny@103:4",
+      "name": "deny",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:live_server",
+      "name": "live_server",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_provider_start_is_streamed_before_provider_finishes",
+      "name": "test_provider_start_is_streamed_before_provider_finishes",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:tests/test_live_trace.py:Provider",
+      "name": "Provider",
+      "type": "Class",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_live_trace.py:Provider.__enter__#0",
+      "name": "__enter__",
+      "type": "Method",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_live_trace.py:Provider.__exit__",
+      "name": "__exit__",
+      "type": "Method",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_live_trace.py:Provider.post",
+      "name": "post",
+      "type": "Method",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_concurrent_streams_do_not_mix_sessions",
+      "name": "test_concurrent_streams_do_not_mix_sessions",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_concurrent_streams_do_not_mix_sessions.run@170:4",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_bounded_preview_redacts_credentials_and_marks_omissions",
+      "name": "test_bounded_preview_redacts_credentials_and_marks_omissions",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_trace_provider_failure_keeps_the_real_faq_fallback",
+      "name": "test_trace_provider_failure_keeps_the_real_faq_fallback",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:tests/test_live_trace.py:Unavailable",
+      "name": "Unavailable",
+      "type": "Class",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_live_trace.py:Unavailable.__enter__#0",
+      "name": "__enter__",
+      "type": "Method",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_live_trace.py:Unavailable.__exit__",
+      "name": "__exit__",
+      "type": "Method",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Method:tests/test_live_trace.py:Unavailable.post",
+      "name": "post",
+      "type": "Method",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_simultaneous_trace_limit_does_not_block_normal_health",
+      "name": "test_simultaneous_trace_limit_does_not_block_normal_health",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_simultaneous_trace_limit_does_not_block_normal_health.blocked@215:4",
+      "name": "blocked",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_simultaneous_trace_limit_does_not_block_normal_health.run@220:4",
+      "name": "run",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_disconnect_stops_observation_but_handler_finishes_transaction",
+      "name": "test_disconnect_stops_observation_but_handler_finishes_transaction",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:tests/test_live_trace.py:test_disconnect_stops_observation_but_handler_finishes_transaction.blocked@240:4",
+      "name": "blocked",
+      "type": "Function",
+      "filePath": "tests/test_live_trace.py",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_3_runlivechat",
+      "name": "RunLiveChat → $",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "runLiveChat",
+          "step": 1
+        },
+        {
+          "symbol": "receive",
+          "step": 2
+        },
+        {
+          "symbol": "selectRecord",
+          "step": 3
+        },
+        {
+          "symbol": "focusGraph",
+          "step": 4
+        },
+        {
+          "symbol": "$",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_4_chat",
+      "name": "Chat → Active",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "chat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_5_runlivechat",
+      "name": "RunLiveChat → Values",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "runLiveChat",
+          "step": 1
+        },
+        {
+          "symbol": "receive",
+          "step": 2
+        },
+        {
+          "symbol": "selectRecord",
+          "step": 3
+        },
+        {
+          "symbol": "values",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_9_chat",
+      "name": "Chat → Nums",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "chat",
+          "step": 1
+        },
+        {
+          "symbol": "generate",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_10_chat",
+      "name": "Chat → Classify",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "chat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_17_choose",
+      "name": "Choose → $",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "choose",
+          "step": 1
+        },
+        {
+          "symbol": "selectRecord",
+          "step": 2
+        },
+        {
+          "symbol": "focusGraph",
+          "step": 3
+        },
+        {
+          "symbol": "$",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_19_choose",
+      "name": "Choose → Values",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "choose",
+          "step": 1
+        },
+        {
+          "symbol": "selectRecord",
+          "step": 2
+        },
+        {
+          "symbol": "values",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_21_chat",
+      "name": "Chat → Conn",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "chat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_22_chat",
+      "name": "Chat → Digest",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "chat",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_27_receive",
+      "name": "Receive → $",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "receive",
+          "step": 1
+        },
+        {
+          "symbol": "selectRecord",
+          "step": 2
+        },
+        {
+          "symbol": "$",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_29_chat",
+      "name": "Chat → Now",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "chat",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}

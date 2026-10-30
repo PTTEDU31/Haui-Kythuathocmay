@@ -1,0 +1,213 @@
+{
+  "checked_at": "2026-10-22T03:39:41.555156+00:00",
+  "origin": "https://macro-empty-podcast-kinda.trycloudflare.com",
+  "mode": "normal-web-chat-observed-through-public-tunnel",
+  "checks": {
+    "/": 200,
+    "/architecture/live": 200,
+    "/architecture/assets/live.js?v=web-chat-2": 200,
+    "/api/health": 200
+  },
+  "pytest": "80 passed; existing Starlette/httpx deprecation warning",
+  "runtime_trace_tests": 24,
+  "secure_visitor_cookie": true,
+  "observer_ready": true,
+  "provider_start_received_before_chat_response": true,
+  "chat_http": 200,
+  "stream_matches_json": true,
+  "generation": {
+    "used": true,
+    "model": "qwen3:4b",
+    "provider": "ollama",
+    "latency_ms": 651,
+    "reason": null
+  },
+  "event_count": 23,
+  "first_event_ms": 127.979,
+  "done_ms": 791.166,
+  "own_test_messages": 2,
+  "own_test_history_cleared": true,
+  "events": [
+    {
+      "received_ms": 127.979,
+      "event": "trace"
+    },
+    {
+      "received_ms": 128.74,
+      "event": "start",
+      "span_id": "1",
+      "parent_id": null,
+      "function": "chat()",
+      "node": "main",
+      "elapsed_ms": 0.496
+    },
+    {
+      "received_ms": 128.769,
+      "event": "start",
+      "span_id": "2",
+      "parent_id": "1",
+      "function": "chat() · SELECT history",
+      "node": "db",
+      "elapsed_ms": 0.903
+    },
+    {
+      "received_ms": 128.786,
+      "event": "end",
+      "span_id": "2",
+      "elapsed_ms": 1.081,
+      "duration_ms": 0.179
+    },
+    {
+      "received_ms": 131.042,
+      "event": "start",
+      "span_id": "4",
+      "parent_id": "1",
+      "function": "Engine.route()",
+      "node": "engine",
+      "elapsed_ms": 1.911
+    },
+    {
+      "received_ms": 131.114,
+      "event": "start",
+      "span_id": "5",
+      "parent_id": "4",
+      "function": "Engine.classify()",
+      "node": "engine",
+      "elapsed_ms": 2.702
+    },
+    {
+      "received_ms": 131.137,
+      "event": "end",
+      "span_id": "5",
+      "elapsed_ms": 3.772,
+      "duration_ms": 1.064
+    },
+    {
+      "received_ms": 132.83,
+      "event": "start",
+      "span_id": "7",
+      "parent_id": "4",
+      "function": "Engine.search()",
+      "node": "engine",
+      "elapsed_ms": 4.026
+    },
+    {
+      "received_ms": 133.426,
+      "event": "end",
+      "span_id": "7",
+      "elapsed_ms": 4.95,
+      "duration_ms": 0.906
+    },
+    {
+      "received_ms": 133.492,
+      "event": "start",
+      "span_id": "9",
+      "parent_id": "4",
+      "function": "Engine.search()",
+      "node": "engine",
+      "elapsed_ms": 5.238
+    },
+    {
+      "received_ms": 133.828,
+      "event": "end",
+      "span_id": "9",
+      "elapsed_ms": 6.06,
+      "duration_ms": 0.806
+    },
+    {
+      "received_ms": 135.027,
+      "event": "start",
+      "span_id": "11",
+      "parent_id": "4",
+      "function": "evidence_matches()",
+      "node": "engine",
+      "elapsed_ms": 6.31
+    },
+    {
+      "received_ms": 135.046,
+      "event": "end",
+      "span_id": "11",
+      "elapsed_ms": 6.496,
+      "duration_ms": 0.192
+    },
+    {
+      "received_ms": 135.265,
+      "event": "end",
+      "span_id": "4",
+      "elapsed_ms": 6.522,
+      "duration_ms": 4.605
+    },
+    {
+      "received_ms": 135.651,
+      "event": "start",
+      "span_id": "14",
+      "parent_id": "1",
+      "function": "Engine.generate()",
+      "node": "engine",
+      "elapsed_ms": 7.032
+    },
+    {
+      "received_ms": 135.673,
+      "event": "start",
+      "span_id": "15",
+      "parent_id": "14",
+      "function": "httpx.Client.post()",
+      "node": "llm",
+      "elapsed_ms": 7.075
+    },
+    {
+      "received_ms": 786.083,
+      "event": "end",
+      "span_id": "15",
+      "elapsed_ms": 657.603,
+      "duration_ms": 650.513
+    },
+    {
+      "received_ms": 786.132,
+      "event": "end",
+      "span_id": "14",
+      "elapsed_ms": 657.776,
+      "duration_ms": 650.74
+    },
+    {
+      "received_ms": 786.738,
+      "event": "start",
+      "span_id": "18",
+      "parent_id": "1",
+      "function": "chat() · INSERT messages",
+      "node": "db",
+      "elapsed_ms": 657.861
+    },
+    {
+      "received_ms": 790.94,
+      "event": "end",
+      "span_id": "18",
+      "elapsed_ms": 662.778,
+      "duration_ms": 4.913
+    },
+    {
+      "received_ms": 790.98,
+      "event": "end",
+      "span_id": "1",
+      "elapsed_ms": 662.807,
+      "duration_ms": 662.328
+    },
+    {
+      "received_ms": 791.149,
+      "event": "result"
+    },
+    {
+      "received_ms": 791.166,
+      "event": "done"
+    }
+  ],
+  "artifacts": {
+    "app/live_trace.py": "73614f5e8981d60650991162d72bd7d3b8f2b785a040eb677533b0114f8f7e51",
+    "app/main.py": "15a5d2b0094977629f36847fab3c3df590b1976d57b4d4c74e45f155a5608089",
+    "app/static/app.js": "f347c51ef4e53cdfd654c432f41f94811f3dfa9a0ceddd23574098094386aced",
+    "app/static/index.html": "3bfdb30fefd38758c80ce5bb69a76609d158e5dd5ac88c8658307c78ca7a7703",
+    "docs/architecture/live.js": "326c8c211163c7ca33cefe6ec53f756904658d0da62ae9a6b1f21a01c8fbdb85",
+    "docs/architecture/live.html": "c3009db6c10e2e7dcf3c73c52f319198ecdfa11ae7c873eaeb6ab8efd8a9e2d3",
+    "tests/test_live_trace.py": "363b4a0fec30d9cc322cdd0e13789d53f422377388b9b819d944b2db8c18e8c0"
+  }
+}

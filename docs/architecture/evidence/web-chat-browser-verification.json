@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-10-22T03:39:52.716240+00:00",
+  "mode": "web-chat-live-observer",
+  "browser": "Playwright Chromium headless; integrated browser unavailable",
+  "production_database_used": false,
+  "checks": [
+    "Same-origin navigation links connect main chat and trace in separate tabs with the same visitor session",
+    "A single ordinary /api/chat updates both observers with the exact response, actual retrieval scores and current Python source; exactly two messages are saved",
+    "Passive server tracing does not invent a browser callback span",
+    "Main chat invokes actual Ollama qwen3:4b; provider block lights up with pending output before generation finishes",
+    "A new ordinary greeting clears the prior call timeline and does not retain retrieval/provider spans",
+    "A separate browser context chat is never broadcast to the original visitor observer",
+    "Observer can disconnect and reconnect without replaying past questions or cancelling normal chat",
+    "Direct trace form still works after observed web chats and does not create duplicate requests/history",
+    "Observer controls and source inspector fit desktop/tablet/mobile widths with dark/light themes",
+    "No JavaScript errors or CSP violations"
+  ],
+  "real_generation": {
+    "used": true,
+    "model": "qwen3:4b",
+    "provider": "ollama",
+    "latency_ms": 638,
+    "reason": null
+  },
+  "page_errors": [],
+  "console_errors": [],
+  "artifacts": {
+    "app/live_trace.py": "73614f5e8981d60650991162d72bd7d3b8f2b785a040eb677533b0114f8f7e51",
+    "app/main.py": "15a5d2b0094977629f36847fab3c3df590b1976d57b4d4c74e45f155a5608089",
+    "app/static/app.js": "f347c51ef4e53cdfd654c432f41f94811f3dfa9a0ceddd23574098094386aced",
+    "app/static/index.html": "3bfdb30fefd38758c80ce5bb69a76609d158e5dd5ac88c8658307c78ca7a7703",
+    "docs/architecture/live.js": "326c8c211163c7ca33cefe6ec53f756904658d0da62ae9a6b1f21a01c8fbdb85",
+    "docs/architecture/live.html": "c3009db6c10e2e7dcf3c73c52f319198ecdfa11ae7c873eaeb6ab8efd8a9e2d3",
+    "tests/test_live_trace.py": "363b4a0fec30d9cc322cdd0e13789d53f422377388b9b819d944b2db8c18e8c0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "verified_at": "2026-10-24T08:21:18.166362+00:00",
+  "url": "https://ttech.io.vn/static/hoc-mo-hinh.html",
+  "sections": 12,
+  "glossary_terms": 81,
+  "viva_questions": 25,
+  "saved_model_examples": 7,
+  "sklearn_forward_and_tfidf_checks": 114,
+  "toy_gradient_finite_difference_checks": 36,
+  "pytest": {
+    "passed": 80,
+    "warnings": 1
+  },
+  "browser": {
+    "desktop": true,
+    "mobile_width": 390,
+    "horizontal_overflow": false,
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "mlp_neuron_16": true,
+    "svc_all_negative_argmax": true,
+    "oov_zero_vector": true,
+    "toy_slider_updates_network_boundary_loss": true,
+    "glossary_accent_case_insensitive": true,
+    "term_hash_clears_filter": true,
+    "console_errors": []
+  },
+  "scope": "Read-only teaching UI and snapshot builder; no retraining/provider call.",
+  "assets": "SHA256-versioned URLs"
+}

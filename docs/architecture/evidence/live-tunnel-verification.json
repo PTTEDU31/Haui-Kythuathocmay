@@ -1,0 +1,222 @@
+{
+  "checked_at": "2026-10-22T03:18:36.088562+00:00",
+  "public_origin": "https://ttech.io.vn",
+  "service": "student-support.service",
+  "port": 8088,
+  "trace_enabled": true,
+  "tunnel_configuration_changed": false,
+  "source_state": "uncommitted runtime trace implementation based on a1bd813",
+  "checks": {
+    "/": {
+      "status": 200,
+      "bytes": 10342
+    },
+    "/api/health": {
+      "status": 200,
+      "bytes": 72
+    },
+    "/architecture/live": {
+      "status": 200,
+      "bytes": 27944
+    },
+    "/architecture/assets/live.js": {
+      "status": 200,
+      "bytes": 12382
+    },
+    "/architecture/assets/live.css": {
+      "status": 200,
+      "bytes": 6557
+    },
+    "/architecture/assets/live-diagram.css": {
+      "status": 200,
+      "bytes": 206265
+    }
+  },
+  "secure_visitor_cookie": true,
+  "stream_content_type": "application/x-ndjson",
+  "stream_events": [
+    {
+      "received_ms": 64.52,
+      "event": "trace"
+    },
+    {
+      "received_ms": 64.858,
+      "event": "start",
+      "span_id": "1",
+      "parent_id": null,
+      "function": "chat()",
+      "node": "main",
+      "elapsed_ms": 0.506
+    },
+    {
+      "received_ms": 64.872,
+      "event": "start",
+      "span_id": "2",
+      "parent_id": "1",
+      "function": "chat() · SELECT history",
+      "node": "db",
+      "elapsed_ms": 0.92
+    },
+    {
+      "received_ms": 66.577,
+      "event": "end",
+      "span_id": "2",
+      "elapsed_ms": 1.255,
+      "duration_ms": 0.328
+    },
+    {
+      "received_ms": 67.649,
+      "event": "start",
+      "span_id": "4",
+      "parent_id": "1",
+      "function": "Engine.route()",
+      "node": "engine",
+      "elapsed_ms": 1.939
+    },
+    {
+      "received_ms": 67.663,
+      "event": "start",
+      "span_id": "5",
+      "parent_id": "4",
+      "function": "Engine.classify()",
+      "node": "engine",
+      "elapsed_ms": 2.138
+    },
+    {
+      "received_ms": 67.671,
+      "event": "end",
+      "span_id": "5",
+      "elapsed_ms": 3.084,
+      "duration_ms": 0.94
+    },
+    {
+      "received_ms": 68.135,
+      "event": "start",
+      "span_id": "7",
+      "parent_id": "4",
+      "function": "Engine.search()",
+      "node": "engine",
+      "elapsed_ms": 3.434
+    },
+    {
+      "received_ms": 68.518,
+      "event": "end",
+      "span_id": "7",
+      "elapsed_ms": 4.412,
+      "duration_ms": 0.958
+    },
+    {
+      "received_ms": 68.534,
+      "event": "start",
+      "span_id": "9",
+      "parent_id": "4",
+      "function": "Engine.search()",
+      "node": "engine",
+      "elapsed_ms": 4.62
+    },
+    {
+      "received_ms": 68.874,
+      "event": "end",
+      "span_id": "9",
+      "elapsed_ms": 5.648,
+      "duration_ms": 1.014
+    },
+    {
+      "received_ms": 69.232,
+      "event": "start",
+      "span_id": "11",
+      "parent_id": "4",
+      "function": "evidence_matches()",
+      "node": "engine",
+      "elapsed_ms": 5.88
+    },
+    {
+      "received_ms": 69.241,
+      "event": "end",
+      "span_id": "11",
+      "elapsed_ms": 6.043,
+      "duration_ms": 0.169
+    },
+    {
+      "received_ms": 69.517,
+      "event": "end",
+      "span_id": "4",
+      "elapsed_ms": 6.1,
+      "duration_ms": 4.152
+    },
+    {
+      "received_ms": 70.663,
+      "event": "start",
+      "span_id": "14",
+      "parent_id": "1",
+      "function": "Engine.generate()",
+      "node": "engine",
+      "elapsed_ms": 6.629
+    },
+    {
+      "received_ms": 71.031,
+      "event": "start",
+      "span_id": "15",
+      "parent_id": "14",
+      "function": "httpx.Client.post()",
+      "node": "llm",
+      "elapsed_ms": 6.767
+    },
+    {
+      "received_ms": 833.905,
+      "event": "end",
+      "span_id": "15",
+      "elapsed_ms": 769.808,
+      "duration_ms": 763.023
+    },
+    {
+      "received_ms": 834.209,
+      "event": "end",
+      "span_id": "14",
+      "elapsed_ms": 769.901,
+      "duration_ms": 763.254
+    },
+    {
+      "received_ms": 834.234,
+      "event": "start",
+      "span_id": "18",
+      "parent_id": "1",
+      "function": "chat() · INSERT messages",
+      "node": "db",
+      "elapsed_ms": 770.027
+    },
+    {
+      "received_ms": 840.478,
+      "event": "end",
+      "span_id": "18",
+      "elapsed_ms": 775.917,
+      "duration_ms": 5.881
+    },
+    {
+      "received_ms": 840.49,
+      "event": "end",
+      "span_id": "1",
+      "elapsed_ms": 775.968,
+      "duration_ms": 775.455
+    },
+    {
+      "received_ms": 840.636,
+      "event": "result"
+    },
+    {
+      "received_ms": 840.654,
+      "event": "done"
+    }
+  ],
+  "result_status": "answered",
+  "generation": {
+    "used": true,
+    "model": "qwen3:4b",
+    "provider": "ollama",
+    "latency_ms": 763,
+    "reason": null
+  },
+  "events_arrived_before_result": true,
+  "own_test_messages": 2,
+  "own_test_history_cleared": true
+}

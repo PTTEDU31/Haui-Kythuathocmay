@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-22T03:24:15.706658+00:00",
+  "original_origin": "https://ttech.io.vn",
+  "diagnosis": {
+    "cloudflare_1_1_1_1": "SERVFAIL; EDE DNSKEY Missing / no SEP matching DS for vn",
+    "google_8_8_8_8": "SERVFAIL; EDE NSEC Missing / invalid denial of ttech.io.vn DS",
+    "checking_disabled_queries": "Both resolvers return original Cloudflare A records with +cd",
+    "scope": "DNSSEC validation fails upstream; current server resolver still returns A records. Earlier HTTP 200 was insufficient to establish user reachability."
+  },
+  "fallback_url": "https://macro-empty-podcast-kinda.trycloudflare.com/architecture/live",
+  "fallback_service": "student-support-demo-tunnel.service",
+  "service_type": "Transient systemd user service; persists after agent turn, not across reboot; restarting quick tunnel may change hostname",
+  "origin": "http://127.0.0.1:8088",
+  "original_tunnel_modified": false,
+  "verification": {
+    "cloudflare_dns": "NOERROR",
+    "google_dns": "NOERROR",
+    "live_page_http": 200,
+    "live_js_http": 200,
+    "health_http": 200,
+    "secure_cookie": true,
+    "trace_http": 200,
+    "stream_event_count": 23,
+    "first_event_ms": 70,
+    "provider_start_ms": 81,
+    "provider_end_ms": 837,
+    "done_ms": 864,
+    "actual_provider": "ollama",
+    "model": "qwen3:4b",
+    "generation_used": true,
+    "own_test_history_cleared": true
+  }
+}

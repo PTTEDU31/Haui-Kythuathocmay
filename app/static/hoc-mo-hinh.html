@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Học máy và nhận dạng · Bên trong MLP và LinearSVC</title>
+<link rel="stylesheet" href="/static/model-lab.css?v=2ce4b94bce9f">
+<script src="/static/model-lab-data.js?v=2c22755e199b" defer></script>
+<script src="/static/defense-lessons.js?v=3" defer></script>
+<script src="/static/model-lab.js?v=f5c06d7fb312" defer></script>
+<link rel="stylesheet" href="/static/code-viewer.css?v=fb3369c17417">
+<script src="/static/vendor/highlight-11.11.1.min.js?v=c4a399dd6f48" defer></script>
+<script src="/static/code-viewer.js?v=f89117f3f39d" defer></script>
+</head>
+<body>
+<header>
+<nav aria-label="Điều hướng"><a href="/">← Chatbot</a><a href="/static/huong-dan-bao-ve.html">Lưu đồ ↔ code</a><a href="/architecture/live">Trace thật</a><button id="theme" type="button">Sáng / Tối</button></nav>
+<p class="eyebrow">HỌC MÁY VÀ NHẬN DẠNG · TỪ KHÁI NIỆM ĐẾN PHÉP TÍNH</p>
+<h1>Một câu hỏi đi qua mô hình như thế nào?</h1>
+<p class="lead">Mô hình nhận một vector số, áp dụng các trọng số đã học và chọn một nhãn. Trang này bóc từng lớp: câu chữ → đặc trưng → phép tính → hàm mất mát → học tham số → quyết định.</p>
+<p>Đọc lần đầu: mục 1–6. Muốn nhìn số chạy: mục 7–8. Ôn vấn đáp: <a href="#tc-questions">câu hỏi thi theo TC1–TC6</a> và mục 12. Bấm tên thuật ngữ có gạch chân để đến từ điển.</p>
+<p class="note"><strong>Bổ sung theo phản hồi của cô:</strong> <a href="#teacher-feedback">thuật toán, số đầu vào, lớp ẩn, đầu ra và vector số</a> · <a href="#scope-behavior">câu hỏi khác phạm vi thì sao?</a></p>
+</header>
+<div class="layout">
+<aside><details class="contents" open><summary>Mục lục bài học</summary><nav aria-label="Mục lục">
+<a href="#foundation">1. Bài toán nhận dạng</a><a href="#notation">2. Đọc ký hiệu toán</a><a href="#tfidf">3. Câu chữ thành TF-IDF</a><a href="#mlp">4. MLP suy luận</a><a href="#learning">5. MLP học thế nào?</a><a href="#svc">6. LinearSVC từ gốc</a><a href="#real-lab">7. Khám phá mô hình đã lưu</a><a href="#toy">8. Tính tay tương tác</a><a href="#comparison">9. So sánh và đối chiếu code</a><a href="#evaluation">10. Đánh giá và lỗi thường gặp</a><a href="#glossary">11. Từ điển thuật ngữ</a><a href="#tc-questions">Câu hỏi thi TC1–TC6</a><a href="#viva">12. Luyện vấn đáp</a><a href="#references">Nguồn học tiếp</a>
+<a href="#teacher-feedback">Trả lời theo phản hồi của cô</a><a href="#scope-behavior">Phạm vi khác thì sao?</a></nav></details></aside>
+<main>
+<section id="teacher-feedback">
+<p class="chapter">ĐỐI CHIẾU PHẢN HỒI CỦA CÔ</p><h2>Từ văn bản đầu vào đến nhãn đầu ra: trả lời đủ từng ý</h2>
+<p>Phần này đi theo các câu hỏi trong ảnh phản hồi. Các kích thước trong bảng bên dưới được đọc từ artifact đã lưu, không suy ra từ độ dài câu hỏi.</p>
+<div class="table-wrap"><table><thead><tr><th>Cô hỏi</th><th>Trả lời và điểm cần phân biệt</th></tr></thead><tbody>
+<tr><td>Thuật toán nào?</td><td>MLPClassifier: mạng nơ-ron truyền thẳng, học có giám sát, phân loại chủ đề. LinearSVC là mô hình đối chứng; chế độ auto hiện chọn LinearSVC. NLP là lĩnh vực xử lý ngôn ngữ tự nhiên, không phải tên khác của MLP.</td></tr>
+<tr><td>Đầu vào là gì?</td><td>Người dùng nhập một câu hỏi dạng văn bản. TF-IDF đổi câu đó thành vector số x; classifier nhận vector, không nhận trực tiếp các chữ như các nơ-ron đầu vào.</td></tr>
+<tr><td>Bao nhiêu đầu vào?</td><td>327 tọa độ đặc trưng, thường gọi 327 nút đầu vào khi vẽ mạng. Một tọa độ ứng với một từ/ngram cố định trong vocabulary, không phải một ký tự hay một từ bất kỳ đang có trong câu. Câu dài hay ngắn vẫn cùng 327 chiều.</td></tr>
+<tr><td>Mấy lớp ẩn, mỗi lớp bao nhiêu nơ-ron?</td><td>MLP đã chọn có 1 lớp ẩn với 16 nơ-ron ReLU. Nếu tính cả tầng vào và tầng ra là 3 tầng; nếu chỉ tính các lớp có trọng số thì có 2. hidden_layer_sizes=(16,) không phải 16 lớp ẩn.</td></tr>
+<tr><td>Đầu ra là gì?</td><td>5 logits → softmax thành 5 giá trị → argmax → một nhãn chuỗi. Đó là nhãn chủ đề; câu trả lời tiếng Việt được lấy từ FAQ, có thể được Qwen diễn đạt ở bước khác.</td></tr>
+<tr><td>Văn bản chuyển thành vector như thế nào?</td><td>Chuẩn hóa → token → unigram/bigram → tra vocabulary → đếm TF → nhân IDF học từ Train → chuẩn L2. Xem ví dụ bên dưới và vector đầy đủ ở bước 2 của mục 7.</td></tr>
+<tr><td>Phạm vi khác thì sao, tại sao vẫn ra kết quả?</td><td>Classifier được huấn luyện đóng với 5 nhãn nên vẫn chọn một trong 5 nhãn khi gọi trực tiếp, kể cả câu lạ. route() kiểm tra quy tắc và bằng chứng riêng. Ký túc xá là ngoài 5 lớp nhưng vẫn được chatbot hỗ trợ bằng quy tắc/truy hồi. Xem bảng thử ở phần “Phạm vi khác thì sao?”.</td></tr>
+</tbody></table></div>
+<h3>Kiểm tra kiến trúc từ artifact</h3><div id="teacher-architecture"></div>
+<h3>Đi theo một câu cụ thể qua MLP</h3><label for="teacher-case-select">Chọn câu để trình bày trước cô</label><select id="teacher-case-select"></select>
+<div id="teacher-example" aria-live="polite"></div>
+<details><summary>Cách trình bày khoảng một phút</summary><p>Em dùng MLP để phân loại chủ đề câu hỏi. Đầu vào ở giao diện là văn bản tiếng Việt. Trước khi vào mạng, pipeline chuẩn hóa và dùng TF-IDF biến câu thành vector 327 chiều theo từ vựng đã học trên 30 câu Train. Mạng có một lớp ẩn gồm 16 nơ-ron ReLU, tiếp theo là 5 đầu ra softmax ứng với 5 chủ đề. Em chọn nhãn bằng argmax theo classes_. Nhãn này hỗ trợ định hướng tìm FAQ, còn nội dung trả lời phải có bằng chứng từ kho. Khi câu hỏi ngoài phạm vi, riêng MLP vẫn có thể gán nhãn nên ứng dụng cần các điều kiện hỏi lại hoặc từ chối. Code sử dụng MLPClassifier, fit và predict của sklearn.</p></details>
+<p><a href="#comparison">Chỉ vào code khai báo TF-IDF, MLPClassifier, fit() và predict() →</a></p>
+</section>
+<section id="foundation">
+<p class="chapter">01 / BÀI TOÁN</p><h2>Nhận dạng là gán một quan sát vào một lớp</h2>
+<p>Trong học phần nhận dạng, một <a href="#term-sample">mẫu</a> có thể là ảnh chữ số, tín hiệu âm thanh hoặc câu hỏi. Mục tiêu là tìm quy luật để suy ra <a href="#term-label">nhãn</a> của mẫu chưa gặp. Ở dự án này, mẫu là câu hỏi sinh viên; nhãn là một trong 5 chủ đề: học phí, học bổng, đăng ký học phần, lịch thi, điểm học tập.</p>
+<div class="flow" aria-label="Đường đi phân loại"><span>Câu hỏi q</span><b>→</b><span>Vector x ∈ ℝ³²⁷</span><b>→</b><span>MLP hoặc LinearSVC</span><b>→</b><span>Một trong 5 nhãn</span></div>
+<p>Ví dụ “Em đã chuyển khoản mà hệ thống vẫn chưa ghi nhận” có thể được gán nhãn <code>hoc_phi</code>. Mô hình phân loại không kiểm tra tài khoản ngân hàng và không tự sinh câu trả lời. Sau đó ứng dụng vẫn phải tìm FAQ phù hợp và kiểm tra bằng chứng. CTSV và ký túc xá là hai chủ đề mở rộng bằng quy tắc/truy hồi, không phải hai lớp bổ sung của bộ phân loại 5 lớp.</p>
+<h3>Học có giám sát nghĩa là gì?</h3>
+<p>Ta có tập dữ liệu D = {(qᵢ, yᵢ)} gồm câu hỏi và nhãn đúng do người biên soạn cung cấp. Biến đổi qᵢ thành xᵢ rồi học hàm f<sub>θ</sub>(xᵢ) để dự đoán yᵢ. θ là tập các tham số học được. “Có giám sát” nghĩa là có nhãn mục tiêu trong lúc học; không có người ngồi duyệt mỗi phép nhân của mô hình.</p>
+<div class="two"><div><h3>Huấn luyện / training</h3><p>Đưa nhiều cặp đầu vào–nhãn vào thuật toán. Đo sai lệch; thay đổi trọng số và bias để giảm mục tiêu tối ưu. Học từ dữ liệu Train, chọn cấu hình theo Validation.</p></div><div><h3>Suy luận / inference</h3><p>Giữ nguyên tham số đã học. Biến câu mới thành vector, tính đầu ra và chọn nhãn. Một lượt <code>predict()</code> không huấn luyện lại mô hình.</p></div></div>
+<h3>Ba lớp “biểu diễn → học → quyết định”</h3>
+<ol><li><strong>Biểu diễn:</strong> chọn cách mô tả mẫu bằng số, ở đây là TF-IDF.</li><li><strong>Học:</strong> tìm θ để các mẫu có nhãn khác nhau được phân biệt tốt.</li><li><strong>Quyết định:</strong> từ các điểm đầu ra chọn nhãn, thường bằng argmax.</li></ol>
+<p class="note">Hai bộ phân loại là hai lựa chọn thay thế. Hệ thống không truyền nhãn của MLP sang LinearSVC để phân loại lần hai. Chế độ auto hiện chọn LinearSVC theo quy tắc lựa chọn đã lưu.</p>
+</section>
+
+<section id="notation"><p class="chapter">02 / NGÔN NGỮ CỦA CÔNG THỨC</p><h2>Đọc ký hiệu trước khi đọc thuật toán</h2>
+<div class="table-wrap"><table><thead><tr><th>Ký hiệu</th><th>Cách đọc và ý nghĩa</th><th>Trong dự án</th></tr></thead><tbody>
+<tr><td>n, d, K</td><td>Số mẫu Train, số đặc trưng, số lớp.</td><td>n = 30, d = 327, K = 5.</td></tr>
+<tr><td>xᵢ ∈ ℝᵈ</td><td>Vector đặc trưng của mẫu i; có d số thực. i đánh số mẫu, j đánh số đặc trưng.</td><td>Mỗi câu là một hàng 327 số; phần lớn bằng 0.</td></tr>
+<tr><td>X ∈ ℝⁿˣᵈ</td><td>Ma trận: xếp n vector mẫu thành n hàng.</td><td>X Train có dạng 30 × 327.</td></tr>
+<tr><td>w, W, b, θ</td><td>w là vector trọng số, W là ma trận trọng số, b là bias; θ gọi chung các tham số.</td><td>Được học bởi fit(), lưu trong artifact joblib.</td></tr>
+<tr><td>wᵀx = Σⱼwⱼxⱼ</td><td>Tích vô hướng: nhân từng cặp cùng vị trí rồi cộng. Dấu ᵀ là chuyển vị.</td><td>Cho biết các đặc trưng cùng đóng góp vào một điểm như thế nào.</td></tr>
+<tr><td>‖x‖₂ = √Σⱼxⱼ²</td><td>Chuẩn L2, đo độ dài vector.</td><td>Dùng chuẩn hóa TF-IDF và điều chuẩn trọng số.</td></tr>
+<tr><td>argmaxₖ sₖ</td><td>Trả về chỉ số k của giá trị lớn nhất; max trả giá trị lớn nhất.</td><td>Tra classes_[k] để có nhãn chuỗi.</td></tr>
+<tr><td>∂L/∂w, ∇θL</td><td>Đạo hàm riêng theo một trọng số; gradient là vector các đạo hàm riêng.</td><td>Hướng nhạy của loss đối với các tham số khi train.</td></tr>
+<tr><td>ln, exp, ⊙</td><td>Logarit tự nhiên, hàm mũ cơ số e, nhân theo từng phần tử.</td><td>TF-IDF, softmax, cross-entropy, backpropagation.</td></tr>
+</tbody></table></div>
+<p><strong>Ví dụ tích vô hướng:</strong> x = [0.6, 0.8], w = [2, −1], b = −0.3. Điểm wᵀx+b = 2×0.6 − 1×0.8 − 0.3 = 0.1. Số 0.1 đến từ phép cộng có trọng số, không phải mô hình “hiểu” câu hỏi như con người.</p>
+</section>
+
+<section id="tfidf"><p class="chapter">03 / TRÍCH CHỌN ĐẶC TRƯNG</p><h2>TF-IDF: biến câu chữ thành một điểm trong không gian 327 chiều</h2>
+<h3>Bước 1 — Chuẩn hóa</h3><p><code>normalize_classification()</code> chuẩn Unicode NFC, chuyển chữ thường và gộp khoảng trắng. Vẫn giữ dấu tiếng Việt và từ “không”, “chưa”. Đây là tiền xử lý của classifier; bộ truy hồi FAQ có chuẩn hóa khác, bao gồm hỗ trợ không dấu và viết tắt.</p>
+<h3>Bước 2 — Token và n-gram</h3><p><a href="#term-token">Token</a> là đơn vị mà bộ tách văn bản tạo ra. Bộ tách mặc định của sklearn nhận chuỗi ký tự từ có từ 2 ký tự; dấu câu thường bị loại ở bước token hóa. Với tiếng Việt, “học phí” cho hai token “học”, “phí”, chưa phải bộ tách từ ngôn ngữ học. Cấu hình word <code>ngram_range=(1,2)</code> tạo cả unigram “học”, “phí” và bigram “học phí”. Giữ dấu câu trong hàm chuẩn hóa không có nghĩa dấu câu trở thành một đặc trưng.</p>
+<h3>Bước 3 — Học từ vựng trên Train</h3><p><code>fit()</code> xây từ vựng và IDF từ 30 câu Train. Mỗi từ/cụm được giữ có một chỉ số cột cố định. <code>max_features=500</code> là trần, không phải luôn có 500 cột; artifact thực tế có 327 cột. <code>min_df=1</code> cho phép đặc trưng xuất hiện trong ít nhất một văn bản Train. Khi transform câu mới, cột không đổi vị trí.</p>
+<h3>Bước 4 — Tính TF và IDF đúng theo cấu hình này</h3>
+<div class="formula">c(t,q) = số lần đặc trưng t xuất hiện trong câu q<br>tf(t,q) = 1 + ln(c(t,q)) nếu c &gt; 0; bằng 0 nếu c = 0<br>idf(t) = ln((1+n)/(1+df(t))) + 1<br>vⱼ = tf(tⱼ,q) × idf(tⱼ)<br>xⱼ = vⱼ / √Σₖvₖ² nếu v khác 0</div>
+<p><code>sublinear_tf=True</code> dùng log để một từ lặp nhiều lần không lấn át tuyến tính. <code>df</code> đếm số văn bản Train chứa t, không đếm tổng số lần t lặp. Dấu +1 trong IDF là làm trơn mặc định của sklearn. <code>norm='l2'</code> đưa vector khác 0 về độ dài 1.</p>
+<details><summary>Ví dụ tính tay với 3 văn bản nhỏ</summary><p>Giả sử D1 = “học phí”, D2 = “học bổng”, D3 = “lịch thi”; chỉ lấy unigram để dễ tính. n=3. “học” có df=2 nên idf=ln(4/3)+1≈1.2877. “phí” có df=1 nên idf=ln(4/2)+1≈1.6931. Với câu “học phí”, mỗi từ xuất hiện 1 lần nên tf=1. Vector thô trên hai cột này là [1.2877, 1.6931], chuẩn≈2.1272; vector chuẩn hóa≈[0.6053, 0.7959]. Các cột còn lại bằng 0.</p><p>Đây là bộ dữ liệu minh họa, không phải hai tọa độ trích từ artifact 327 chiều. Các giá trị của dự án thật xem ở mục 7.</p></details>
+<h3>Vector thưa và từ chưa gặp</h3><p>Trong 327 cột, một câu chỉ kích hoạt một số cột. Ta lưu các vị trí khác 0 bằng <a href="#term-sparse">ma trận thưa</a> để tiết kiệm. Từ ngoài từ vựng (OOV) không tạo cột mới. Nếu mọi token/ngram đều OOV thì x=0: TF-IDF giữ vector 0, không chia cho 0. Classifier vẫn có thể đưa nhãn do bias. Vì vậy nhận được nhãn không chứng minh câu thuộc phạm vi.</p>
+<p class="note">TF-IDF là đặc trưng từ vựng. Nó không tự biểu diễn đầy đủ ngữ nghĩa, thứ tự xa, mỉa mai hay phủ định. Giữ từ “không” là cần thiết nhưng không bảo đảm hiểu đúng phủ định. Word bigram chỉ bổ sung quan hệ cục bộ giữa các token kề nhau.</p>
+</section>
+
+<section id="mlp"><p class="chapter">04 / MLP · SUY LUẬN</p><h2>Một mạng nơ-ron là chuỗi phép biến đổi có tham số</h2>
+<p><strong>MLP = Multi-Layer Perceptron</strong>, mạng perceptron nhiều lớp. Mạng đang lưu có một lớp ẩn gồm 16 nơ-ron và 5 đầu ra. “Nhiều lớp” tính các lớp có tham số; 327 đầu vào là các tọa độ dữ liệu, không phải 327 nơ-ron đang tự học quy luật riêng.</p>
+<div class="flow"><span>x: 327 số</span><b>→</b><span>W₁,b₁ → ReLU: 16 số</span><b>→</b><span>W₂,b₂ → softmax: 5 số</span><b>→</b><span>argmax → nhãn</span></div>
+<h3>4.1 — Nơ-ron cộng các tín hiệu đã nhân trọng số</h3>
+<div class="formula">zⱼ = Σᵢ₌₁³²⁷ xᵢW₁ᵢⱼ + b₁ⱼ<br>hⱼ = ReLU(zⱼ) = max(0,zⱼ)</div>
+<p><strong>Weight / trọng số</strong> điều chỉnh mức và chiều tác động của một đặc trưng lên nơ-ron. <strong>Bias / hệ số chệch</strong> dịch ngưỡng phản ứng, kể cả khi đầu vào bằng 0. <strong>z</strong> là tổng trước kích hoạt; <strong>h</strong> là giá trị sau kích hoạt. Với TF-IDF không âm, trọng số âm tạo đóng góp âm; đóng góp khác cũng có thể bù lại.</p>
+<p><strong>ReLU</strong> giữ phần dương và chặn phần âm về 0. Nó tạo tính phi tuyến: các vùng đầu vào có những nhóm nơ-ron hoạt động khác nhau. Không được gọi mỗi nơ-ron ẩn là “nơ-ron học phí”: đặc trưng ẩn được học chung, thường không có tên ngữ nghĩa rõ ràng.</p>
+<h3>4.2 — Vì sao lớp ẩn phải có tính phi tuyến?</h3><p>Nếu bỏ ReLU và chỉ nhân/cộng: (xW₁+b₁)W₂+b₂ = x(W₁W₂)+(b₁W₂+b₂), tương đương một lớp tuyến tính duy nhất. ReLU giúp mạng tạo ranh giới quyết định phức tạp hơn một siêu phẳng. Điều đó tăng khả năng biểu diễn, không tự bảo đảm tổng quát hóa tốt hơn.</p>
+<h3>4.3 — Từ lớp ẩn tới 5 logits và softmax</h3>
+<div class="formula">aₖ = Σⱼ₌₁¹⁶ hⱼW₂ⱼₖ + b₂ₖ<br>pₖ = exp(aₖ−m) / Σᵣexp(aᵣ−m), m = maxᵣaᵣ<br>k̂ = argmaxₖ pₖ; nhãn = classes_[k̂]</div>
+<p><strong>Logit aₖ</strong> là điểm trước softmax. Softmax đổi 5 số thành 5 giá trị dương có tổng bằng 1, dùng làm xác suất dự đoán theo mô hình. Trừ m không đổi tỷ lệ, chỉ giúp tránh tràn số. Softmax giữ thứ tự logits nên argmax p cũng là argmax a. Nó cạnh tranh giữa các lớp, không phải 5 quyết định độc lập.</p>
+<p>Ví dụ 3 logits [2,1,0] → softmax≈[0.6652,0.2447,0.0900]. Một logit bằng 2 không có nghĩa xác suất 200%. Xác suất lớn cũng không bảo đảm đúng; mô hình có thể tự tin khi gặp câu ngoài dữ liệu huấn luyện.</p>
+<h3>4.4 — Kích thước và số tham số</h3>
+<div class="table-wrap"><table><thead><tr><th>Đối tượng</th><th>Kích thước</th><th>Số phần tử học</th></tr></thead><tbody><tr><td>W₁ = coefs_[0]</td><td>327 × 16</td><td>5.232</td></tr><tr><td>b₁ = intercepts_[0]</td><td>16</td><td>16</td></tr><tr><td>W₂ = coefs_[1]</td><td>16 × 5</td><td>80</td></tr><tr><td>b₂ = intercepts_[1]</td><td>5</td><td>5</td></tr><tr><td>Tổng MLP</td><td>Không tính từ vựng và IDF</td><td>5.333</td></tr></tbody></table></div>
+<p>Với một mẫu ở dạng vector hàng: (1×327) × (327×16) → (1×16); rồi (1×16) × (16×5) → (1×5). Kiểm tra kích thước là cách tốt để phát hiện viết sai công thức chuyển vị.</p>
+</section>
+
+<section id="learning"><p class="chapter">05 / MLP · HUẤN LUYỆN</p><h2>Học là tìm trọng số làm hàm mất mát nhỏ đi</h2>
+<h3>5.1 — Nhãn đúng và cross-entropy</h3><p>Mã one-hot y của lớp đúng có một phần tử bằng 1, còn lại bằng 0. Ví dụ thứ tự lớp [đăng ký, điểm, học bổng, học phí, lịch thi], nhãn học phí là [0,0,0,1,0]. Cross-entropy so phân phối mục tiêu với phân phối dự đoán.</p>
+<div class="formula">Lᵢ = −Σₖ yᵢₖ ln(pᵢₖ) = −ln(pᵢ,lớp_đúng)<br>J = (1/n)ΣᵢLᵢ + α/(2n) × (‖W₁‖²F + ‖W₂‖²F)</div>
+<p>Ví dụ xác suất lớp đúng 0.8 → L≈0.2231; 0.1 → L≈2.3026. Phạt dự đoán tự tin nhưng sai rất mạnh. Công thức điều chuẩn trên tương ứng trường hợp Train không có sample_weight của dự án. Chuẩn Frobenius ‖W‖²F là tổng bình phương các phần tử; phần phạt áp dụng trọng số, không áp dụng bias của MLP sklearn.</p>
+<h3>5.2 — Backpropagation: tính gradient bằng quy tắc dây chuyền</h3>
+<p>Lan truyền ngược không phải một mạng thứ hai, cũng không đưa câu trả lời chạy ngược. Nó truyền thông tin đạo hàm từ đầu ra về tham số đầu vào, tận dụng các giá trị đã tính trong lượt forward.</p>
+<div class="formula">δ₂ = p − y<br>∂L/∂W₂ = hᵀδ₂; ∂L/∂b₂ = δ₂<br>δ₁ = (δ₂W₂ᵀ) ⊙ 1[z &gt; 0]<br>∂L/∂W₁ = xᵀδ₁; ∂L/∂b₁ = δ₁</div>
+<p>Các công thức này cho <strong>một mẫu, chưa cộng điều chuẩn</strong>. Với cả Train, lấy trung bình gradient các mẫu rồi thêm αW/n vào gradient của W. δ₂ cho biết đầu ra nào đang cao/thấp so với nhãn đúng. Đạo hàm ReLU là 1 ở z&gt;0, là 0 ở z&lt;0; sklearn chọn 0 tại z=0. Nơ-ron bị chặn không truyền gradient qua nhánh đó trong mẫu này.</p>
+<h3>5.3 — Bộ tối ưu khác với cách tính gradient</h3><p><strong>Backpropagation</strong> tính gradient. <strong>Optimizer</strong> dùng loss/gradient để tìm tham số mới. Công thức θ←θ−η∇J là gradient descent cơ bản để học ý tưởng; dự án này dùng <strong>L-BFGS</strong>, không dùng cập nhật SGD/Adam đó.</p>
+<p>L-BFGS là phương pháp quasi-Newton bộ nhớ giới hạn: dùng lịch sử thay đổi tham số và gradient để xấp xỉ tác động của nghịch đảo Hessian lên hướng đi, rồi tìm bước đi bằng line search. Nó không dựng toàn bộ Hessian dày 5.333×5.333. Với <code>solver='lbfgs'</code>, sklearn dùng toàn bộ dữ liệu Train cho mục tiêu; <code>batch_size</code> và <code>learning_rate_init</code> không điều khiển như khi dùng SGD/Adam.</p>
+<h3>5.4 — Siêu tham số và điều kiện dừng</h3><ul><li><code>hidden_layer_sizes=(16,)</code>: một lớp ẩn, 16 nơ-ron. Dấu phẩy tạo tuple một phần tử; (16,8) sẽ là hai lớp ẩn.</li><li><code>alpha=0.001</code>: mức phạt L2. Lớn hơn khuyến khích trọng số nhỏ hơn; quá lớn có thể làm thiếu khớp.</li><li><code>max_iter=1000</code>: giới hạn vòng lặp bộ tối ưu, không khẳng định đã chạy đủ 1.000 lần hay 1.000 epoch Adam.</li><li><code>tol</code>, <code>max_fun</code>: còn có ngưỡng hội tụ và giới hạn đánh giá hàm. Hội tụ không có nghĩa đạt cực tiểu toàn cục.</li><li><code>random_state=42</code>: cố định nguồn ngẫu nhiên như khởi tạo để dễ tái lập; không phải siêu tham số làm accuracy tự tăng.</li></ul>
+<p>Mục tiêu MLP không lồi do nhiều lớp và ReLU. Khởi tạo, cấu hình và dữ liệu có thể dẫn đến nghiệm khác nhau. Dự án khảo sát 16/32 nơ-ron và α∈{0.001,0.01}; chọn theo Macro-F1 Validation. Với 5.333 tham số và 30 câu Train, nguy cơ overfitting rất đáng lưu ý.</p>
+</section>
+
+<section id="svc"><p class="chapter">06 / LINEARSVC · HÌNH HỌC VÀ TỐI ƯU</p><h2>Học các siêu phẳng để phân biệt lớp</h2>
+<p><strong>SVM = Support Vector Machine</strong>. <strong>SVC = Support Vector Classification</strong>. <code>LinearSVC</code> của sklearn là bộ phân loại SVM tuyến tính dùng liblinear; nó khác lớp <code>SVC(kernel='linear')</code> về bộ giải, giá trị mặc định và API. Đây là phân loại, không phải hồi quy tuyến tính.</p>
+<h3>6.1 — Bắt đầu bằng bài toán nhị phân</h3><p>Với y∈{−1,+1}, đặt f(x)=wᵀx+b. Nếu f(x)&gt;0 dự đoán +1, nếu f(x)&lt;0 dự đoán −1. Trong 2D, f=0 là đường thẳng; trong 3D là mặt phẳng; trong 327D là siêu phẳng. Tuyến tính nói về dạng điểm theo x, không có nghĩa dữ liệu gốc chỉ có hai chiều.</p>
+<div class="formula">Ranh giới: wᵀx+b = 0<br>Khoảng cách có dấu tới ranh giới: f(x)/‖w‖₂<br>Hai mặt biên chuẩn: f(x)=+1 và f(x)=−1<br>Bề rộng giữa hai mặt biên: 2/‖w‖₂</div>
+<p>w xác định hướng vuông góc với siêu phẳng, b dịch vị trí. Chỉ biết f(x) chưa phải biết khoảng cách Euclid: phải chia cho ‖w‖. Điểm f=0 nằm đúng ranh giới; cách thư viện xử lý hòa không phải bằng chứng nhận dạng chắc chắn.</p>
+<h3>6.2 — Biên mềm và hàm squared hinge</h3>
+<div class="formula">mᵢ = yᵢf(xᵢ)  (biên chức năng theo nhãn đúng)<br>ℓᵢ = max(0,1−mᵢ)²<br>J = ½‖w‖₂² + CΣᵢℓᵢ</div>
+<p>Đây là dạng mục tiêu cơ bản với L2 và squared hinge, mỗi bài toán OvR một lần. Trong liblinear với <code>fit_intercept=True</code>, bias được triển khai như trọng số của đặc trưng hằng <code>intercept_scaling</code> và cũng chịu điều chuẩn; có thể viết mục tiêu trên vector trọng số mở rộng để bao gồm phần này.</p>
+<div class="table-wrap"><table><thead><tr><th>m = y·f</th><th>Diễn giải</th><th>Squared hinge</th></tr></thead><tbody><tr><td>m ≥ 1</td><td>Đúng phía, ở hoặc ngoài biên.</td><td>0</td></tr><tr><td>0 &lt; m &lt; 1</td><td>Đúng nhãn nhưng chưa đạt biên mong muốn.</td><td>(1−m)² &gt; 0</td></tr><tr><td>m = 0</td><td>Trên ranh giới.</td><td>1</td></tr><tr><td>m &lt; 0</td><td>Sai phía so với nhãn đúng.</td><td>&gt; 1</td></tr></tbody></table></div>
+<p><strong>C</strong> cân bằng phạt vi phạm biên và điều chuẩn. C lớn làm lỗi/vi phạm bị phạt mạnh hơn tương đối; C nhỏ thiên về trọng số nhỏ. Không nên diễn đạt “C lớn thì chắc chắn biên nhỏ và accuracy cao”: đó là xu hướng đánh đổi của bài toán tối ưu, kết quả còn tùy dữ liệu.</p>
+<h3>6.3 — “Support vector” là gì?</h3><p>Trong SVM, các mẫu ở sát hoặc vi phạm biên có vai trò quyết định ranh giới; đó là trực giác của vector hỗ trợ. Với squared hinge, mẫu có m&lt;1 tạo gradient của phần loss, còn mẫu m≥1 không tạo gradient loss tại vị trí hiện tại. <code>LinearSVC</code> không cung cấp <code>support_vectors_</code>; không chỉ vào tất cả câu Train và gọi chúng đều là support vector.</p>
+<h3>6.4 — Từ 2 lớp sang 5 lớp bằng One-vs-Rest</h3><p>Học 5 bộ phân biệt: “học phí” so với “không phải học phí”, “học bổng” so với “không phải học bổng”, … Với lớp k, tạo yᵢₖ=+1 nếu mẫu thuộc k, ngược lại −1. Khi suy luận:</p>
+<div class="formula">sₖ = wₖᵀx+bₖ với k=1,…,5<br>k̂ = argmaxₖsₖ<br>coef_.shape = (5,327); intercept_.shape = (5,)</div>
+<p><code>decision_function()</code> trả 5 điểm chưa hiệu chỉnh, không bắt buộc nằm trong [0,1] và không có tổng bằng 1. Nếu cả 5 đều âm, vẫn chọn điểm lớn nhất: [−0.8,−0.4,−0.9,−0.2,−0.6] → lớp thứ 4. Không biến −0.2 thành “−20% chính xác”, không gọi điểm này là xác suất. Cũng không lấy softmax của các điểm rồi khẳng định đã có xác suất hiệu chỉnh.</p>
+<h3>6.5 — Học và kernel</h3><p>Mỗi bài toán tuyến tính có mục tiêu lồi trong cấu hình này, khác mục tiêu không lồi của MLP. Bộ giải số liblinear giải dạng primal/dual thích hợp; <code>dual='auto'</code> chọn dựa trên số mẫu, số đặc trưng và cấu hình hỗ trợ. Nó không dùng backprop qua lớp ẩn, không dùng kernel RBF và không cần lưu một ma trận kernel cho toàn bộ cặp mẫu để suy luận.</p>
+<p>Đặc trưng TF-IDF có nhiều chiều và thưa thường là điểm xuất phát hợp lý cho bộ phân loại tuyến tính. LinearSVC vẫn có thể sai khi từ vựng ít, ngữ nghĩa mơ hồ hoặc dữ liệu lệch phân phối. Trong dự án, C được khảo sát ở 0.1 và 1.0; artifact đã chọn dùng C=0.1.</p>
+</section>
+
+<section id="real-lab"><p class="chapter">07 / MỞ NẮP MÔ HÌNH ĐÃ LƯU</p><h2>Theo dõi các phép tính với trọng số thật</h2>
+<p>Các ví dụ dưới đây được tính từ hai artifact của dự án lúc dựng bài. Công thức từng lớp được kiểm tra khớp với sklearn. Đây là <strong>bản chụp suy luận có sẵn</strong>, không phải trace trực tiếp hay huấn luyện ngay trong trình duyệt. Ta gọi classifier trực tiếp để học phép tính; một câu như vậy trên chatbot còn đi qua các quy tắc định tuyến.</p>
+<div class="controls"><label>Câu hỏi mẫu<select id="case-select"></select></label><label>Mô hình<select id="model-select"><option value="mlp">MLP · ReLU + softmax</option><option value="linearsvc">LinearSVC · One-vs-Rest</option></select></label></div>
+<p id="artifact-info" class="note"></p>
+<div class="step-buttons" role="group" aria-label="Chọn bước tính"><button type="button" data-stage="0" aria-pressed="true">1 · Chuẩn hóa</button><button type="button" data-stage="1" aria-pressed="false">2 · TF-IDF</button><button type="button" data-stage="2" aria-pressed="false">3 · Nhân trọng số</button><button type="button" data-stage="3" aria-pressed="false">4 · Các đầu ra</button><button type="button" data-stage="4" aria-pressed="false">5 · Chọn nhãn</button></div>
+<div id="lab-output" class="lab-output" aria-live="polite"></div>
+<div class="controls"><button type="button" id="stage-prev">← Bước trước</button><button type="button" id="stage-next">Bước tiếp →</button><span id="stage-status"></span></div>
+<details><summary>Thời điểm dựng bài và nguồn trọng số</summary><p id="snapshot-info"></p></details>
+</section>
+
+<section id="scope-behavior">
+<p class="chapter">PHẢN HỒI · PHẠM VI VÀ KHẢ NĂNG NHẬN DẠNG</p><h2>Câu ngoài phạm vi vẫn ra nhãn — vì sao?</h2>
+<p>Classifier chỉ được học 5 nhãn; nó không có đầu ra thứ 6 tên “ngoài phạm vi”. MLP vẫn tạo 5 xác suất tổng 1, LinearSVC vẫn tạo 5 điểm và argmax vẫn chọn một nhãn. Từ quen thuộc một phần hoặc chỉ bias khi vector bằng 0 cũng có thể tạo quyết định. Đây không phải chứng minh mô hình biết trả lời câu đó.</p>
+<p><strong>Ba phạm vi khác nhau:</strong> (1) 5 lớp đã huấn luyện; (2) phạm vi chatbot còn có CTSV/KTX qua quy tắc và kho FAQ; (3) những câu không có nguồn đủ khớp cần hỏi lại hoặc từ chối. Ký túc xá ngoài 5 lớp không đồng nghĩa ngoài phạm vi hỗ trợ của toàn ứng dụng.</p>
+<div id="scope-results"></div>
+<h3>Tại sao hệ thống vẫn có thể trả lời đúng khi classifier sai?</h3><p>Chủ đề tường minh, ngữ cảnh hoặc quy tắc có thể quyết định nhóm tìm kiếm trước; nhãn classifier không tự ghi đè. Sau đó bộ truy hồi vẫn phải chọn đúng FAQ và qua kiểm tra bằng chứng. Bảng bên trên có câu phúc khảo: xem riêng MLP và kết quả route để nhận ra vai trò của từng phần.</p>
+<h3>Nếu muốn chuyển hẳn sang lĩnh vực khác?</h3><p>Cần dữ liệu có nhãn của lĩnh vực mới, định nghĩa lại tập lớp, fit lại vectorizer và huấn luyện classifier, cập nhật kho nguồn và quy tắc, rồi đánh giá trên dữ liệu đại diện chưa dùng để phát triển. Đưa văn bản mới vào mô hình cũ không làm mô hình tự học thêm lớp. Giữ cùng 327 chiều cũng không có nghĩa cùng ngữ nghĩa hoặc cùng phân phối.</p>
+<p class="note">Các quy tắc regex, ngưỡng truy hồi và kiểm tra từ vựng hiện tại chỉ giảm sai, không bảo đảm phát hiện mọi câu ngoài phạm vi. Bảng là snapshot chạy route() với FAQ JSON công khai, không đọc SQLite đang phục vụ. Muốn xem lượt hỏi hiện tại, mở <a href="/architecture/live">trace thật</a>.</p>
+<p><a href="/static/huong-dan-bao-ve.html#rules">Code quy tắc →</a> · <a href="/static/huong-dan-bao-ve.html#evidence">Code kiểm tra bằng chứng →</a></p>
+</section>
+<section id="toy"><p class="chapter">08 / VÍ DỤ NHỎ · TỰ THAY SỐ</p><h2>Kéo đầu vào để thấy từng phép tính đổi</h2>
+<p>Ví dụ có 2 đặc trưng, 2 nơ-ron ẩn và 2 lớp A/B để tính tay. Các trọng số dưới đây <strong>do ta đặt cho bài học</strong>, không phải mô hình 327→16→5 của dự án. Hai đầu vào điều chỉnh độc lập, không bắt buộc chuẩn L2; đừng xem chúng là một vector TF-IDF thực đã chuẩn hóa.</p>
+<div class="controls"><label for="toy-x1">x₁ <output id="x1-value" for="toy-x1">0.6</output><input id="toy-x1" type="range" min="0" max="1" step="0.1" value="0.6"></label><label for="toy-x2">x₂ <output id="x2-value" for="toy-x2">0.8</output><input id="toy-x2" type="range" min="0" max="1" step="0.1" value="0.8"></label></div>
+<div class="two"><div><h3>MLP nhỏ</h3><div class="formula">z₁=x₁−x₂; z₂=−x₁+x₂<br>h₁=max(0,z₁); h₂=max(0,z₂)<br>aA=2h₁−h₂; aB=−h₁+2h₂<br>p=softmax([aA,aB])</div><div id="toy-mlp"></div></div><div><h3>SVM nhị phân nhỏ</h3><div class="formula">w=[2,−1], b=−0.3<br>f(x)=2x₁−x₂−0.3<br>m=y·f(x)<br>ℓ=max(0,1−m)²</div><label>Nhãn đúng để tính loss<select id="toy-label"><option value="1">+1</option><option value="-1">−1</option></select></label><div id="toy-svc"></div></div></div>
+<details><summary>Tính gradient của MLP nhỏ cho nhãn đúng A</summary><div id="toy-gradient"></div><p>Các gradient này chỉ cho một mẫu, chưa cộng L2. Không có thao tác cập nhật trọng số. Khi x₁=x₂, cả hai z=0; dùng đạo hàm ReLU tại 0 bằng 0 nên gradient đi vào hai nơ-ron ẩn bị chặn. Không suy ra mô hình học xong từ hiện tượng này.</p></details>
+</section>
+
+<section id="comparison"><p class="chapter">09 / PHƯƠNG PHÁP ↔ CODE</p><h2>Cùng dữ liệu, hai dạng hàm quyết định</h2>
+<div class="table-wrap"><table><thead><tr><th>Tiêu chí</th><th>MLP</th><th>LinearSVC</th></tr></thead><tbody>
+<tr><td>Biểu diễn đầu vào</td><td>TF-IDF, 327 chiều.</td><td>Pipeline TF-IDF riêng, cùng cấu hình Train.</td></tr><tr><td>Điểm đầu ra</td><td>Qua lớp ẩn phi tuyến rồi softmax.</td><td>5 hàm wᵀx+b.</td></tr><tr><td>Mục tiêu học</td><td>Cross-entropy + L2.</td><td>Squared hinge + L2 cho OvR.</td></tr><tr><td>Bộ tối ưu trong dự án</td><td>L-BFGS, gradient qua backprop.</td><td>liblinear; không có lớp ẩn.</td></tr><tr><td>Số hệ số của classifier</td><td>5.333 trọng số và bias.</td><td>5×327+5 = 1.640 hệ số.</td></tr><tr><td>predict()</td><td>Chọn lớp có đầu ra cao nhất.</td><td>Chọn điểm OvR cao nhất.</td></tr><tr><td>Xem điểm</td><td>predict_proba(), chưa hiệu chỉnh.</td><td>decision_function(), không phải xác suất.</td></tr><tr><td>Đánh đổi</td><td>Biểu diễn phi tuyến, nhiều tham số hơn, dễ overfit dữ liệu ít.</td><td>Ranh giới tuyến tính, ít hệ số hơn; giới hạn khả năng mô tả quan hệ phi tuyến theo đặc trưng hiện có.</td></tr>
+</tbody></table></div>
+<p>“Tuyến tính” là theo không gian đặc trưng đang dùng. Một bộ phân loại tuyến tính sau phép biến đổi đặc trưng phi tuyến có thể có ranh giới khác khi nhìn ở không gian dữ liệu gốc. Trong dự án này, ta không nói LinearSVC đã học mạng nơ-ron.</p>
+<h3>Code dự án gọi thư viện ở đâu?</h3><p>Dự án khai báo cấu hình và gọi pipeline. Nhân ma trận, ReLU, gradient và bộ giải nằm trong sklearn/NumPy/SciPy/liblinear. Mục 7 viết lại phép forward để giải thích và đối chiếu, không thay thuật toán đang phục vụ chatbot.</p>
+<div id="code-excerpts"></div>
+</section>
+
+<section id="evaluation"><p class="chapter">10 / THỰC NGHIỆM VÀ TỔNG QUÁT HÓA</p><h2>Học tốt trên Train chưa đủ</h2>
+<p><strong>30 Train:</strong> học từ vựng, IDF và tham số classifier. <strong>10 Validation:</strong> chọn cấu hình trong các phương án khảo sát. <strong>10 Test:</strong> báo cáo sau lựa chọn. Pipeline không refit trên Train+Validation trong lần thực nghiệm đã lưu. Test này đã từng được xem trước đó, nên không coi là đánh giá độc lập mới.</p>
+<h3>Đọc confusion matrix và các chỉ số</h3>
+<div class="formula">Accuracy = số nhãn đúng / tổng số mẫu<br>Precisionₖ = TPₖ/(TPₖ+FPₖ)<br>Recallₖ = TPₖ/(TPₖ+FNₖ)<br>F1ₖ = 2·Precisionₖ·Recallₖ/(Precisionₖ+Recallₖ)<br>Macro-F1 = (1/K)ΣₖF1ₖ</div>
+<p>TP là mẫu thuộc lớp k và được dự đoán k; FP là mẫu không thuộc k nhưng bị gán k; FN là mẫu thuộc k nhưng bị bỏ sang lớp khác. Với <code>confusion_matrix</code> của sklearn, hàng là nhãn thật, cột là nhãn dự đoán theo thứ tự labels được truyền. Dự án dùng <code>zero_division=0</code> cho trường hợp chỉ số không xác định vì mẫu số bằng 0.</p>
+<p>Cả hai mô hình đạt 7/10 câu Test đúng. Một câu thay đổi accuracy 10 điểm phần trăm. Không kết luận hai mô hình tương đương nói chung; kết quả chỉ mô tả tập dữ liệu nhỏ này. Validation hòa Macro-F1, quy tắc lựa chọn ưu tiên LinearSVC; MLP vẫn là mô hình nghiên cứu chính để phân tích.</p>
+<h3>Overfitting, underfitting và rò rỉ dữ liệu</h3><ul><li><strong>Overfitting:</strong> học quá sát nhiễu/đặc thù Train, ra câu mới giảm chất lượng. Kiểm tra chênh lệch Train–Validation, độ ổn định qua tập dữ liệu lớn hơn, không chỉ nhìn một lần accuracy.</li><li><strong>Underfitting:</strong> mô hình/đặc trưng hoặc mức điều chuẩn chưa đủ để mô tả quy luật, ngay Train cũng kém. Thêm lớp không tự giải quyết dữ liệu nhãn sai.</li><li><strong>Data leakage:</strong> dùng thông tin của Validation/Test để fit từ vựng, chỉnh tham số hoặc chọn phương án, khiến đánh giá lạc quan. Phải fit tiền xử lý bên trong mỗi Train; nếu dùng cross-validation thì fit riêng ở từng fold.</li><li><strong>Distribution shift:</strong> câu hỏi thực tế, cách viết, năm học hoặc thủ tục đổi so với dữ liệu biên soạn. Mô hình vẫn trả nhãn nhưng khả năng đúng có thể giảm.</li></ul>
+<p class="note">Đúng chủ đề ≠ đúng FAQ ≠ đúng câu trả lời. Đánh giá classifier bằng nhãn, đánh giá truy hồi bằng FAQ được chọn, đánh giá câu trả lời bằng nội dung và nguồn. Ngưỡng kiểm tra bằng chứng là quy tắc kỹ thuật riêng, không phải ngưỡng softmax đã được kiểm định thống kê.</p>
+</section>
+
+<section id="glossary"><p class="chapter">11 / TỪ ĐIỂN CÓ THỂ TRA CỨU</p><h2>Mỗi thuật ngữ: định nghĩa, vai trò và chỗ dễ nhầm</h2><label>Tìm thuật ngữ tiếng Việt hoặc tiếng Anh<input id="term-search" type="search" placeholder="Ví dụ: gradient, bias, biên, kernel…"></label><p id="term-count" class="muted"></p><div id="terms"></div></section>
+
+<section id="tc-questions"><p class="chapter">ÔN THI VẤN ĐÁP · THEO BẢNG TIÊU CHÍ TC1–TC6</p><h2>Câu hỏi thầy cô hay hỏi, kèm đáp án theo dự án</h2>
+<p>Mỗi tiêu chí có câu hỏi, ý cần nói và số liệu thật của bài. Số liệu lấy từ <code>reports/experiments.json</code> và <code>scripts/train.py</code>. Nên tự trả lời trước rồi mới mở đáp án.</p>
+<div class="table-wrap"><table><thead><tr><th>CĐR</th><th>Tiêu chí</th><th>Nội dung</th><th>Điểm</th></tr></thead><tbody>
+<tr><td>L1</td><td><a href="#tc1">TC1</a></td><td>Thiết lập cơ sở dữ liệu huấn luyện</td><td class="number">2</td></tr>
+<tr><td>L1</td><td><a href="#tc2">TC2</a></td><td>Thiết lập các tham số cho mô hình nhận dạng</td><td class="number">2</td></tr>
+<tr><td>L1</td><td><a href="#tc3">TC3</a></td><td>Lựa chọn thuật toán</td><td class="number">1</td></tr>
+<tr><td>L2</td><td><a href="#tc4">TC4</a></td><td>Thiết kế mô hình hệ thống nhận dạng</td><td class="number">2</td></tr>
+<tr><td>L2</td><td><a href="#tc5">TC5</a></td><td>Thiết kế phần mềm nhận dạng</td><td class="number">2</td></tr>
+<tr><td>L2</td><td><a href="#tc6">TC6</a></td><td>Hiển thị và đánh giá kết quả nhận dạng</td><td class="number">1</td></tr>
+</tbody></table></div>
+
+<h3 id="tc1">TC1 · Thiết lập cơ sở dữ liệu huấn luyện (2đ)</h3>
+<details><summary>Dữ liệu lấy từ đâu, bao nhiêu mẫu, bao nhiêu lớp?</summary><p>Bộ <code>data/original_50.csv</code> gồm 50 câu hỏi sinh viên tự biên soạn. Mỗi câu có các cột id, question, intent, split và group_id. Có 5 lớp: hoc_phi, dang_ky_hoc_phan, lich_thi, hoc_bong và diem_hoc_tap, mỗi lớp 10 câu. Nội dung câu hỏi bám theo thông tin công khai trên trang HaUI.</p></details>
+<details><summary>Dữ liệu có mất cân bằng không?</summary><p>Không, vì 5 lớp đều có 10 câu. Nếu mất cân bằng thì có thể dùng <code>class_weight='balanced'</code> (với LinearSVC), oversampling/SMOTE hoặc undersampling. Khi đó nên báo cáo Macro-F1 thay vì chỉ báo Accuracy.</p></details>
+<details><summary>Chia Train/Validation/Test thế nào, tại sao phải có Test riêng?</summary><p>Chia cố định 30/10/10, tức 60/20/20. Mỗi lớp có 6 câu Train, 2 câu Validation và 2 câu Test, nên tỉ lệ các lớp giống nhau ở cả ba tập (phân tầng). Train dùng để học, Validation để chọn cấu hình, Test chỉ dùng để báo cáo cuối. Nếu chọn cấu hình bằng Test thì kết quả sẽ lạc quan giả, gọi là rò rỉ dữ liệu. Script có <code>assert</code> kiểm tra đủ 50 câu và đúng 30/10/10.</p></details>
+<details><summary>Tiền xử lý gồm những bước nào?</summary><p>Hàm <code>normalize_classification</code> trong <code>app/text.py</code> chuẩn hóa Unicode NFC, đổi chữ thường và gộp khoảng trắng. Bài giữ dấu tiếng Việt và từ phủ định, không bỏ stopword vì với câu ngắn, từ như “không” hay “ở đâu” có thể đổi nghĩa.</p></details>
+<details><summary>Trích chọn đặc trưng thế nào?</summary><p>Dùng <code>TfidfVectorizer</code> với unigram và bigram (<code>ngram_range=(1,2)</code>), <code>sublinear_tf=True</code>, chuẩn L2 và <code>max_features=500</code>. Vectorizer chỉ fit trên 30 câu Train, học được vocabulary 327 đặc trưng. Vì vậy mỗi câu thành một vector 327 chiều. Xem <a href="#tfidf">mục 3</a>.</p></details>
+<details><summary>Gán nhãn thế nào, làm sao đảm bảo nhãn đúng?</summary><p>Nhãn được gán thủ công theo chủ đề khi biên soạn. Cột group_id giữ các câu gần giống nhau cùng một tập, tránh rò rỉ giữa Train và Test. Có thể bổ sung một người thứ hai gán nhãn độc lập rồi đo mức đồng thuận (Cohen’s kappa).</p></details>
+<details><summary>Có tăng cường dữ liệu không? 50 câu có ít quá không?</summary><p>Không tăng cường. 50 câu là ít: Test chỉ có 10 câu nên một câu sai làm Accuracy thay đổi 10%. Cần nói rõ đây là hạn chế. Hướng cải tiến là thu thêm câu hỏi thật, viết lại câu bằng nhiều cách diễn đạt (paraphrase), rồi đánh giá trên tập Test mới chưa từng xem.</p></details>
+
+<h3 id="tc2">TC2 · Thiết lập các tham số cho mô hình (2đ)</h3>
+<details><summary>Tham số và siêu tham số khác nhau thế nào?</summary><p>Tham số là giá trị mô hình tự học từ dữ liệu, ví dụ trọng số W, bias b, hay w và b của SVM. Siêu tham số là giá trị người làm đặt trước khi học, ví dụ số nơ-ron ẩn, alpha, C, solver, max_iter.</p></details>
+<details><summary>Mô hình có những siêu tham số nào, chọn bao nhiêu, vì sao?</summary><p><strong>MLP:</strong> thử <code>hidden_layer_sizes</code> ∈ {(16,),(32,)} và <code>alpha</code> ∈ {0.001, 0.01}, với <code>solver='lbfgs'</code>, <code>max_iter=1000</code>, <code>random_state=42</code>. Cấu hình được chọn là (16,) và alpha=0.001. <strong>LinearSVC:</strong> thử C ∈ {0.1, 1}, chọn C=0.1. Cả hai được chọn theo Macro-F1 trên Validation. Khi hòa, lấy cấu hình đứng đầu theo thứ tự đã định trước.</p></details>
+<details><summary>Tìm siêu tham số bằng cách nào?</summary><p>Dùng grid search nhỏ, viết bằng vòng lặp trong <code>scripts/train.py</code>. Mỗi cấu hình học trên Train, đo Macro-F1 trên Validation, rồi giữ cấu hình tốt nhất. Có thể dùng <code>GridSearchCV</code> với k-fold, nhưng vì dữ liệu ít và cần tách Test cố định nên bài chọn Validation riêng.</p></details>
+<details><summary>Tại sao solver lbfgs mà không phải Adam/SGD?</summary><p>L-BFGS là phương pháp tựa Newton, thường hội tụ nhanh và ổn định với dữ liệu nhỏ, đúng khuyến nghị của sklearn. Adam và SGD phù hợp hơn với dữ liệu lớn, khi cần học theo mini-batch. Với lbfgs không có khái niệm batch size hay learning rate.</p></details>
+<details><summary>Learning rate quá lớn hoặc quá nhỏ thì sao?</summary><p>Quá lớn thì loss dao động hoặc phân kỳ. Quá nhỏ thì hội tụ chậm và dễ dừng khi chưa học xong. Bài dùng lbfgs nên bước đi do thuật toán tự tìm (line search), không cần đặt learning rate.</p></details>
+<details><summary>Overfitting là gì, nhận biết và chống thế nào?</summary><p>Overfitting là khi mô hình học thuộc Train nhưng kém trên dữ liệu mới. Bài có dấu hiệu này: Train đạt Accuracy 1.0, Test chỉ 0.7. Cách chống: điều chuẩn L2 (alpha của MLP, C nhỏ của SVM), chọn mạng nhỏ (16 nơ-ron), thêm dữ liệu và early stopping. Kết quả đúng phải đo trên tập chưa dùng để học.</p></details>
+<details><summary>Alpha, C ảnh hưởng thế nào?</summary><p>Alpha tăng thì phạt L2 mạnh hơn, trọng số nhỏ hơn, mô hình đơn giản hơn. C của SVM tác động ngược lại: C nhỏ nghĩa là điều chuẩn mạnh, biên rộng hơn. Xem <a href="#learning">mục 5</a> và <a href="#svc">mục 6</a>.</p></details>
+<details><summary>random_state=42 để làm gì?</summary><p>Để cố định khởi tạo ngẫu nhiên trọng số, giúp chạy lại cho cùng kết quả (tái lập thí nghiệm).</p></details>
+
+<h3 id="tc3">TC3 · Lựa chọn thuật toán (1đ)</h3>
+<details><summary>Bài toán thuộc loại gì?</summary><p>Học có giám sát, phân loại đa lớp văn bản với 5 lớp. Đây không phải hồi quy hay phân cụm.</p></details>
+<details><summary>Tại sao chọn MLP và LinearSVC?</summary><p>Vector TF-IDF có nhiều chiều và thưa (327 chiều), nên SVM tuyến tính là lựa chọn mạnh và nhanh cho văn bản. MLP là mạng nơ-ron, học được biên phi tuyến nhờ ReLU, đúng nội dung học phần. So sánh hai mô hình trên cùng dữ liệu cho phép đánh giá công bằng.</p></details>
+<details><summary>Trình bày nguyên lý MLP</summary><p>Lớp ẩn tính h = ReLU(xW₁+b₁), lớp ra tính a = hW₂+b₂, softmax đổi thành xác suất, argmax chọn nhãn. Khi học, mô hình giảm cross-entropy, backpropagation tính gradient và L-BFGS cập nhật trọng số.</p></details>
+<details><summary>Trình bày nguyên lý SVM</summary><p>SVM tìm siêu phẳng w·x+b=0 có lề lớn nhất giữa các lớp. Mục tiêu là ½‖w‖² + C·Σ squared hinge. Với 5 lớp, LinearSVC học 5 bộ phân loại one-vs-rest, rồi chọn lớp có điểm cao nhất.</p></details>
+<details><summary>Sao không dùng Naive Bayes, KNN, cây quyết định, CNN/LSTM/Transformer?</summary><p><strong>Naive Bayes:</strong> nhanh, làm baseline tốt, nhưng giả định các từ độc lập. <strong>KNN:</strong> chậm khi dự đoán, kém với vector thưa nhiều chiều. <strong>Cây quyết định:</strong> dễ overfit trên đặc trưng thưa. <strong>CNN/LSTM/Transformer:</strong> cần nhiều dữ liệu hơn hẳn 50 câu, tốn tài nguyên. Hướng mở rộng hợp lý là thêm Naive Bayes làm baseline.</p></details>
+<details><summary>Ưu và nhược điểm của thuật toán đã chọn?</summary><p><strong>LinearSVC:</strong> nhanh (fit khoảng 1.6 ms), dễ giải thích qua trọng số; nhưng điểm ra không phải xác suất và chỉ tạo biên tuyến tính. <strong>MLP:</strong> có xác suất từ softmax, biểu diễn được quan hệ phi tuyến; nhưng nhiều tham số, dễ overfit với dữ liệu nhỏ và khó giải thích hơn.</p></details>
+
+<h3 id="tc4">TC4 · Thiết kế mô hình hệ thống nhận dạng (2đ)</h3>
+<details><summary>Vẽ và giải thích sơ đồ khối hệ thống</summary><p>Câu hỏi → chuẩn hóa → TF-IDF (327 chiều) → classifier (MLP hoặc LinearSVC) → nhãn chủ đề → định tuyến và truy hồi FAQ → kiểm tra bằng chứng → trả lời, hoặc hỏi lại/từ chối. Xem <a href="/static/huong-dan-mo-phong.html">lưu đồ từng bước</a>.</p></details>
+<details><summary>Huấn luyện và nhận dạng khác nhau ở đâu?</summary><p><strong>Huấn luyện</strong> (<code>scripts/train.py</code>) chạy offline: fit Pipeline(TF-IDF + clf) trên Train, chọn cấu hình theo Validation, đo Test rồi lưu file <code>.joblib</code>. <strong>Nhận dạng</strong> chạy online: nạp file đã lưu và gọi <code>predict</code>, không học lại.</p></details>
+<details><summary>Kiến trúc mạng: đầu vào, lớp ẩn, đầu ra bao nhiêu?</summary><p>327 đầu vào, 1 lớp ẩn 16 nơ-ron ReLU, 5 đầu ra softmax. Tổng số tham số là 327×16+16+16×5+5 = 5.333. Xem <a href="#teacher-feedback">bảng đối chiếu</a>.</p></details>
+<details><summary>Hàm loss là gì, tại sao?</summary><p>MLP dùng cross-entropy (log-loss) cộng phạt L2, phù hợp với đầu ra xác suất của softmax. LinearSVC dùng squared hinge, phạt các mẫu nằm trong biên hoặc sai phía. MSE dành cho hồi quy nên không dùng ở đây.</p></details>
+<details><summary>Tại sao dùng Pipeline?</summary><p>Pipeline gói vectorizer và classifier làm một khối. Nhờ vậy lúc dự đoán luôn dùng đúng vocabulary và IDF đã fit trên Train, tránh lệch giữa lúc học và lúc chạy, cũng tránh rò rỉ dữ liệu.</p></details>
+<details><summary>Mô hình lưu và nạp thế nào?</summary><p><code>joblib.dump</code> lưu ra <code>models/mlp.joblib</code>, <code>models/linearsvc.joblib</code> và <code>models/intent.joblib</code> (mô hình được chọn). Ứng dụng nạp bằng <code>joblib.load</code>. Mã SHA-256 của từng file được ghi trong báo cáo để kiểm chứng đúng file.</p></details>
+<details><summary>Câu hỏi ngoài 5 lớp thì sao?</summary><p>Classifier đóng vẫn chọn một trong 5 nhãn. Vì vậy hệ thống có thêm bước truy hồi và ngưỡng bằng chứng: nếu không khớp FAQ thì hỏi lại hoặc từ chối. Xem <a href="#scope-behavior">Phạm vi khác thì sao?</a></p></details>
+
+<h3 id="tc5">TC5 · Thiết kế phần mềm nhận dạng (2đ)</h3>
+<details><summary>Dùng ngôn ngữ và thư viện gì?</summary><p>Python, scikit-learn (TfidfVectorizer, MLPClassifier, LinearSVC), joblib, FastAPI cho backend, HTML/JS cho giao diện và SQLite để lưu dữ liệu.</p></details>
+<details><summary>Phần mềm có chức năng gì?</summary><p>Chatbot hỏi đáp cho sinh viên, trang Thực nghiệm để chọn auto/MLP/LinearSVC/chỉ truy hồi, trang quản trị FAQ, trace chạy thật và trang học mô hình này.</p></details>
+<details><summary>Giao diện và backend giao tiếp thế nào?</summary><p>Qua REST API trả JSON. <code>POST /api/chat</code> dùng để hỏi đáp, <code>POST /api/experiments/route</code> để thử từng mô hình, <code>GET /api/experiments</code> để xem kết quả thực nghiệm.</p></details>
+<details><summary>Chỉ ra hàm huấn luyện và hàm dự đoán</summary><p>Hàm huấn luyện là <code>main()</code> trong <code>scripts/train.py</code>, gồm vòng grid, <code>pipe.fit</code>, <code>measure</code> và <code>joblib.dump</code>. Hàm dự đoán là <code>classify()</code> trong <code>app/engine.py</code>: gọi <code>model.predict</code>, rồi <code>predict_proba</code> (MLP) hoặc <code>decision_function</code> (SVC) để lấy điểm. Xem <a href="/static/huong-dan-bao-ve.html">Lưu đồ ↔ code</a>.</p></details>
+<details><summary>Nhận dạng một câu mất bao lâu, có chạy thời gian thực không?</summary><p>Trung vị (p50) khoảng 0.34 ms với MLP và 0.30 ms với LinearSVC, nên chạy thời gian thực được. Phần chậm nhất của hệ thống là gọi LLM để diễn đạt câu trả lời, không phải classifier.</p></details>
+<details><summary>Đầu vào lạ, rỗng hoặc toàn từ chưa gặp thì sao?</summary><p>Câu toàn từ chưa có trong vocabulary (OOV) thành vector 0, nhưng nhờ bias vẫn ra một nhãn. Vì vậy ứng dụng không tin riêng nhãn mà kiểm tra thêm bằng chứng truy hồi. Xem <a href="#real-lab">mục 7</a>.</p></details>
+<details><summary>Chạy demo thế nào?</summary><p>Mở chatbot, gõ một câu trong tập Test, mở trang Thực nghiệm để so MLP và LinearSVC, rồi mở Trace để chứng minh <code>classify</code> thực sự được gọi. Nên tập trước vài câu đúng và một câu sai để giải thích.</p></details>
+
+<h3 id="tc6">TC6 · Hiển thị và đánh giá kết quả (1đ)</h3>
+<details><summary>Dùng những độ đo nào, giải thích?</summary><p>Dùng Accuracy, Precision, Recall, F1 và Macro-F1. Precision trả lời: trong các câu bị gán lớp k, bao nhiêu câu đúng là k. Recall trả lời: trong các câu thật sự thuộc k, bao nhiêu câu tìm ra. F1 là trung bình điều hòa của hai giá trị này. Macro-F1 là trung bình F1 của 5 lớp, coi các lớp ngang nhau. Công thức ở <a href="#evaluation">mục 10</a>.</p></details>
+<details><summary>Kết quả cụ thể là bao nhiêu?</summary><p>Validation: cả hai đạt Macro-F1 1.0. Test: MLP đạt Accuracy 0.70 và Macro-F1 ≈ 0.713; LinearSVC đạt Accuracy 0.70 và Macro-F1 ≈ 0.693. Train của cả hai là 1.0. Ứng dụng chọn LinearSVC vì Validation hòa và quy tắc ưu tiên mô hình tuyến tính đơn giản hơn. Lựa chọn được lưu trước khi đo Test.</p></details>
+<details><summary>Đọc confusion matrix: lớp nào hay nhầm?</summary><p>Cả hai mô hình sai 3/10 câu Test: “Làm sao để lấy thông tin các khoản phải nộp của học kỳ?” (học phí, MLP đoán lich_thi, SVC đoán dang_ky_hoc_phan); “Làm thế nào để kiểm tra địa điểm thi?” (lịch thi, đoán hoc_phi); “Làm sao để biết mình đã có kết quả thi cuối kỳ?” (điểm, đoán lich_thi). Nguyên nhân là các câu không chứa từ khóa đặc trưng như “học phí” hay “điểm”, trong khi từ “thi” kéo câu về lớp lịch thi. Đây là giới hạn của TF-IDF: mô hình dựa vào từ bề mặt, không hiểu nghĩa của câu.</p></details>
+<details><summary>Accuracy 1.0 trên Train có đáng tin không?</summary><p>Không chứng minh được mô hình tốt. Mô hình nhỏ dễ thuộc lòng 30 câu. Phải nhìn Validation và Test; chênh lệch 1.0 so với 0.7 là dấu hiệu overfitting và dữ liệu quá ít.</p></details>
+<details><summary>Khi nào Accuracy không đủ?</summary><p>Khi dữ liệu mất cân bằng: đoán toàn lớp đông nhất vẫn được Accuracy cao. Khi đó cần Macro-F1 và xem Precision/Recall của từng lớp.</p></details>
+<details><summary>Có đồ thị loss theo epoch không?</summary><p>lbfgs không học theo epoch nên không có đường loss/epoch như Adam. Có thể xem <code>loss_</code> và <code>n_iter_</code> của MLP. Kết quả hiển thị ở trang Thực nghiệm và <code>reports/experiments.png</code>.</p></details>
+<details><summary>Hạn chế và hướng cải tiến?</summary><p>Hạn chế: dữ liệu nhỏ (Test 10 câu), Test đã từng được xem, TF-IDF không hiểu từ đồng nghĩa, điểm softmax chưa được hiệu chỉnh. Hướng cải tiến: thu thêm dữ liệu thật, dùng k-fold cross-validation, lập tập Test độc lập mới, thử embedding như PhoBERT, thêm Naive Bayes làm baseline và hiệu chỉnh xác suất.</p></details>
+
+<h3>Câu hỏi “bẫy” hay gặp</h3>
+<details><summary>Bias và variance là gì?</summary><p>Bias cao nghĩa là mô hình quá đơn giản, sai ngay trên Train (underfitting). Variance cao nghĩa là mô hình quá nhạy với Train, kém trên dữ liệu mới (overfitting). Bài có Train 1.0, Test 0.7 nên nghiêng về variance.</p></details>
+<details><summary>Cross-validation là gì, tại sao dùng k-fold?</summary><p>Chia dữ liệu thành k phần, lần lượt lấy 1 phần để kiểm tra và k−1 phần để học, rồi lấy trung bình. Cách này cho ước lượng ổn định hơn một lần chia, rất có ích khi dữ liệu ít như bài này.</p></details>
+<details><summary>ReLU, Sigmoid, Softmax dùng ở đâu?</summary><p>ReLU dùng ở lớp ẩn: đơn giản, ít bị triệt tiêu gradient. Sigmoid dùng cho đầu ra nhị phân. Softmax dùng cho đầu ra đa lớp, như 5 lớp của bài.</p></details>
+<details><summary>Gradient descent hoạt động thế nào?</summary><p>Lặp θ ← θ − η·∇L(θ): đi ngược hướng gradient để giảm loss. Backpropagation tính ∇L theo chain rule. L-BFGS cải tiến thêm bằng cách xấp xỉ ma trận Hessian.</p></details>
+<details><summary>Tăng gấp đôi dữ liệu thì kết quả đổi thế nào?</summary><p>Thường giảm variance và tăng độ tin cậy của phép đánh giá; vocabulary lớn hơn nên ít từ OOV hơn. Không bảo đảm kết quả tăng nếu dữ liệu mới bị lệch phân bố hoặc gán nhãn sai. Phải đo lại theo đúng quy trình.</p></details>
+<details><summary>Em tự làm phần nào?</summary><p>Trả lời trung thực theo phần mình thực sự làm: biên soạn dữ liệu, script huấn luyện, grid tham số, đánh giá, tích hợp vào ứng dụng. Thư viện sklearn cài đặt thuật toán, còn em thiết kế quy trình và giải thích được phép tính bên trong.</p></details>
+<p class="note"><strong>Mẹo:</strong> TC1, TC2, TC4 và TC5 chiếm 8/10 điểm. Cần thuộc các số 50 câu, 5 lớp, 30/10/10, 327 đặc trưng, (16,) với alpha 0.001, C=0.1 và Test 0.70. Chạy demo trơn tru và mở đúng hàm <code>classify()</code> khi được hỏi.</p>
+</section>
+
+<section id="viva"><p class="chapter">12 / LUYỆN VẤN ĐÁP</p><h2>Hiểu đủ để tự giải thích</h2>
+<p>Thử tự trả lời trước khi mở gợi ý. Khi cô hỏi, nên đi theo thứ tự <strong>khái niệm → công thức → dữ liệu đi qua → dòng code → giới hạn</strong>.</p><div id="viva-questions"></div>
+<div class="note"><strong>Bài tự luyện:</strong><ol><li>Tính softmax cho [1,0,−1]. Tại sao trừ 1 trước khi lấy exp không đổi đáp án?</li><li>Với x=[0.6,0.8], w=[2,−1], b=−0.3, y=+1: tính điểm, khoảng cách và squared hinge.</li><li>Với MLP 327→32→5, có bao nhiêu tham số? Gợi ý: đếm cả bias.</li><li>Chọn câu toàn OOV ở mục 7. Vì sao vẫn có nhãn? Chỉ ra số hạng còn lại trong cả hai mô hình.</li><li>Đọc một hàng confusion matrix để mô tả lớp đó thường nhầm sang đâu.</li></ol><details><summary>Đáp án nhanh 1–3</summary><p>1) ≈[0.6652,0.2447,0.0900], cùng nhân tử exp(−1) bị triệt tiêu ở tử/mẫu. 2) f=0.1; khoảng cách có dấu≈0.04472; m=0.1; loss=0.81. 3) 327×32+32+32×5+5=10.661 tham số.</p></details></div>
+</section>
+
+<section id="references"><h2>Nguồn học tiếp và cách đối chiếu</h2><ul>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html" target="_blank" rel="noopener">sklearn · TfidfVectorizer</a> — cấu hình token, n-gram, TF, IDF và chuẩn hóa.</li>
+<li><a href="https://scikit-learn.org/stable/modules/neural_networks_supervised.html" target="_blank" rel="noopener">sklearn · Neural network models</a> — MLP, loss, điều chuẩn và các solver.</li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html" target="_blank" rel="noopener">sklearn · LinearSVC</a> — OvR, squared hinge, C và intercept.</li>
+<li><a href="/static/huong-dan-bao-ve.html#train">Code huấn luyện của dự án</a> · <a href="/architecture/live">Trace để xem classifier có thực sự được gọi</a>.</li>
+</ul><p>Các nguồn sklearn “stable” có thể thay đổi phiên bản; thông số cụ thể của bài này được lấy từ artifact hiện tại. Những ví dụ tính tay được ghi rõ là minh họa. Mở trang không sửa mô hình, không tạo hội thoại và không gọi Qwen.</p></section>
+</main></div>
+<footer>HaUI Assist · Học từ phép tính, kiểm tra bằng code. <a href="#">Về đầu trang ↑</a></footer>
+</body></html>

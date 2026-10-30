@@ -1,0 +1,76 @@
+/* Teaching shell; the original Archify SVG geometry is preserved. */
+body.presentation-shell { margin:0; padding:0; display:block; font:15px/1.5 system-ui,sans-serif; background:var(--page); color:var(--ink); overflow-x:hidden; }
+.presentation-shell * { box-sizing:border-box; }
+html[data-theme="dark"] { --page:#0b1423; --panel:#132137; --panel-alt:#192b43; --ink:#e7effa; --muted:#a9bdd7; --line:#334b66; --cyan:#62d9ef; --green:#82e5b5; --amber:#ffd293; }
+html[data-theme="light"] { --page:#f3f7fc; --panel:#fff; --panel-alt:#eaf1fa; --ink:#142b43; --muted:#405d79; --line:#bed1e3; --cyan:#00758c; --green:#06784b; --amber:#8b4d00; }
+.presentation-shell a { color:var(--cyan); }
+.presentation-shell button,.presentation-shell select { font:inherit; color:var(--ink); background:var(--panel-alt); border:1px solid var(--line); border-radius:9px; padding:9px 12px; cursor:pointer; }
+.presentation-shell button:disabled { opacity:.35; cursor:default; }
+.presentation-shell :focus-visible { outline:3px solid var(--cyan); outline-offset:3px; }
+.presentation-shell header { display:flex; justify-content:space-between; gap:24px; padding:18px 26px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+.presentation-shell h1 { font-size:25px; line-height:1.2; margin:5px 0 8px; color:var(--ink); letter-spacing:-.5px; }
+.presentation-shell .eyebrow { color:var(--cyan); font-size:11px; font-weight:750; letter-spacing:2px; }
+.presentation-shell .subtitle { color:var(--muted); margin:0; font-size:13px; }
+.presentation-shell .header-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.presentation-shell .demo-banner { margin:14px 26px; padding:9px 14px; border:1px solid var(--line); border-radius:9px; background:var(--panel); color:var(--amber); font-size:13px; }
+.presentation-shell .toolbar { position:static; display:flex; gap:14px; flex-wrap:wrap; padding:0 26px 14px; align-items:end; }
+.presentation-shell .toolbar label { display:flex; flex-direction:column; font-size:12px; gap:5px; color:var(--muted); }
+.presentation-shell .toolbar select { min-width:240px; max-width:100%; }
+.presentation-shell .toolbar .scenario { flex:1; }
+.presentation-shell .workspace { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(350px,1fr); align-items:start; gap:16px; padding:0 26px 24px; }
+.presentation-shell .graph-card,.presentation-shell .io-panel { min-width:0; border:1px solid var(--line); border-radius:16px; background:var(--panel); overflow:hidden; }
+.presentation-shell .graph-heading { padding:13px 16px; display:flex; justify-content:space-between; gap:12px; align-items:center; border-bottom:1px solid var(--line); }
+.presentation-shell h2 { font:700 17px/1.4 system-ui; margin:0; color:var(--ink); }
+.presentation-shell .follow { white-space:nowrap; font-size:12px; color:var(--muted); }
+.presentation-shell .diagram-container { margin:0; padding:0; width:100%; max-width:none; height:min(55vh,560px); min-height:360px; border:0; border-radius:0; background:var(--panel); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.presentation-shell .diagram-container > svg { width:100%; height:100%; max-width:none; display:block; overflow:hidden; }
+.presentation-shell .diagram-container [data-node-id] { cursor:pointer; opacity:.52; transition:opacity .2s; }
+.presentation-shell .diagram-container [data-node-id].demo-done { opacity:.85; }
+.presentation-shell .diagram-container [data-node-id].demo-active { opacity:1; filter:drop-shadow(0 0 9px var(--cyan)); }
+.presentation-shell .diagram-container [data-node-id].demo-active > rect:not(.c-mask) { stroke:var(--cyan)!important; stroke-width:3px!important; }
+.presentation-shell .diagram-container [data-edge-id].demo-edge { opacity:1; filter:drop-shadow(0 0 3px var(--cyan)); }
+.presentation-shell .diagram-container path[data-edge-id].demo-edge,.presentation-shell .diagram-container .demo-edge > path { stroke:var(--cyan)!important; stroke-width:2.7px!important; }
+.presentation-shell .graph-legend { padding:8px 16px; color:var(--muted); display:flex; gap:16px; flex-wrap:wrap; font-size:12px; border-top:1px solid var(--line); }
+.presentation-shell .graph-legend b { color:var(--cyan); }
+.presentation-shell .scenario-copy { padding:12px 16px; font-size:13px; color:var(--muted); border-top:1px solid var(--line); min-height:62px; }
+.presentation-shell .controls { display:flex; align-items:center; gap:8px; padding:12px 16px 8px; flex-wrap:wrap; }
+.presentation-shell .controls .primary { color:var(--page); background:var(--cyan); border-color:var(--cyan); font-weight:750; min-width:120px; }
+.presentation-shell .controls .speed-label { margin-left:auto; color:var(--muted); font-size:12px; }
+.presentation-shell .controls select { min-width:75px; padding:8px; }
+.presentation-shell .progress-row { display:flex; gap:12px; padding:3px 16px 12px; align-items:center; }
+.presentation-shell input[type="range"] { accent-color:var(--cyan); width:100%; }
+.presentation-shell #step-number { white-space:nowrap; font:13px ui-monospace,monospace; color:var(--cyan); }
+.presentation-shell .playback-status { color:var(--muted); font-size:12px; padding:0 16px 12px; }
+.presentation-shell .step-list { display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 16px; max-height:145px; overflow:auto; }
+.presentation-shell .step-item { font-size:12px; padding:6px 9px; text-align:left; }
+.presentation-shell .step-item.current { color:var(--cyan); border-color:var(--cyan); background:var(--panel-alt); }
+.presentation-shell .step-item.completed { border-color:var(--green); }
+.presentation-shell .io-panel { position:sticky; top:12px; }
+.presentation-shell .step-meta { padding:18px 20px 12px; border-bottom:1px solid var(--line); }
+.presentation-shell #branch-status { display:block; font-size:11px; color:var(--green); margin-bottom:8px; }
+.presentation-shell #branch-status.is-inferred { color:var(--amber); }
+.presentation-shell #step-title { font-size:21px; margin-bottom:8px; }
+.presentation-shell #function-name { display:block; font:12px ui-monospace,monospace; color:var(--cyan); overflow-wrap:anywhere; }
+.presentation-shell #step-explanation { color:var(--muted); font-size:13px; margin:10px 0 0; }
+.presentation-shell .io-section { padding:14px 20px; }
+.presentation-shell .io-section + .io-section { border-top:1px solid var(--line); }
+.presentation-shell .io-title { display:flex; gap:8px; align-items:center; margin:0 0 10px; font-size:12px; font-weight:750; letter-spacing:1px; }
+.presentation-shell .io-title.input { color:var(--cyan); }
+.presentation-shell .io-title.output { color:var(--green); }
+.presentation-shell .value-list { display:grid; gap:8px; }
+.presentation-shell .value-row { display:grid; gap:4px; padding:9px 11px; border:1px solid var(--line); border-radius:9px; background:var(--panel-alt); }
+.presentation-shell .value-key { font:11px ui-monospace,monospace; color:var(--muted); }
+.presentation-shell .value-content { font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; max-height:190px; overflow:auto; }
+.presentation-shell details { padding-top:10px; }
+.presentation-shell summary { font-size:12px; color:var(--muted); cursor:pointer; }
+.presentation-shell pre { font:11px/1.5 ui-monospace,monospace; white-space:pre-wrap; overflow-wrap:anywhere; max-height:210px; overflow:auto; padding:12px; border-radius:8px; background:var(--page); color:var(--ink); }
+.presentation-shell .speaker { padding:14px 20px; background:var(--panel-alt); border-top:1px solid var(--line); }
+.presentation-shell .speaker-label { color:var(--amber); font-size:11px; font-weight:750; letter-spacing:1px; }
+.presentation-shell #speaker-note { font-size:14px; margin:7px 0 0; }
+.presentation-shell .sources { border-top:1px solid var(--line); padding:12px 20px; font-size:11px; color:var(--muted); }
+.presentation-shell #source-links { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:5px; }
+.presentation-shell .footer-note { padding:0 26px 22px; color:var(--muted); font-size:12px; }
+@media (min-width:1500px) { .presentation-shell .workspace { grid-template-columns:minmax(0,1.8fr) minmax(400px,1fr); } }
+@media (max-width:1000px) { .presentation-shell .workspace { grid-template-columns:1fr; } .presentation-shell .io-panel { position:static; } .presentation-shell header { flex-wrap:wrap; } }
+@media (max-width:600px) { .presentation-shell header { padding:16px; } .presentation-shell .workspace { padding:0 12px 16px; } .presentation-shell .toolbar { padding:0 12px 12px; } .presentation-shell .toolbar select { min-width:0; width:100%; } .presentation-shell .toolbar label { width:100%; } .presentation-shell .demo-banner { margin:12px; } .presentation-shell .diagram-container { height:370px; min-height:0; } .presentation-shell .controls .speed-label { margin-left:0; } }
+@media (prefers-reduced-motion:reduce) { .presentation-shell * { transition:none!important; animation:none!important; } }

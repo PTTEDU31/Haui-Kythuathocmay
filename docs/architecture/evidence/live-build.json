@@ -1,0 +1,12 @@
+{
+  "mode": "live-runtime",
+  "diagram_geometry": "architecture.html",
+  "original_diagram_modified": false,
+  "requires": "STUDENT_TRACE=1; GET /architecture/live; same-origin server",
+  "artifacts": {
+    "live.html": "63fcbcfc12b22fb98da202f35b49ccf9f1869ff11a1c242906930b1787d37951",
+    "live.js": "a71563280ebdd69674054aed6db4bda6299a26ad7b8880fcb4020c46be75888c",
+    "live.css": "cad312c2e4b7d397a6bd51e3109060f284914075949af63ebca0e0697ff0f33b",
+    "live-diagram.css": "71f83eee651d798bed2bf06d8fc2f39d670531f092fdaf56e6fc49390f632ae5"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "verified_at": "2026-10-24T08:49:12.756652+00:00",
+  "url": "https://ttech.io.vn/static/hoc-mo-hinh.html#teacher-feedback",
+  "feedback_source": "Phản hồi.jpg (not published)",
+  "saved_examples": 9,
+  "sklearn_forward_and_tfidf_checks": 118,
+  "local_route_snapshots": 18,
+  "dataset_counts": {
+    "dang_ky_hoc_phan": {
+      "Train": 6,
+      "Validation": 2,
+      "Test": 2
+    },
+    "diem_hoc_tap": {
+      "Train": 6,
+      "Validation": 2,
+      "Test": 2
+    },
+    "hoc_bong": {
+      "Train": 6,
+      "Validation": 2,
+      "Test": 2
+    },
+    "hoc_phi": {
+      "Train": 6,
+      "Validation": 2,
+      "Test": 2
+    },
+    "lich_thi": {
+      "Train": 6,
+      "Validation": 2,
+      "Test": 2
+    }
+  },
+  "architecture": {
+    "mlp": [
+      327,
+      16,
+      5
+    ],
+    "parameters": 5333
+  },
+  "artifacts_unchanged": true,
+  "pytest": {
+    "passed": 80,
+    "warnings": 1
+  },
+  "browser": {
+    "teacher_answers": 7,
+    "hidden_neuron_buttons": 16,
+    "case_selects_synchronized": true,
+    "neuron_16_opens_stage_3": true,
+    "full_vector_coordinates": 327,
+    "oov_vector_all_zero": true,
+    "weather_out_of_scope": true,
+    "ktx_faq_024": true,
+    "desktop": true,
+    "mobile_width": 390,
+    "horizontal_overflow": false,
+    "scope_table_scroll_width": 900,
+    "scope_table_mobile_wrapper_width": 343,
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "console_errors": []
+  },
+  "checks": {
+    "js_syntax": true,
+    "python_compile": true,
+    "readme_diff_whitespace": true,
+    "whole_tree_diff_check": "Existing whitespace findings in index.html and architecture generated files; preserved unrelated changes."
+  },
+  "scope": "Read-only teaching UI, trusted artifacts and local Engine on public FAQ JSON. No retraining, runtime database writes or provider calls.",
+  "assets": {
+    "model-lab.js": "f5c06d7fb312f091fe93038460f9a0c23030de0b891efeac99402c552131546b",
+    "model-lab.css": "2ce4b94bce9f8affe50f07f5575cf32004439f550b1774a5717ea978981c480f",
+    "model-lab-data.js": "e317376eef6d87b0849a43316e17f01ec7f2a2a355ae473f8014d6ece1680be8"
+  }
+}

@@ -1,0 +1,38 @@
+/* Shared teaching panels; scoped separately from the student chat UI. */
+.defense-panel,.defense-page{--dg-bg:#f4f7fb;--dg-panel:#fff;--dg-ink:#192d45;--dg-muted:#4b6179;--dg-line:#cbd6e4;--dg-link:#075d9c;--dg-accent:#e8f2fd;color:var(--dg-ink);font:15px/1.65 system-ui,sans-serif}
+html[data-theme="dark"] .defense-panel,html[data-theme="dark"] .defense-page{--dg-bg:#0b1423;--dg-panel:#132137;--dg-ink:#e7effa;--dg-muted:#b2c3d9;--dg-line:#3b526c;--dg-link:#74d8ed;--dg-accent:#1b344b}
+.defense-panel *,.defense-page *{box-sizing:border-box}
+.defense-panel{padding:18px;min-width:0;background:var(--dg-panel);border-top:1px solid var(--dg-line);overflow-wrap:anywhere}
+.defense-panel .defense-heading{font:700 18px/1.4 system-ui;margin:0 0 10px;color:var(--dg-ink)}
+.defense-panel .defense-title{font:650 17px/1.5 system-ui;color:var(--dg-ink);letter-spacing:0;margin:16px 0 8px}
+.defense-panel h4{font:650 14px/1.5 system-ui;margin:0 0 4px;color:var(--dg-link)}
+.defense-panel p{font:400 14px/1.7 system-ui;color:var(--dg-ink);margin:5px 0 12px}
+.defense-panel .defense-state,.defense-panel .defense-caution{font-size:12px;color:var(--dg-muted)}
+.defense-panel .defense-part{margin:16px 0}
+.defense-panel details{padding:10px 0;margin:0;border:0}
+.defense-panel summary{font-size:13px;cursor:pointer;color:var(--dg-link)}
+.defense-panel .defense-excerpt{margin:12px 0 18px;min-width:0}
+.defense-panel figcaption{font:12px/1.5 ui-monospace,monospace;color:var(--dg-muted);overflow-wrap:anywhere}
+.defense-panel pre{font:12px/1.75 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--dg-bg);color:var(--dg-ink);padding:12px;border-radius:8px;max-height:none;margin:8px 0;overflow:auto}
+.defense-panel .defense-say{padding:12px;background:var(--dg-accent);border-radius:8px;margin:12px 0}
+.defense-panel .defense-say p{margin-bottom:0}
+.defense-panel a{color:var(--dg-link)}
+.defense-page{margin:0;background:var(--dg-bg)}
+.defense-page header{padding:24px max(18px,calc((100% - 1180px)/2));border-bottom:1px solid var(--dg-line);background:var(--dg-panel)}
+.defense-page h1{font-size:clamp(24px,3vw,34px);line-height:1.25;margin:10px 0}
+.defense-page header p{max-width:850px;margin:10px 0;color:var(--dg-muted)}
+.defense-page nav{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.defense-page a{color:var(--dg-link)}
+.defense-page button{font:inherit;cursor:pointer;color:var(--dg-ink);background:var(--dg-panel);border:1px solid var(--dg-line);border-radius:8px;padding:10px 12px}
+.defense-page :focus-visible,.defense-panel :focus-visible{outline:3px solid var(--dg-link);outline-offset:3px}
+.defense-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:22px;max-width:1180px;margin:24px auto;padding:0 18px;align-items:start}
+.defense-lessons{display:grid;gap:7px;min-width:0}
+.defense-lessons h2{font-size:14px;margin:16px 0 2px;color:var(--dg-muted)}
+.defense-lessons .defense-choice{text-align:left;font-size:14px;min-height:44px}
+.defense-lessons .defense-choice[aria-pressed="true"]{background:var(--dg-accent);border-color:var(--dg-link)}
+.defense-page .defense-panel{border:1px solid var(--dg-line);border-radius:12px;padding:22px}
+.defense-page .defense-checklist{padding:15px 18px;max-width:1180px;margin:16px auto;color:var(--dg-muted)}
+.defense-page .defense-checklist ol{padding-left:22px}
+.defense-page footer{max-width:1180px;margin:20px auto;padding:0 18px 20px;color:var(--dg-muted);font-size:13px}
+@media(max-width:760px){.defense-layout{grid-template-columns:1fr;gap:14px}.defense-lessons{grid-template-columns:repeat(2,minmax(0,1fr))}.defense-lessons h2{grid-column:1/-1}.defense-page .defense-panel{padding:16px}.defense-page header{padding:18px}.defense-page nav{gap:12px}}
+@media(max-width:380px){.defense-lessons{grid-template-columns:1fr}}

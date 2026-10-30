@@ -2,6 +2,92 @@
 
 Open [the interactive overview](index.html). All eight diagrams are standalone Archify HTML files with theme, focus and export controls. The [relationship explorer](explorer.html) filters calls, imports, callbacks and HTTP interactions by evidence status. The [source explorer](source.html) contains line-linked committed text snapshots, so references work without a remote or a web server.
 
+## Học máy và nhận dạng: mô hình chạy như thế nào?
+
+Mở [bài học chi tiết](https://ttech.io.vn/static/hoc-mo-hinh.html), cũng có liên kết từ menu chatbot, trang hướng dẫn bảo vệ và trace. Gồm 12 phần, 81 thuật ngữ và 25 câu vấn đáp: biểu diễn TF-IDF; forward MLP; cross-entropy, gradient/backprop và L-BFGS; hình học, squared hinge và OvR của LinearSVC; đánh giá và giới hạn thực nghiệm.
+
+Phòng khám phá có 9 ví dụ được tính từ artifact đã lưu: từng đặc trưng TF/DF/IDF, đóng góp vào nơ-ron/điểm OvR, ReLU, logits, softmax và argmax. Đây là snapshot suy luận, tách khỏi trace runtime. Ví dụ tương tác 2 chiều dùng trọng số minh họa riêng, hiển thị mạng và biên SVM cùng loss/gradient, không huấn luyện hay đổi artifact.
+
+[Phần đối chiếu phản hồi của cô](https://ttech.io.vn/static/hoc-mo-hinh.html#teacher-feedback) trả lời từng ý về thuật toán, đầu vào văn bản/vector, kiến trúc MLP 327→16→5, số lớp và nhãn đầu ra. Có bảng phân bố 50 câu theo nhãn/split, đủ 327 tọa độ và tên cột, cùng 16 nơ-ron ẩn có thể bấm để xem phép tính. Phần phạm vi đối chiếu 18 lượt route cục bộ (9 câu × 2 mô hình) trên FAQ công khai với nhãn classifier trực tiếp; chỉ rõ trường hợp ngoài từ vựng, thời tiết ngoài phạm vi và ký túc xá được quy tắc mở rộng hỗ trợ. Các lượt này không phải trace runtime hay phép đo khả năng phát hiện mọi câu ngoài miền.
+
+Sau khi đổi artifact hoặc tài nguyên trang học, chạy:
+
+```bash
+.venv/bin/python scripts/build_model_lab.py
+```
+
+Bộ dựng bài kiểm tra phép forward với sklearn trên toàn bộ 50 câu công khai và 9 ví dụ cho cả hai mô hình (118 lượt), kiểm tra TF-IDF với DF từ Train, rồi xuất snapshot và cập nhật URL tài nguyên theo hash nội dung để tránh cache cũ. Route được chạy bằng Engine mới trên `data/faqs.json`, quan sát lời gọi classifier và giữ nguyên hash artifact. Không import `app.main`, đọc DB/cấu hình runtime, chạy train hay gọi provider. Code đối chiếu dùng `defense-lessons.js`; nếu nguồn code thay đổi, dựng lại bằng `scripts/build_defense_lessons.py` như hướng dẫn bên dưới.
+
+## Trace chạy thật theo thời gian thực
+
+Các trang học mô hình, hướng dẫn, lưu đồ, xem source và trace dùng chung `app/static/code-viewer.js` / `.css`: tô màu cú pháp bằng Highlight.js 11.11.1 lưu tại chỗ, giữ thụt dòng, tách số dòng, cuộn ngang, bật/tắt xuống dòng, tăng/giảm cỡ chữ và sao chép code không kèm số dòng. Liên kết và tìm kiếm theo dòng của snapshot được giữ nguyên. Đây là thay đổi cách trình bày, không viết lại code được trích dẫn. Giấy phép thư viện ở `app/static/vendor/highlight-LICENSE`.
+
+Các bộ dựng trang gọi `scripts/code_viewer_assets.py` để thêm tài nguyên cùng origin và URL có hash nội dung. Sau khi đổi JS/CSS trình đọc code, chạy `.venv/bin/python scripts/code_viewer_assets.py` rồi `.venv/bin/python docs/architecture/build_live.py`; chạy lại các bộ dựng trang như bên dưới cũng giữ trình đọc code.
+
+### Đối chiếu lưu đồ, phương pháp và code khi vấn đáp
+
+Mở [hướng dẫn bảo vệ trên web](https://ttech.io.vn/static/huong-dan-bao-ve.html) hoặc [lưu đồ từng bước](https://ttech.io.vn/static/huong-dan-mo-phong.html). Menu chatbot và trang trace đều có liên kết tới hướng dẫn. Các trang public dùng script/style cùng origin, phù hợp CSP của FastAPI.
+
+Theo yêu cầu của giáo viên, với mỗi bước trình bày theo thứ tự: **lưu đồ viết gì → phương pháp sử dụng → code triển khai ở đâu → giải thích input/output và điều kiện chuyển nhánh**. Hướng dẫn có bài riêng cho TF-IDF, MLP, LinearSVC, truy hồi cosine, kiểm tra bằng chứng, Qwen/Ollama và Train/Validation/Test; kèm câu hỏi vấn đáp và câu trả lời gợi ý. Chỉ rõ code gọi `sklearn` để fit/predict, không nhận là dự án tự viết nội bộ thuật toán.
+
+Trong trace, chọn lời gọi để xem phần **Đối chiếu lưu đồ với code**. Chú giải hiển thị dưới dữ liệu thật, dùng `routing.classifier_used`, kết quả mô hình và trạng thái lời gọi để phân biệt nhánh thực tế. Lời gọi đang chạy chưa có output; khối chưa quan sát không được gán dữ liệu hay phương pháp thực thi giả. Nội bộ sklearn, huấn luyện và nội bộ Qwen không được trace từ request chat.
+
+Trích đoạn code công khai được dựng từ các file allowlist; mỗi đoạn ghi file, dòng và hash nguồn. Sau khi sửa code hoặc nội dung hướng dẫn, chạy theo thứ tự:
+
+```bash
+.venv/bin/python scripts/build_defense_lessons.py
+.venv/bin/python docs/architecture/build_live.py
+.venv/bin/python docs/architecture/build_presentation.py
+.venv/bin/python scripts/publish_defense_player.py
+```
+
+`defense-lessons.js` là snapshot code hiện tại khi dựng bài. Các input/output trong player offline vẫn là minh họa của revision được ghim; không gọi chúng là trace thật. Bản public player và source viewer chỉ tách script/style ra file, không sửa các sơ đồ Archify gốc. Nội dung này không đọc SQLite, cấu hình bí mật, cookie hoặc API key; đọc hướng dẫn không chạy train/provider.
+
+**Link trình diễn dự phòng hiện tại: [mở trace](https://macro-empty-podcast-kinda.trycloudflare.com/architecture/live) · [mở chat web](https://macro-empty-podcast-kinda.trycloudflare.com/#chat)**. Đây là quick tunnel; hostname có thể đổi khi tunnel khởi động lại. Tên miền chính `https://ttech.io.vn/architecture/live` đang gặp lỗi DNSSEC ở DNS công khai (xem `evidence/live-dns-fallback.json`). Trang live và stream dùng chung origin với ứng dụng.
+
+**Trace cả chat trên web chính:** mở hai tab cùng tên miền trong cùng trình duyệt, bật **Tự động trace chat từ web chính** ở tab trace và chờ **Đang nghe chat web**. Gửi câu hỏi ở tab chat; sơ đồ, input/output và mã nguồn bên tab trace cập nhật theo lời gọi thật. Trang chat có nút **Xem trace trực tiếp** khi server bật trace. Hai trình duyệt, hai thiết bị hoặc hai tên miền dùng phiên khác nhau nên không tự chia sẻ trace. Chỉ nhận sự kiện của những lượt hỏi bắt đầu sau khi kết nối; không lưu/phát lại trace cũ.
+
+Nếu chạy riêng trên máy để phát triển, bật trace từ thư mục gốc repository:
+
+```bash
+STUDENT_TRACE=1 .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8090
+```
+
+Mở **http://127.0.0.1:8090/architecture/live**, nhập câu hỏi và bấm **Gửi và trace thật**. Khối sáng cùng dữ liệu khi hàm bắt đầu/kết thúc; output còn đang chờ được ghi rõ. Chọn lời gọi trong danh sách hoặc bấm khối để xem lại dữ liệu đã thu. **Phóng theo khối** giúp đọc trên máy chiếu; tắt **Theo dõi sự kiện mới** để giữ nguyên lời gọi đang giải thích. Hàm nhanh có thể hoàn tất trong vài mili giây; trang không thêm delay giả để làm chậm ứng dụng.
+
+Đây là request thật vào cùng `chat()` của `/api/chat`: đọc lịch sử của phiên hiện tại, chạy `Engine.route()`, các hàm phân loại/truy hồi/kiểm tra bằng chứng thực sự được gọi và ghi hai tin nhắn vào SQLite. Chọn AI sẽ gọi provider thật nếu điều kiện `generate()` cho phép; trace hiện cả lời gọi HTTP, kết quả và fallback. `observe_chat()` bao quanh handler thường để gửi sự kiện tới các tab trace cùng phiên đang kết nối; phản hồi JSON, mã lỗi và cookie của `/api/chat` vẫn giữ nguyên. Không mở observer thì chat không khởi tạo recorder. Khối không có sự kiện ghi **chưa quan sát**, không được suy ra là đã chạy hoặc chưa từng chạy ở nơi khác. Callback JavaScript của tab chat thông thường không được quan sát từ server.
+
+Giao thức `POST /api/chat/trace` trả NDJSON qua `StreamingResponse`: sự kiện `start`, `end`/`error`, `result` và `done`; mỗi lời gọi có parent ID, timestamp UTC, thời gian monotonic và input/output có giới hạn kích thước. Server dùng ContextVar theo request; không ghi trace ra file hoặc phát sang phiên khác. Cần cookie visitor hợp lệ từ `/api/bootstrap`; các kiểm tra origin, schema và giới hạn chat vẫn áp dụng. Lỗi sau khi bắt đầu stream nằm trong `request_error.status_code` dù transport đã trả HTTP 200; mất kết nối không tự gửi lại vì handler có thể đã ghi DB. Đóng tab dừng quan sát, không hủy tác vụ đã bắt đầu.
+
+`POST /api/chat/trace/events` mở kênh NDJSON chờ chat web (không có body). Client dùng POST vì quick tunnel đang giữ lại các chunk GET nhỏ; route GET vẫn có cho client nội bộ. Kênh, xác thực cookie phiên trước khi đăng ký. `observer_ready` xác nhận đã nghe; mỗi lượt chat có `trace_id` riêng trên mọi sự kiện. Kênh có heartbeat 10 giây và tự nối lại khi mất mạng; không phát lại các sự kiện đã mất. Mỗi tab giữ hàng đợi tối đa 256 sự kiện; quá chậm thì báo thiếu sự kiện và đóng kênh, không ảnh hưởng phản hồi chat. Tối đa 4 tab trên mỗi phiên và 32 tab trên mỗi process. UI hiển thị lượt chat mới nhất khi có nhiều lượt đồng thời; lượt gửi trực tiếp từ trang trace được ưu tiên tới khi kết thúc. Quan sát dùng bộ nhớ của một process, phù hợp dịch vụ Uvicorn một worker hiện tại; triển khai nhiều worker cần thêm broker và cơ chế phân phối riêng.
+
+Trace tắt mặc định; tối đa 4 lượt gửi trực tiếp qua `/api/chat/trace` đồng thời trên mỗi process. Không thu thập cookie/token/API key/cấu hình bí mật; các trường không thu thập và phần rút gọn được đánh dấu. File source/function line và code của hàm Python lấy từ checkout đang phục vụ, không trỏ về snapshot cũ. Thời gian có overhead quan sát và truyền dữ liệu, không phải benchmark; thời gian browser/server có đồng hồ riêng. Luồng hiện gắn quan sát chat/Engine/SQLite/provider, không phải profiler mọi callback hoặc mọi dòng lệnh; không quan sát nội bộ Ollama/sklearn/SQLite, khởi động, quản trị, huấn luyện hay backup từ một lượt chat.
+
+`live.html` cần mở qua FastAPI để dùng session và stream cùng origin, không mở trực tiếp bằng `file://` hay `python -m http.server`. URL `127.0.0.1:8090` chỉ dùng cho máy đang chạy lệnh phát triển ở trên; khi truy cập từ máy khác, dùng URL tunnel.
+
+Dịch vụ hiện tại `student-support.service` ở cổng **8088** đã được khởi động lại với `STUDENT_TRACE=1` qua drop-in `~/.config/systemd/user/student-support.service.d/live-trace.conf`:
+
+```ini
+[Service]
+Environment=STUDENT_TRACE=1
+```
+
+Sau khi thay đổi drop-in, chạy `systemctl --user daemon-reload` rồi `systemctl --user restart student-support.service`. Tunnel giữ nguyên đích `http://127.0.0.1:8088`. Nếu trang live trả 404 trong khi `/api/health` vẫn hoạt động, kiểm tra dịch vụ đã nạp code mới và flag trace. Kết quả kiểm tra HTTPS/stream thực tế nằm trong `evidence/live-tunnel-verification.json`.
+
+Dựng lại giao diện bằng `python docs/architecture/build_live.py` sau khi sửa `live.template.html`, `live.js` hoặc `live.css`. Bản đồ dùng lại hình học SVG Archify; `live-diagram.css` được tách để tuân thủ CSP của ứng dụng mà không cần inline script/style. Các file Archify gốc và receipt giữ nguyên; `evidence/live-build.json` ghi hash của giao diện live. Kiểm thử ở `tests/test_live_trace.py` có kết nối HTTP thật chứng minh sự kiện provider đến trước khi provider hoàn tất, kiểm tra cách ly phiên, số đo/kết quả thật, nhánh trả về sớm và fallback lỗi.
+
+## Trình diễn input/output cho giáo viên
+
+Mở [bản trình diễn offline](presentation.html), chọn sơ đồ và kịch bản rồi bấm **Phát** hoặc **Tiếp →**. Khối đang xử lý sáng lên cùng bảng **Input / Output**, tên hàm, trích dẫn nguồn và gợi ý lời thuyết trình. Có thể bấm trực tiếp vào bất kỳ khối nào để xem dữ liệu, bật **Phóng theo khối**, đổi tốc độ, mở JSON hoặc dùng toàn màn hình.
+
+Có 8 sơ đồ, 58 khối có dữ liệu, 12 kịch bản và 72 bước minh họa. Các nhánh định tuyến bao gồm answered, clarify, out_of_scope và greeting; nhánh AI lỗi giữ lại FAQ. Sơ đồ module giải thích phụ thuộc import, không được diễn giải thành thứ tự thực thi request.
+
+**Đây là mô phỏng offline, không phải trace runtime.** Payload, điểm số, token và kết quả là ví dụ theo mã nguồn đã trích dẫn. Trang không gọi API, chạy AI, ghi DB hay đọc dữ liệu riêng tư. FAQ mẫu và cấu hình lựa chọn mô hình lấy từ dữ liệu công khai tại revision được ghim. Các sơ đồ Archify gốc và receipt giữ nguyên; presentation.html tái sử dụng SVG và thêm bộ điều khiển riêng.
+
+Space = phát/dừng và ←/→ = lùi/tiếp khi không focus nút/ô nhập. Bản trình diễn tự dừng khi chuyển tab; chọn sơ đồ/kịch bản hoặc bấm khối sẽ dừng để tránh nhảy bước khi đang giải thích.
+
+Dựng lại bản trình diễn bằng `python docs/architecture/build_presentation.py`. Các nguồn chỉnh sửa là `build_presentation.py`, `presentation.js` và `presentation.css`; HTML đầu ra nhúng đầy đủ CSS, JavaScript và dữ liệu nên mở trực tiếp được, không cần server hoặc Internet. `evidence/presentation-build.json` ghi coverage và hash artifact.
+
 ## Scope and method
 
 Repository: `student-support`. Pinned revision: `ded15187b5fe25dc9eb6733c64292097943f3f1d`. Analysis refreshed on 2026-10-22 (Asia/Ho_Chi_Minh) with GitNexus 1.6.12, using `analyze --force --index-only`. GitNexus context, schema, clusters, process resources, concept query, symbol contexts and full Cypher extracts are retained under `evidence/`. The index was fresh for this source snapshot; creating these documentation artifacts subsequently makes GitNexus report added documentation files. Application source is unchanged; generated documentation was not recursively indexed into its own evidence.

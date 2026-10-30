@@ -11,6 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel,Field,ConfigDict
 import httpx
 from .engine import Engine,ROOT,LABELS,safe_url,normalize,active
+from .tracing import traced,span
+from .live_trace import observe_chat,install_live_trace
 
 DB=ROOT/'data'/'student.db';STATIC=Path(__file__).parent/'static'
 ENGINE=Engine();rate_lock=threading.Lock();rates=defaultdict(deque)
@@ -130,7 +132,7 @@ def health():
 def bootstrap(request:Request,response:Response):
     visitor(request,response)
     settings=read_settings()
-    return {'name':'HaUI Assist','university':'Đại học Công nghiệp Hà Nội','topics':LABELS,'faq_count':len(ENGINE.rows),'ai':{'enabled':settings['enabled'],'provider':settings['provider'],'model':settings['model']},'privacy':'Lịch sử được lưu trên máy chủ nội bộ và chỉ hiển thị trong trình duyệt của bạn. Không nhập mật khẩu, mã OTP hay thông tin nhạy cảm.','scope':'Thông tin công khai và hướng dẫn tra cứu. Chưa kết nối hệ thống điểm, tài khoản hoặc công nợ cá nhân.'}
+    return {'name':'HaUI Assist','university':'Đại học Công nghiệp Hà Nội','topics':LABELS,'faq_count':len(ENGINE.rows),'trace_enabled':os.getenv('STUDENT_TRACE')=='1','ai':{'enabled':settings['enabled'],'provider':settings['provider'],'model':settings['model']},'privacy':'Lịch sử được lưu trên máy chủ nội bộ và chỉ hiển thị trong trình duyệt của bạn. Không nhập mật khẩu, mã OTP hay thông tin nhạy cảm.','scope':'Thông tin công khai và hướng dẫn tra cứu. Chưa kết nối hệ thống điểm, tài khoản hoặc công nợ cá nhân.'}
 @app.get('/api/history')
 def history(request:Request,response:Response):
     sid=visitor(request,response)
@@ -144,20 +146,24 @@ def clear_history(request:Request,response:Response):
         c.execute('DELETE FROM messages WHERE session_id=?',(sid,))
     return {'ok':True}
 @app.post('/api/chat')
+@observe_chat
+@traced('main', ('body',))
 def chat(body:Chat,request:Request,response:Response):
     limit(request,'chat',20);sid=visitor(request,response);q=body.question.strip()
     if not q or not normalize(q):raise HTTPException(422,'Bạn hãy nhập một câu hỏi có nội dung.')
     started=time.perf_counter()
-    with conn() as c:
+    with span('db','chat() · SELECT history',{'table':'messages','role':'assistant','limit':4}) as history_trace, conn() as c:
         past=c.execute("SELECT result FROM messages WHERE session_id=? AND role='assistant' ORDER BY rowid DESC LIMIT 4",(sid,)).fetchall()
+        history_trace.output={'history':[json.loads(r['result']) for r in reversed(past) if r['result']]}
     result=ENGINE.route(q,[json.loads(r['result']) for r in reversed(past) if r['result']])
     if body.use_ai:result=ENGINE.generate(q,result,read_settings())
     else:result['generation']={'used':False,'reason':'disabled_for_request'}
     result.pop('evidence',None);result['latency_ms']=round((time.perf_counter()-started)*1000)
     result['id']=secrets.token_hex(12)
-    with conn() as c:
+    with span('db','chat() · INSERT messages',{'question':q,'answer':result['answer']}) as save_trace, conn() as c:
         c.execute('INSERT INTO messages VALUES(?,?,?,?,?,?)',(secrets.token_hex(12),sid,'user',q,None,now()))
         c.execute('INSERT INTO messages VALUES(?,?,?,?,?,?)',(result['id'],sid,'assistant',result['answer'],json.dumps(result,ensure_ascii=False),now()))
+        save_trace.output={'rows_written':2,'assistant_message_id':result['id']}
     return result
 @app.post('/api/feedback')
 def feedback(body:Feedback,request:Request,response:Response):
@@ -312,3 +318,5 @@ def ai_settings(body:AISettings):
 @app.get('/')
 def index():return FileResponse(STATIC/'index.html',headers={'Cache-Control':'no-cache'})
 app.mount('/static',StaticFiles(directory=STATIC),name='static')
+
+install_live_trace(app,Chat,chat,DB)

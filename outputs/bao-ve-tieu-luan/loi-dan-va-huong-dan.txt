@@ -1,0 +1,261 @@
+THUYẾT TRÌNH — HỌC MÁY VÀ NHẬN DẠNG
+Phạm Thanh Tùng · Đại học Công nghiệp Hà Nội
+
+CÁCH DÙNG
+Mở thuyet-trinh.html bằng Chrome/Edge; hoạt động ngoại tuyến.
+← / →: chuyển slide. N: lời dẫn trên cùng màn hình. M: mục lục. F11: toàn màn hình.
+20 slide chính, 6 phụ lục. Nhịp gợi ý: 905 giây, khoảng 15 phút. Nếu chỉ 10 phút: rút phần tính tay, phân tích lỗi và không mở phụ lục.
+Slide 16 cho đổi 4 câu hỏi, xem vector và điểm hai model. Các số liệu tính từ model đã lưu; không huấn luyện lại, không gọi API.
+Hai ví dụ số giảng giải (TF-IDF 3 câu, mạng 2–2–2) tách biệt với dữ liệu và trọng số thật.
+Bản này là HTML; có nút In / PDF, không phải file PPTX.
+
+MẠCH NỘI DUNG
+Bài toán nhận dạng → đặc trưng TF-IDF → cơ chế MLP → cơ chế LinearSVC → so sánh → thiết kế thực nghiệm → kết quả và lỗi → tích hợp ứng dụng.
+
+LỜI DẪN THEO SLIDE
+
+01. Nhận dạng ý định câu hỏi
+Gợi ý nhịp nói: 25 giây
+Kính thưa thầy cô, em trình bày đề tài chatbot hỗ trợ sinh viên dưới góc nhìn học máy và nhận dạng. Bài toán trung tâm là nhận một câu hỏi tiếng Việt rồi xác định một trong năm ý định. Phần trình bày tập trung vào ba câu hỏi: biểu diễn văn bản bằng TF-IDF như thế nào, MLP học và dự đoán ra sao, LinearSVC khác MLP ở điểm nào. Cuối cùng, em trình bày kết quả thực nghiệm và cách đưa bộ phân loại vào chatbot.
+[Sources]
+sources/Bao_cao_TC1_TC2_Chatbot (1).docx
+scripts/train.py
+[/Sources]
+
+02. Đầu vào là câu hỏi, đầu ra là một nhãn
+Gợi ý nhịp nói: 35 giây
+Đầu vào là câu hỏi và đầu ra là nhãn ý định. Ví dụ câu chuyển khoản chưa ghi nhận cần được nhận dạng là học phí, dù không chứa trực tiếp cụm học phí. Đây là học có giám sát vì khi huấn luyện, mỗi câu đều có nhãn đúng do con người gán. Năm nhãn gồm học phí, đăng ký học phần, lịch thi, học bổng và điểm học tập. Đề tài nhận dạng ý định, chưa phải trích xuất đầy đủ thực thể hay sinh nội dung câu trả lời bằng chính mạng MLP.
+[Sources]
+data/original_50.csv
+reports/faq-evaluation.json · T06
+[/Sources]
+
+03. TF-IDF và bộ phân loại có vai trò khác nhau
+Gợi ý nhịp nói: 45 giây
+TF-IDF không phải mô hình phân loại cùng loại với MLP hoặc LinearSVC. Nó là cách biến văn bản thành vector. Khi fit, TF-IDF học từ điển và thống kê IDF từ các câu Train mà không cần nhãn. Sau đó MLP hoặc LinearSVC nhận vector và học mối liên hệ với nhãn. Vì vậy, hai phương án được so sánh là TF-IDF kết hợp MLP và TF-IDF kết hợp LinearSVC. Trong dự án, cả hai dùng cùng quy tắc tiền xử lý, cấu hình TF-IDF và cách chia tập.
+[Sources]
+https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting
+scripts/train.py · Pipeline
+[/Sources]
+
+04. TF-IDF gán trọng số cho từ và cặp từ
+Gợi ý nhịp nói: 55 giây
+Đầu tiên, câu được chuẩn hóa nhưng vẫn giữ dấu và từ phủ định. Vectorizer dùng từ đơn và cặp từ liền nhau, chẳng hạn học phí. TF phản ánh số lần xuất hiện của một đặc trưng trong câu. Dự án dùng TF dạng log, nên đặc trưng lặp nhiều lần không tăng trọng số tuyến tính. IDF đo độ hiếm trên Train: một từ xuất hiện ở nhiều câu sẽ có IDF thấp hơn. Cuối cùng, nhân TF với IDF và chuẩn hóa L2. Các câu được đưa về cùng hệ tọa độ gồm 327 đặc trưng thực tế.
+[Sources]
+https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting
+app/text.py
+reports/experiments.json · tfidf_configuration
+[/Sources]
+
+05. Tính thử một vector TF-IDF bằng tay
+Gợi ý nhịp nói: 55 giây
+Ví dụ này dùng riêng ba câu và chỉ từ đơn để có thể tính tay. Từ học có trong hai trên ba câu, còn phí chỉ có trong một câu. Theo công thức IDF làm trơn, học nhận 1,288 và phí nhận 1,693. Mỗi từ trong câu học phí xuất hiện một lần nên TF bằng một. Vector thô có hai phần tử khác không. Sau khi chia cho độ dài khoảng 2,127, trọng số học khoảng 0,605 và phí khoảng 0,796. Các vị trí khác bằng không. Đây là ví dụ minh họa phương pháp; không dùng các số này thay cho đặc trưng thật trong thực nghiệm.
+[Sources]
+https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting
+Ví dụ giảng giải tính theo công thức TF-IDF của sklearn
+[/Sources]
+
+06. Một hệ đặc trưng, hai cách phân loại
+Gợi ý nhịp nói: 40 giây
+Sau TF-IDF, câu hỏi là một điểm trong không gian 327 chiều. MLP học một phép biến đổi qua tầng ẩn có ReLU, nên có thể tạo ranh giới phi tuyến. LinearSVC học các hàm điểm tuyến tính trên chính không gian đó. Cả hai cuối cùng chọn lớp có điểm cao nhất, nhưng cách sinh điểm và cách học khác nhau. Việc giữ cùng điều kiện biểu diễn giúp kết quả so sánh tập trung hơn vào bộ phân loại. Mỗi pipeline lưu một vectorizer riêng được fit trên cùng Train; không dùng chung trạng thái có thể bị sửa khi chạy.
+[Sources]
+scripts/train.py · Pipeline
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+[/Sources]
+
+07. MLP dùng tầng ẩn để tạo quan hệ phi tuyến
+Gợi ý nhịp nói: 50 giây
+Mạng đã chọn có 327 đầu vào, một tầng ẩn gồm 16 nơ-ron và năm đầu ra. Đầu vào không phải 327 từ trong riêng câu đang xét, mà là 327 vị trí của từ điển. Mỗi nơ-ron tầng ẩn cộng các đầu vào theo trọng số, thêm bias rồi qua ReLU. ReLU giữ giá trị dương và đưa giá trị âm về không. Nếu bỏ toàn bộ hàm phi tuyến, nhiều phép biến đổi tuyến tính liên tiếp vẫn có thể gộp thành một phép tuyến tính. Tầng cuối tạo năm logits và softmax chuyển thành phân bố điểm các lớp. Mạng hiện có 5.333 trọng số và bias.
+[Sources]
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+models/mlp.joblib
+reports/experiments.json · metadata
+[/Sources]
+
+08. Lan truyền thuận: tính điểm từ đầu vào
+Gợi ý nhịp nói: 45 giây
+Đây là mạng nhỏ được dựng để giải thích phép tính, không phải mạng thực nghiệm. Với đầu vào 0,8 và 0,2, nơ-ron thứ nhất lấy hiệu được 0,6, nơ-ron thứ hai lấy hiệu ngược được âm 0,6. Qua ReLU, hai giá trị thành 0,6 và không. Nếu tầng đầu ra dùng lần lượt hai giá trị này thì logits là 0,6 và không. Softmax cho lớp A khoảng 0,646 và lớp B khoảng 0,354, nên chọn A. Trong mạng thật, quy trình tương tự nhưng có 327 đầu vào, 16 giá trị ẩn và năm lớp. Các trọng số thật được học thay vì đặt bằng tay.
+[Sources]
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+Ví dụ giảng giải 2–2–2, trọng số minh họa
+[/Sources]
+
+09. MLP học bằng cách giảm lỗi dự đoán
+Gợi ý nhịp nói: 55 giây
+Khác với suy luận chỉ tính đầu ra, huấn luyện phải có nhãn đúng. Nếu nhãn thật là học phí nhưng mạng cho học phí điểm thấp, thành phần âm log điểm của nhãn thật sẽ lớn. Mạng cần giảm loss này và đồng thời hạn chế trọng số quá lớn bằng phạt L2. Lan truyền ngược tính đạo hàm loss theo trọng số bằng quy tắc dây chuyền. Bộ tối ưu của dự án là L-BFGS, sử dụng gradient và thông tin xấp xỉ độ cong để điều chỉnh trọng số. Không nên mô tả lần chạy này bằng cập nhật mini-batch Adam. alpha là độ mạnh của phạt L2, không phải tốc độ học.
+[Sources]
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+scripts/train.py · MLPClassifier
+reports/experiments.json · classifier_parameters
+[/Sources]
+
+10. LinearSVC học một ranh giới tuyến tính
+Gợi ý nhịp nói: 50 giây
+Với hai đặc trưng, một ranh giới tuyến tính là đường thẳng. Trong 327 chiều, đó là siêu phẳng nhưng ý tưởng tương tự: tính tích vô hướng giữa vector câu và vector trọng số rồi cộng bias. SVM cố gắng tìm ranh giới có biên lớn và đồng thời xử lý các điểm vi phạm biên. Dữ liệu thực không nhất thiết tách hoàn toàn được, nên dùng soft margin. LinearSVC trong dự án dùng squared hinge loss và phạt L2. Hình này chỉ minh họa hai nhóm, không phải biểu đồ dữ liệu thật hay bằng chứng các câu trong dự án tách được tuyến tính.
+[Sources]
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+reports/experiments.json · LinearSVC metadata
+[/Sources]
+
+11. Năm lớp được nhận dạng bằng năm điểm
+Gợi ý nhịp nói: 45 giây
+LinearSVC được cấu hình one-versus-rest. Với mỗi lớp, nó tạo bài toán lớp đó so với bốn lớp còn lại. Vì có năm lớp, khi dự đoán sẽ có năm điểm tuyến tính và lớp có điểm lớn nhất được chọn. Các bộ phân loại riêng không nhất thiết cho các điểm dương, nên khi tất cả điểm âm, lớp có điểm âm ít nhất vẫn thắng. Điểm decision_function không phải xác suất. Tham số C điều chỉnh mức ưu tiên phạt vi phạm so với giữ trọng số nhỏ. C lớn không đồng nghĩa tốt hơn. Trong hai giá trị 0,1 và 1,0, quy trình Validation chọn C bằng 0,1.
+[Sources]
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+scripts/train.py
+reports/experiments.json · multi_class=ovr
+[/Sources]
+
+12. MLP và LinearSVC khác nhau ở đâu?
+Gợi ý nhịp nói: 50 giây
+Hai mô hình khác nhau về dạng hàm có thể học và mục tiêu tối ưu. MLP dùng ReLU để tạo quan hệ phi tuyến và giảm log-loss. LinearSVC giữ hàm điểm tuyến tính và giảm squared hinge loss. Cấu hình MLP có 5.333 trọng số và bias; LinearSVC có 1.640. Số tham số giúp mô tả độ phức tạp chứ không tự quyết định khả năng khái quát. Dữ liệu ít có thể khiến mô hình phức tạp học rất tốt Train nhưng chưa tốt câu mới. Softmax và decision_function cũng khác thang đo, nên không dùng cùng một ngưỡng số để so độ tự tin của hai mô hình.
+[Sources]
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+models/mlp.joblib
+models/linearsvc.joblib
+[/Sources]
+
+13. Tách dữ liệu để hạn chế học thuộc
+Gợi ý nhịp nói: 50 giây
+Để đánh giá học máy, phải tách việc học và việc kiểm tra. Trong đề tài, mỗi nhãn có sáu câu Train, hai Validation và hai Test, tổng cộng 30, 10 và 10. Cả từ điển lẫn IDF chỉ fit từ Train, vì nếu dùng toàn bộ dữ liệu thì đã lấy thông tin của tập đánh giá vào tiền xử lý. Validation dùng để chọn cấu hình và Test dùng để báo kết quả cuối. Lần chạy lưu lựa chọn trước khi tính Test nhưng Test đã từng được xem trong lịch sử triển khai. Do đó, em không gọi đây là đánh giá độc lập mới.
+[Sources]
+data/original_50.csv
+scripts/train.py
+reports/selection.json
+[/Sources]
+
+14. Sáu cấu hình được thử cùng điều kiện
+Gợi ý nhịp nói: 40 giây
+Bốn cấu hình MLP được tạo bởi hai kích thước tầng ẩn và hai giá trị alpha. Hai cấu hình LinearSVC được tạo bởi hai giá trị C. Các ứng viên đều đạt Macro-F1 Validation bằng một trên tập mười câu này. Vì hòa nên quy tắc trong từng họ lấy cấu hình đầu theo thứ tự đã quy định, còn giữa hai họ thì ưu tiên LinearSVC vì suy luận tuyến tính đơn giản. MLP là mô hình nghiên cứu chính, nhưng mặc định của ứng dụng tuân theo quy tắc lựa chọn chứ không theo mong muốn mô hình nào thắng. Không chọn dựa trên điểm Test.
+[Sources]
+reports/experiments.json · candidates
+reports/selection.json
+[/Sources]
+
+15. Hai mô hình cùng đúng 7/10 câu Test
+Gợi ý nhịp nói: 50 giây
+Cả hai mô hình nhận dạng đúng bảy trên mười câu Test, nhưng đạt tuyệt đối trên Train. Điều này cho thấy kết quả trên câu đã học không đại diện cho câu mới. Accuracy chỉ đếm tỷ lệ câu đúng. Macro-F1 tính F1 cho từng nhãn rồi lấy trung bình đều, nên có xét việc một nhãn bị nhầm hoặc bị bỏ sót. MLP có Macro-F1 Test 0,7133 và LinearSVC là 0,6933. Chênh lệch này xuất hiện dù tổng số câu đúng bằng nhau vì phân bố lỗi khác nhau. Tập Test quá nhỏ và đã từng được xem nên chưa đủ kết luận mô hình nào tốt hơn trong thực tế.
+[Sources]
+reports/experiments.json · models
+[/Sources]
+
+16. Xem vector và dự đoán từ model đã lưu
+Gợi ý nhịp nói: 60 giây
+Đây là các dự đoán được tính từ trọng số model đã lưu và đã đối chiếu với báo cáo. Với T06, vector có 12 trong 327 vị trí khác không. Cả hai dự đoán học phí. Cột MLP là điểm softmax, còn cột LinearSVC là điểm quyết định, có thể âm. Khi chọn Q050, nhãn thật là điểm học tập nhưng cả hai dự đoán lịch thi; MLP còn cho lịch thi khoảng 93,45 phần trăm. Vì vậy, một điểm softmax rất cao vẫn có thể đi cùng dự đoán sai. Không được diễn giải nó thành độ đúng của toàn bộ câu trả lời chatbot.
+[Sources]
+models/mlp.joblib
+models/linearsvc.joblib
+reports/experiments.json · predictions
+reports/faq-evaluation.json · T06
+[/Sources]
+
+17. Ma trận nhầm lẫn cho biết sai ở nhóm nào
+Gợi ý nhịp nói: 45 giây
+Hàng là nhãn thật, cột là nhãn dự đoán. Ô trên đường chéo là câu được phân loại đúng. Mỗi hàng có hai câu Test nên chỉ một lỗi đã thay đổi mạnh kết quả theo lớp. Tổng đường chéo của cả hai đều bằng bảy. Điểm khác nằm ở Q010: nhãn thật là học phí, MLP nhầm lịch thi còn LinearSVC nhầm đăng ký học phần. Điều này ảnh hưởng precision của các nhãn khác nhau, khiến Macro-F1 khác dù Accuracy bằng nhau. Phân tích lỗi cần chỉ rõ câu và nhóm nhầm, thay vì chỉ nêu một con số trung bình.
+[Sources]
+reports/experiments.json · confusion_matrix, predictions
+[/Sources]
+
+18. TF-IDF cũng dùng để tìm FAQ phù hợp
+Gợi ý nhịp nói: 40 giây
+TF-IDF có thể xuất hiện ở hai nơi nhưng được dùng khác nhau. Trong nhận dạng, nó tạo vector để MLP hoặc LinearSVC dự đoán nhãn. Trong truy hồi, vector câu hỏi được so độ tương đồng với các FAQ để xếp hạng nội dung. Nhánh phân loại giữ dấu và chỉ dùng từ cùng cặp từ. Nhánh truy hồi bỏ dấu, mở rộng một số viết tắt và kết hợp đặc trưng từ với ký tự theo trọng số 0,55 và 0,45. Hai vectorizer có từ điển và mục đích riêng. Chọn đúng nhãn vẫn chưa bảo đảm chọn đúng FAQ cụ thể trong nhãn đó.
+[Sources]
+app/engine.py · rebuild(), search(), classify()
+app/text.py
+[/Sources]
+
+19. Bộ nhận dạng được ghép vào Engine
+Gợi ý nhịp nói: 40 giây
+Sau phần học máy, em tích hợp bộ nhận dạng vào Engine của chatbot. route xử lý quy tắc và ngữ cảnh trước. Với chủ đề chưa rõ, classify chạy pipeline để định hướng tìm FAQ. Nhãn không tự tạo ra nội dung trả lời và cũng không thay bằng chứng. search chọn FAQ và route kiểm tra độ khớp. Nếu đã có câu trả lời và bật AI, generate dùng Qwen có sẵn để diễn đạt lại. Vì vậy, không nên gọi toàn bộ Engine là mô hình MLP hay coi Qwen là mạng được học từ 50 câu. Các tầng có nhiệm vụ và tiêu chí đánh giá khác nhau.
+[Sources]
+app/engine.py
+app/main.py · chat()
+[/Sources]
+
+20. Biểu diễn tốt và mô hình phù hợp đều cần thiết
+Gợi ý nhịp nói: 30 giây
+Tóm lại, TF-IDF là cách biểu diễn văn bản; MLP và LinearSVC là hai bộ phân loại sử dụng biểu diễn đó. MLP học quan hệ phi tuyến qua tầng ẩn, còn LinearSVC học các hàm tuyến tính theo từng lớp. Đề tài đã triển khai dữ liệu, pipeline, quy trình chọn tham số và đánh giá, rồi tích hợp nhận dạng vào chatbot. Hai mô hình cùng đạt bảy trên mười câu Test nhưng có phân bố lỗi khác nhau. Kết quả hiện tại minh họa được quy trình, chưa đủ khẳng định ưu thế thực tế do dữ liệu nhỏ và Test đã từng được xem. Em xin cảm ơn thầy cô.
+[Sources]
+reports/experiments.json
+reports/report-alignment.md
+[/Sources]
+
+21. Công thức MLP và lan truyền ngược
+Phụ lục, mở khi được hỏi
+Phụ lục dùng khi được hỏi về đạo hàm. Với softmax kết hợp cross-entropy của một mẫu, gradient theo logit bằng p trừ nhãn one-hot. Từ đó áp dụng quy tắc dây chuyền qua lớp cuối rồi qua ReLU để tính gradient các lớp trước. ReLU có đạo hàm một khi đầu vào dương và không khi âm; điểm không dùng quy ước triển khai. Loss có thêm phạt L2 trên trọng số. Dự án dùng L-BFGS để chọn bước cập nhật từ các gradient, không phải công thức tối ưu Adam.
+[Sources]
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+reports/experiments.json · MLP parameters
+[/Sources]
+
+22. Biên mềm, squared hinge và vai trò C
+Phụ lục, mở khi được hỏi
+Phân loại đúng về dấu chưa chắc đã hết loss: nếu điểm nằm trong biên thì vẫn bị phạt. Khi tích y nhân f nhỏ hơn một, squared hinge lấy bình phương phần thiếu biên. Hàm mục tiêu cân bằng giữ norm trọng số nhỏ với tổng phạt vi phạm. C điều chỉnh cân bằng này. Phương trình trên giải thích ý tưởng và giản lược cách regularize intercept của liblinear. Đây là LinearSVC, không phải kernel SVM RBF; không có tham số gamma trong cấu hình đang dùng.
+[Sources]
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+[/Sources]
+
+23. Độ phức tạp và giới hạn dữ liệu
+Phụ lục, mở khi được hỏi
+Số tham số được đếm trực tiếp từ model đã lưu. MLP có 327 nhân 16 cộng 16 ở tầng đầu và 16 nhân 5 cộng 5 ở tầng cuối, tổng 5.333. LinearSVC có năm vector 327 chiều và năm intercept, tổng 1.640. Dữ liệu Train chỉ 30 câu nên cần chú ý độ phức tạp, nhưng số tham số lớn hơn số mẫu không tự chứng minh overfitting. Phải xét regularization và đánh giá trên câu độc lập. Dự án còn cần dữ liệu có lỗi gõ, cách hỏi mới và nội dung ngoài phạm vi được gán nhãn phù hợp.
+[Sources]
+models/mlp.joblib
+models/linearsvc.joblib
+reports/experiments.json
+[/Sources]
+
+24. Các mô hình mở rộng nằm ở đâu?
+Phụ lục, mở khi được hỏi
+Nếu được hỏi các mô hình khác, em phân biệt theo nhiệm vụ. BiLSTM có thể khai thác thứ tự chuỗi qua mạng hồi tiếp hai chiều. PhoBERT dùng kiến trúc Transformer tiền huấn luyện cho tiếng Việt và có thể được fine-tune để phân loại. Trong đề tài hiện tại, đây chỉ là hướng phát triển, chưa có kết quả chạy. Qwen là mô hình ngôn ngữ tạo sinh được sử dụng sẵn để diễn đạt FAQ. Không nên đưa kết quả MLP lên cùng một bảng thắng thua với các mô hình chưa thực nghiệm.
+[Sources]
+sources/Bao_cao_TC1_TC2_Chatbot (1).docx
+reports/report-alignment.md
+[/Sources]
+
+25. Minh họa phần tích hợp vào chatbot
+Phụ lục, mở khi được hỏi
+Phụ lục này chỉ dùng nếu cần demo ứng dụng sau phần học máy. T06 cho thấy nhãn thực sự định hướng tìm kiếm. T03 cho thấy đúng nhãn chưa đủ chọn đúng FAQ. T07 cho thấy thu hẹp theo nhãn sai có thể làm mất FAQ đúng. Câu hỏi tiếp nối cho thấy vai trò của ngữ cảnh. Kết quả chọn FAQ cần được đánh giá tách biệt với bộ phân loại và với chất lượng diễn đạt của Qwen.
+[Sources]
+reports/faq-evaluation.json
+app/engine.py
+[/Sources]
+
+26. Các ý cần trả lời rõ khi được hỏi
+Phụ lục, mở khi được hỏi
+Tài liệu phương pháp được đối chiếu với tài liệu chính thức scikit-learn. Số liệu và cấu hình thực nghiệm được lấy từ các báo cáo và trọng số đã lưu của chính dự án. Ví dụ TF-IDF ba câu và mạng 2–2–2 là minh họa tính toán, không phải kết quả huấn luyện mới. Các dự đoán T06, Q010, Q029 và Q050 đã được tính lại từ model, đối chiếu dự đoán với báo cáo và kiểm tra forward pass MLP khớp predict_proba.
+[Sources]
+https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+reports/experiments.json
+[/Sources]
+
+CÂU HỎI THƯỜNG GẶP
+TF-IDF có phải học máy không? — Nó là phép biểu diễn có bước fit học thống kê từ tập văn bản, không dùng nhãn; đứng riêng chưa phải bộ phân loại ý định.
+IDF tính trên tập nào? — Chỉ Train. Validation/Test dùng từ điển và IDF đã học, tránh rò rỉ thông tin đánh giá.
+Từ mới thì sao? — Từ/cặp từ không có trong từ điển được bỏ qua; nhiều từ mới có thể làm vector ít thông tin hoặc toàn 0. Không tự thêm đặc trưng khi chat.
+Vì sao cần ReLU? — Nếu mọi tầng đều tuyến tính thì có thể gộp thành một biến đổi tuyến tính; ReLU cho phép mạng biểu diễn quan hệ phi tuyến.
+Backprop và L-BFGS khác nhau thế nào? — Backprop tính gradient qua các tầng; L-BFGS là bộ tối ưu dùng gradient và xấp xỉ độ cong để cập nhật tham số.
+alpha có phải learning rate? — Không. alpha điều khiển phạt L2 của MLP; lần chạy dùng L-BFGS.
+C có phải độ chính xác? — Không. C là trọng số đánh đổi phạt vi phạm biên với regularization của LinearSVC; chọn bằng Validation.
+LinearSVC có dùng kernel RBF không? — Không; đây là mô hình tuyến tính liblinear. Không có gamma trong cấu hình của dự án.
+LinearSVC 5 lớp làm sao? — One-vs-rest: 5 hàm tuyến tính, mỗi hàm phân biệt một lớp với các lớp còn lại; suy luận chọn điểm lớn nhất.
+Tại sao tất cả điểm SVC âm vẫn dự đoán? — Ở đa lớp one-vs-rest, predict chọn argmax điểm; không đòi lớp thắng phải có điểm dương.
+Vì sao cùng Accuracy nhưng F1 khác? — Các lỗi rơi vào các lớp khác nhau, làm precision/recall từng lớp khác; Macro-F1 lấy trung bình F1 từng lớp.
+Tại sao 93% mà sai? — Softmax mô tả phân bố điểm mô hình, chưa được hiệu chuẩn thành xác suất dự đoán đúng; xem Q050.
+Có đủ cơ sở nói MLP hơn SVC không? — Chưa. Test 10 câu đã được xem, dữ liệu tự biên soạn; cần tập độc lập và đánh giá lớn hơn.
+Mạng có tự học khi sinh viên chat không? — Không. Pipeline đã lưu chỉ suy luận. Huấn luyện lại là quy trình riêng.
+Qwen thuộc phần nào? — Mô hình tạo sinh có sẵn để diễn đạt FAQ, không phải MLP phân loại được học từ 50 câu.
+
+NGUỒN PHƯƠNG PHÁP
+https://scikit-learn.org/stable/modules/feature_extraction.html#tfidf-term-weighting
+https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html
+
+KIỂM CHỨNG SỐ LIỆU
+Forward pass MLP tính từ coefs_ và intercepts_ khớp predict_proba bằng numpy.allclose. Dự đoán các câu Test khớp reports/experiments.json; T06 khớp reports/faq-evaluation.json.
+Đếm tham số trực tiếp: MLP 5333; LinearSVC 1640. T06 có 12 phần tử TF-IDF khác 0; Q050 được MLP gán lịch thi với điểm 0.9344966257155412 dù nhãn thật là diem_hoc_tap.
+Giá trị TF-IDF ví dụ 3 câu được tính riêng theo công thức làm trơn IDF và L2; không đưa vào Train, Validation hoặc Test của dự án.
+Không chạy huấn luyện lại, không sửa model, số liệu thực nghiệm, dữ liệu ứng dụng hoặc dịch vụ.

@@ -1,0 +1,56 @@
+{
+  "mode": "illustrative-offline",
+  "source_revision": "ded15187b5fe25dc9eb6733c64292097943f3f1d",
+  "native_diagrams_modified": false,
+  "coverage": {
+    "architecture": {
+      "nodes": 9,
+      "inspectable_nodes": 9,
+      "scenarios": 2,
+      "steps": 10
+    },
+    "chat": {
+      "nodes": 5,
+      "inspectable_nodes": 5,
+      "scenarios": 1,
+      "steps": 8
+    },
+    "routing": {
+      "nodes": 20,
+      "inspectable_nodes": 20,
+      "scenarios": 4,
+      "steps": 24
+    },
+    "startup": {
+      "nodes": 5,
+      "inspectable_nodes": 5,
+      "scenarios": 1,
+      "steps": 6
+    },
+    "knowledge-admin": {
+      "nodes": 4,
+      "inspectable_nodes": 4,
+      "scenarios": 1,
+      "steps": 7
+    },
+    "research-training": {
+      "nodes": 5,
+      "inspectable_nodes": 5,
+      "scenarios": 1,
+      "steps": 6
+    },
+    "operations": {
+      "nodes": 4,
+      "inspectable_nodes": 4,
+      "scenarios": 1,
+      "steps": 5
+    },
+    "modules": {
+      "nodes": 6,
+      "inspectable_nodes": 6,
+      "scenarios": 1,
+      "steps": 6
+    }
+  },
+  "artifact_sha256": "3056bc3c2c8b0eb6b5e92471dffdbc1cef4bb85e500d0dd5beb2b241d07dffc4"
+}

@@ -1,0 +1,23 @@
+{
+  "mode": "live-runtime",
+  "source_state": "uncommitted worktree based on a1bd813",
+  "tests": {
+    "pytest": "69 passed; one existing Starlette deprecation warning",
+    "new_trace_cases": 13,
+    "inprocess_api_checks": 9,
+    "ui_renderer_checks": 6,
+    "javascript_syntax": "passed"
+  },
+  "original_archify_files_unchanged": 8,
+  "visual_review": "Inspected actual provider-in-flight, completed dark/light and mobile captures",
+  "live_provider_test": "Actual local Ollama qwen3:4b; temporary SQLite database with public fixtures",
+  "production_database_used_for_tests": false,
+  "files": {
+    "app/main.py": "a5366bbe332fcb6573ac9cf0c68e2c47124333e8be9bf257321565da357f6a29",
+    "app/engine.py": "a1f51311e281542faceef732c44e23aaa9fec8917c253394dd3cdbd32600bb7a",
+    "app/tracing.py": "8631e6e5de5d7cf74817e6f8fe4b2e52badf9092f7caac80e2a4657f8056f381",
+    "app/live_trace.py": "93ab3dfd5ee9a4cb5e001a79a7617ad52f2c3489d4502b2c8271a7f1740bf8d8",
+    "tests/test_live_trace.py": "7b8e0cb3798990d1a9b873a58353f0cc53134aaed8b9e709b087e14e8ef4fe1d"
+  },
+  "browser_evidence": "live-browser-verification.json"
+}

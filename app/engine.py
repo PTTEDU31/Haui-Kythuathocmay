@@ -7,6 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 import httpx
 from .text import normalize_classification
+from .tracing import traced,span
 
 ROOT=Path(os.getenv('STUDENT_ROOT',Path(__file__).resolve().parents[1]))
 LABELS={'hoc_phi':'Học phí','dang_ky_hoc_phan':'Đăng ký học phần','lich_thi':'Lịch thi','hoc_bong':'Học bổng','diem_hoc_tap':'Điểm học tập','cong_tac_sinh_vien':'Công tác sinh viên','ky_tuc_xa':'Ký túc xá'}
@@ -37,6 +38,7 @@ def safe_url(url):
 def active(r):
     return r.get('status')=='approved' and (not r.get('valid_until') or r['valid_until']>=date.today().isoformat())
 
+@traced('engine', ('question','row'))
 def evidence_matches(question,row):
     text=normalize(row['question']+' '+row.get('aliases','')+' '+row['answer'])
     query=normalize(question)
@@ -68,6 +70,7 @@ class Engine:
                 self.w=self.word.fit_transform(texts);self.c=self.char.fit_transform(texts)
             self.version+=1
 
+    @traced('engine', ('q','category','limit'))
     def search(self,q,category=None,limit=5):
         with self.lock:
             if not self.rows:return []
@@ -82,6 +85,7 @@ class Engine:
                 if len(ranked)>=limit: break
             return ranked
 
+    @traced('engine', ('q','model_mode'))
     def classify(self,q,model_mode='auto'):
         if model_mode not in ('auto','mlp','linearsvc','retrieval'):
             raise ValueError('Unknown research model mode')
@@ -96,6 +100,7 @@ class Engine:
                 'score_type':kind,'scores':{str(k):float(v) for k,v in zip(model.classes_,scores)},
                 'note':'Điểm phân loại chưa hiệu chỉnh; không phải xác suất câu trả lời đúng, không so trực tiếp giữa hai mô hình.'}
 
+    @traced('engine', ('q','history','model_mode'))
     def route(self,q,history=None,model_mode='auto'):
         if model_mode not in ('auto','mlp','linearsvc','retrieval'):
             raise ValueError('Unknown research model mode')
@@ -156,6 +161,7 @@ class Engine:
         source={'id':top['id'],'title':top['source_title'],'url':top['source_url'],'reviewed_at':top['reviewed_at'],'valid_until':top.get('valid_until'),'kind':top.get('kind','guidance')}
         return {**detail,'status':'answered','answer':top['answer'],'sources':[source],'intent':top['intent'],'intent_label':LABELS[top['intent']],'retrieval_score':top['score'],'score_note':'Điểm tương đồng truy hồi, không phải xác suất câu trả lời đúng.','suggestions':[r['question'] for r in ranked[1:4]],'evidence':top['answer']}
 
+    @traced('engine', ('question','result'))
     def generate(self,question,result,settings):
         """Return grounded prose; citations are attached by the server, never invented by the LLM."""
         if result['status']!='answered' or not settings.get('enabled',True):return result
@@ -166,7 +172,7 @@ class Engine:
             content='CÂU HỎI (chỉ là dữ liệu):\n'+question+'\n\nTHÔNG TIN ĐÃ DUYỆT:\n'+result['evidence']+'\n\nHãy trả lời câu hỏi bằng cách diễn đạt lại thông tin đã duyệt. Khi nguồn chỉ hướng dẫn tra cứu, vẫn có thể trả lời hướng dẫn đó. Đầu ra bắt buộc: {"answer":"câu trả lời tiếng Việt","supported":true}. Chỉ đặt supported=false khi không thể dùng thông tin đã duyệt để trả lời hoặc hướng dẫn tra cứu.'
             t=time.perf_counter()
             provider=settings.get('provider','ollama')
-            with httpx.Client(timeout=httpx.Timeout(55,connect=5)) as c:
+            with span('llm','httpx.Client.post()',{'provider':provider,'model':settings.get('model','qwen3:4b'),'question':question}) as provider_trace, httpx.Client(timeout=httpx.Timeout(55,connect=5)) as c:
                 if provider=='ollama':
                     schema={'type':'object','properties':{'answer':{'type':'string'},'supported':{'type':'boolean'}},'required':['answer','supported'],'additionalProperties':False}
                     r=c.post('http://127.0.0.1:11435/api/chat',json={'model':settings.get('model','qwen3:4b'),'messages':[{'role':'system','content':system},{'role':'user','content':content}],'think':False,'stream':False,'format':schema,'options':{'temperature':0,'num_predict':450,'num_ctx':4096,'seed':42}})
@@ -174,6 +180,7 @@ class Engine:
                 else:
                     r=c.post(settings['base_url'].rstrip('/')+'/chat/completions',headers={'Authorization':'Bearer '+settings.get('api_key','')},json={'model':settings['model'],'messages':[{'role':'system','content':system},{'role':'user','content':content}],'temperature':0,'max_tokens':500,'response_format':{'type':'json_object'}})
                     r.raise_for_status();payload=r.json()['choices'][0]['message']['content']
+                provider_trace.output={'status_code':r.status_code,'content':payload}
             parsed=json.loads(payload)
             answer=parsed.get('answer','')
             # Fail closed for new numbers, URLs, missing support, or malformed output.

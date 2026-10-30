@@ -1,0 +1,27 @@
+{
+  "mode": "live-runtime",
+  "checks": [
+    "Real browser request returns FAQ-001 with measured retrieval score and actual API JSON",
+    "Clicking a measured call highlights the correct Archify block and shows actual input, output and current function source",
+    "Unobserved blocks never receive invented runtime data",
+    "Greeting/clarify/out_of_scope branches show only functions actually executed",
+    "Actual Ollama call appears while in flight: provider block lit, output pending, duplicate submission disabled",
+    "Actual Ollama qwen3:4b request completes and displays real generation result/fallback without fabricated output",
+    "Theme switch and fullscreen controls work under the application CSP",
+    "No horizontal overflow at desktop/tablet/mobile widths 1440/1024/768/390px",
+    "No JavaScript errors or CSP violations"
+  ],
+  "production_database_used": false,
+  "browser": "Playwright Chromium headless",
+  "retrieval_score": 0.4506,
+  "generation": {
+    "used": true,
+    "model": "qwen3:4b",
+    "provider": "ollama",
+    "latency_ms": 568,
+    "reason": null
+  },
+  "page_errors": [],
+  "console_errors": [],
+  "artifact_sha256": "3b0072be313013401ef9d1c8281bf534cc94245196ab4c70606afc9b2b4e0c49"
+}

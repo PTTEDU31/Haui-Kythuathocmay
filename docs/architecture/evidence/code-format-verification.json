@@ -1,0 +1,56 @@
+{
+  "verified_at": "2026-10-24T11:49:55.952245+00:00",
+  "pages": [
+    "app/static/huong-dan-bao-ve.html",
+    "app/static/huong-dan-mo-phong.html",
+    "app/static/huong-dan-source.html",
+    "app/static/hoc-mo-hinh.html",
+    "docs/architecture/live.html"
+  ],
+  "assets": {
+    "app/static/code-viewer.js": "f89117f3f39d6c606799644edc1dcf9d54e3424f354529d2c642d6104f7ce777",
+    "app/static/code-viewer.css": "fb3369c17417637ed13d2f1fe14cc83a2bc8d44c4a151447bd7e8dfe204fc109",
+    "scripts/code_viewer_assets.py": "4908f0d2e9e3aaf01732bf7b6e8a1384f900c19b5b7bdfb2f6c21043961d9abf",
+    "app/static/vendor/highlight-11.11.1.min.js": "c4a399dd6f488bc97a3546e3476747b3e714c99c57b9473154c6fb8d259b9381"
+  },
+  "highlighter": {
+    "name": "Highlight.js",
+    "version": "11.11.1",
+    "license": "BSD-3-Clause",
+    "local_only": true
+  },
+  "features": [
+    "syntax highlighting",
+    "line-number gutter",
+    "horizontal scrolling",
+    "optional wrapping",
+    "13/15/17/19 px font sizes",
+    "copy original code without line numbers",
+    "excerpt common-indent removal for display",
+    "source anchors and search preserved",
+    "dynamic code updates"
+  ],
+  "browser": {
+    "guide_mobile_width": 390,
+    "horizontal_overflow": false,
+    "copy_button_reported_success": true,
+    "wrap_toggle": true,
+    "font_increase_to_17": true,
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "source_line_92_anchor": true,
+    "source_search": true,
+    "source_file_change_language_updated": true,
+    "lab_full_vector_coordinates": 327,
+    "live_page_no_console_errors": true,
+    "offline_player_code_highlighted": true,
+    "console_errors": []
+  },
+  "pytest": {
+    "passed": 80,
+    "warnings": 1
+  },
+  "scope": "Presentation only; source text remains unchanged. No training, provider requests or test chat messages."
+}

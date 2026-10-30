@@ -1,0 +1,26 @@
+{
+  "mode": "illustrative-offline",
+  "checks": [
+    "8 diagrams, 12 scenarios, 72 steps: highlight and input/output stay synchronized",
+    "58 blocks clickable with input/output and source links; untraversed branches marked inspection",
+    "Playback, pause, manual-step cancellation, scenario-switch cancellation, slider, completion and replay",
+    "Keyboard playback shortcuts and control focus exclusion",
+    "Follow active block changes SVG viewBox; overview restores original geometry",
+    "Dark/light toggle and fullscreen enter/exit",
+    "Source citation opens selected line in pinned source explorer",
+    "Desktop/tablet/mobile layouts fit viewport at 1440/1024/768/390px",
+    "Standalone file opens and steps offline without HTTP requests",
+    "No page errors or application API requests",
+    "All eight original Archify HTML files unchanged from a1bd813",
+    "Generated HTML rebuild is deterministic; JavaScript syntax and whitespace checks passed",
+    "Visually inspected desktop dark/light, routing focus and mobile captures"
+  ],
+  "diagrams": 8,
+  "scenarios": 12,
+  "steps": 72,
+  "inspectable_nodes": 58,
+  "browser": "Playwright Chromium headless",
+  "page_errors": [],
+  "artifact_sha256": "6bab8431cb3ac61b49177bffa1d242f767513784bea09a3486cb15f75d3a147f",
+  "visual_review": "Desktop dark/light, routing focus and mobile screenshots inspected"
+}
