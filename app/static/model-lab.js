@@ -315,7 +315,7 @@
   const seen=new Set();
   for(const lesson of window.HauiDefenseLessons.lessons.filter(l=>['tfidf','mlp','svc','train'].includes(l.id))){
     const d=node('details');d.append(node('summary',lesson.title));paragraph(d,lesson.implementation);
-    for(const ref of lesson.refs){const key=ref.path+':'+ref.line;if(seen.has(key))continue;seen.add(key);paragraph(d,`${ref.path}:${ref.line}–${ref.end_line}`,'code-ref');const pre=node('pre');pre.append(node('code',ref.code.split('\n').map((line,i)=>`${ref.line+i}  ${line}`).join('\n')));d.append(pre);}
+    for(const ref of lesson.refs){const key=ref.path+':'+ref.line;if(seen.has(key))continue;seen.add(key);{const a=node('a',`${ref.path}:${ref.line}–${ref.end_line} ↗`);a.href=window.HauiDefenseLessons.github+ref.path+'#L'+ref.line+'-L'+ref.end_line;a.target='_blank';a.rel='noopener';const p=node('p',undefined,'code-ref');p.append(a);d.append(p);}const pre=node('pre');pre.append(node('code',ref.code.split('\n').map((line,i)=>`${ref.line+i}  ${line}`).join('\n')));d.append(pre);}
     $('#code-excerpts').append(d);
   }
   $('#theme').addEventListener('click',()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';});

@@ -98,7 +98,10 @@
     source.append(el('summary', '', 'Chỉ vào đoạn code này khi cô hỏi'));
     for (const ref of lesson.refs) {
       const figure = el('figure', 'defense-excerpt');
-      figure.append(el('figcaption', '', `${ref.path}:${ref.line}–${ref.end_line} · đoạn trích từ code hiện tại khi dựng bài`));
+      const caption = el('figcaption', '', `${ref.path}:${ref.line}–${ref.end_line} · `);
+      const github = el('a', '', 'Mở trên GitHub ↗');
+      github.href = window.HauiDefenseLessons.github+ref.path+'#L'+ref.line+'-L'+ref.end_line;github.target = '_blank';github.rel = 'noopener';
+      caption.append(github);figure.append(caption);
       const pre = el('pre', '');
       const code = el('code', '');
       code.textContent = ref.code.split('\n').map((line, index) => `${ref.line + index}  ${line}`).join('\n');
