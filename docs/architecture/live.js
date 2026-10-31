@@ -135,6 +135,58 @@
     } else svg.setAttribute('viewBox',originalViewBox);
   }
 
+  // Learning view for ML spans: tables + bars built from the real output, raw JSON kept below.
+  const ML_STEPS = [
+    [/TF-IDF/, 'TF-IDF', 'Biến câu hỏi thành vector: từ hiếm trong kho (IDF cao) và xuất hiện trong câu (TF) có trọng số lớn; cuối cùng chuẩn hóa L2 để độ dài vector = 1.'],
+    [/cosine/, 'Cosine', 'So vector câu hỏi với từng tài liệu FAQ. Cosine ∈ [0,1]: càng gần 1 càng giống. Điểm cuối = 0.55·cos(từ) + 0.45·cos(ký tự).'],
+    [/LinearSVC/, 'LinearSVC', 'Mỗi nhãn có một vector trọng số w và bias b. Điểm = w·x + b; nhãn có điểm cao nhất thắng. Điểm không phải xác suất.'],
+    [/MLPClassifier/, 'MLP', 'Mạng nơ-ron 1 lớp ẩn: x → ReLU(x·W1+b1) → z = h·W2+b2 → softmax ra xác suất cho từng nhãn.']];
+  const mlStep = name => ML_STEPS.find(([re]) => re.test(name || ''));
+  function el(tag, cls, text) { const e=document.createElement(tag); if(cls)e.className=cls; if(text!=null)e.textContent=text; return e; }
+  function table(rows, cols, barKey) {
+    const max = Math.max(1e-9, ...rows.map(r => Math.abs(Number(r[barKey]) || 0)));
+    const t = el('table','learn-table'), head = el('tr');
+    for (const [, title] of cols) head.append(el('th','',title));
+    t.append(head);
+    rows.forEach((r, i) => {
+      const tr = el('tr', i === 0 ? 'best' : '');
+      for (const [key] of cols) {
+        const td = el('td','', r[key] == null ? '' : String(r[key]));
+        if (key === barKey) {
+          const v = Number(r[key]) || 0, bar = el('span', v < 0 ? 'bar neg' : 'bar');
+          bar.style.width = `${Math.round(Math.abs(v) / max * 100)}%`;td.prepend(bar);td.classList.add('bar-cell');
+        }
+        tr.append(td);
+      }
+      t.append(tr);
+    });
+    return t;
+  }
+  function learnView(record) {
+    const step = mlStep(record.function), out = record.output;
+    if (!step || !out || typeof out !== 'object') return null;
+    const box = el('div','learn');
+    box.append(el('p','learn-badge',step[1]), el('p','learn-intro',step[2]));
+    if (out.formula) box.append(el('code','learn-formula',out.formula));
+    if (out.top_terms) {
+      box.append(el('p','learn-meta',`Sau chuẩn hóa: “${out.preprocessed}” · ${out.tokens} n-gram, ${out.distinct_in_vocab} có trong từ điển ${out.vocabulary_size} term · ||v||₂ trước chuẩn hóa = ${out.l2_norm}`));
+      box.append(table(out.top_terms,[['term','Term'],['count','Đếm'],['tf','TF'],['idf','IDF'],['tf_x_idf','TF×IDF'],['weight_l2','Trọng số cuối']],'weight_l2'));
+      if (out.out_of_vocab?.length) box.append(el('p','learn-meta',`Bỏ qua (không có trong từ điển): ${out.out_of_vocab.join(', ')}`));
+    } else if (out.top) {
+      box.append(table(out.top,[['intent','Nhóm'],['cos_word','cos từ'],['cos_char','cos ký tự'],['score','Điểm'],['question','Câu FAQ']],'score'));
+    } else if (out.classes && out.model === 'LinearSVC') {
+      box.append(table(out.classes,[['class','Nhãn'],['w_dot_x','w·x'],['bias','b'],['score','Điểm'],['top_terms','Từ kéo điểm lên']],'score'));
+    } else if (out.classes) {
+      box.append(el('p','learn-meta',`Kiến trúc ${out.layers} · neuron ẩn bật (ReLU>0): ${out.active_neurons}`));
+      const strip = el('div','neurons');
+      const h = String(out.hidden_relu).split(',').map(Number), m = Math.max(1e-9, ...h);
+      h.forEach((v, i) => { const n = el('span', v > 0 ? 'on' : ''); n.style.opacity = v > 0 ? .25 + .75 * v / m : 1; n.title = `h${i+1} = ${v}`; strip.append(n); });
+      box.append(strip, table(out.classes,[['class','Nhãn'],['logit_z','Logit z'],['softmax_p','Xác suất p']],'softmax_p'));
+    }
+    box.append(el('p','learn-meta','Dòng tô đậm = giá trị lớn nhất. Số liệu lấy từ lần chạy thật này.'));
+    return box;
+  }
+
   function selectRecord(record) {
     selected = record;
     $('#selected-title').textContent = names[record.node] || record.node;
@@ -143,7 +195,10 @@
     const state = record.error ? 'Lỗi' : record.finished ? 'Đã hoàn tất' : 'Đang chạy';
     $('#timing').textContent = `${state} · ${origin} · ${record.at || ''} · t+${record.elapsed_ms.toFixed(3)} ms${record.finished ? ' · mất ' + record.duration_ms.toFixed(3) + ' ms' : ''}`;
     $('#input-value').replaceChildren(values(record.input));
-    $('#output-value').replaceChildren(values(record.error || (record.finished ? record.output : 'Đang chạy… chưa có output.')));
+    const raw = values(record.error || (record.finished ? record.output : 'Đang chạy… chưa có output.'));
+    const learn = record.finished && !record.error ? learnView(record) : null;
+    if (learn) { const d = el('details','learn-raw'); d.append(el('summary','','JSON gốc'), raw); $('#output-value').replaceChildren(learn, d); }
+    else $('#output-value').replaceChildren(raw);
     const source = record.source;
     $('#source-label').textContent = source ? `${source.path}:${source.line || '?'}${source.end_line ? '–'+source.end_line : ''} · mã nguồn hiện tại` : 'Mã nguồn';
     // Live code is read at runtime, so link to main rather than a pinned commit.
@@ -159,7 +214,12 @@
   function renderRow(record) {
     record.button.classList.toggle('running', !record.finished);
     record.button.classList.toggle('error', Boolean(record.error));
-    record.button.querySelector('.event-name').textContent = `${record.parent_id ? '↳ ' : ''}${record.function}`;
+    const name = record.button.querySelector('.event-name'), step = mlStep(record.function);
+    name.textContent = record.function.replace(/^\w+\(\) · /, '');
+    if (step) name.prepend(el('span','ml-tag',step[1]));
+    let depth = 0;for (let p = records.get(record.parent_id); p && depth < 4; p = records.get(p.parent_id)) depth++;
+    record.button.style.marginLeft = `${depth * 14}px`;
+    record.button.classList.toggle('ml', Boolean(step));
     record.button.querySelector('.event-time').textContent = record.error ? 'Lỗi' : record.finished ? `${record.duration_ms.toFixed(3)} ms` : 'Đang chạy…';
     $('#event-count').textContent = `${records.size} lời gọi`;
   }

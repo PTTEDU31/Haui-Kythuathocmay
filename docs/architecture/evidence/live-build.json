@@ -4,9 +4,9 @@
   "original_diagram_modified": false,
   "requires": "STUDENT_TRACE=1; GET /architecture/live; same-origin server",
   "artifacts": {
-    "live.html": "9ff613c93f921759357b968a2cfde6dfc7c16084c9297289808941bc7d83fe70",
-    "live.js": "401a05422c4b44fd3834b9a40ed83d8c59f76855777a584078f0eea688a557c8",
-    "live.css": "cad312c2e4b7d397a6bd51e3109060f284914075949af63ebca0e0697ff0f33b",
+    "live.html": "1469eff3b1067d419dbfd2b964ab43bc8919253d9700795168161a198db1743e",
+    "live.js": "f762d18b29d402d8ffc0ccf5ed75a2b48cab046165c19d998f7f5ec90e29babb",
+    "live.css": "fe7a15965bb7c7089dbefa4d664c4d5100157342adbdcbe42620907f41e5db15",
     "live-diagram.css": "71f83eee651d798bed2bf06d8fc2f39d670531f092fdaf56e6fc49390f632ae5"
   }
 }

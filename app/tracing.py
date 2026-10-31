@@ -96,6 +96,9 @@ class span:
         return False
 
 
+def tracing_on():
+    return _current.get() is not None
+
 def traced(node, fields):
     def decorate(function):
         signature = inspect.signature(function)

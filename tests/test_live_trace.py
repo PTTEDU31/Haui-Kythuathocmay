@@ -459,3 +459,12 @@ def test_post_observer_retains_origin_and_session_guards(client, enabled, monkey
     assert client.post('/api/chat/trace/events',headers={'Origin':'https://evil.example'}).status_code==403
     monkeypatch.delenv('STUDENT_TRACE')
     assert client.post('/api/chat/trace/events').status_code==404
+
+def test_trace_explains_tfidf_and_both_classifiers(client, enabled):
+    client.get('/api/bootstrap')
+    trace = events(client)
+    names = [e['function'] for e in starts(trace)]
+    assert any('TF-IDF từ' in n for n in names) and any('cosine' in n for n in names)
+    assert any('LinearSVC' in n for n in names) and any('MLPClassifier' in n for n in names)
+    tfidf = next(e for e in trace if e['event'] == 'end' and 'top_terms' in (e.get('output') or {}))
+    assert {'tf', 'idf', 'weight_l2'} <= tfidf['output']['top_terms'][0].keys()

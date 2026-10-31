@@ -1,5 +1,6 @@
 """Vietnamese retrieval and grounded generation. No student records are accessed."""
-import re, unicodedata, os, json, time, threading
+import re, unicodedata, os, json, time, threading, math
+from collections import Counter
 from datetime import date
 from pathlib import Path
 import numpy as np
@@ -7,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 import httpx
 from .text import normalize_classification
-from .tracing import traced,span
+from .tracing import traced,span,tracing_on
 
 ROOT=Path(os.getenv('STUDENT_ROOT',Path(__file__).resolve().parents[1]))
 LABELS={'hoc_phi':'Học phí','dang_ky_hoc_phan':'Đăng ký học phần','lich_thi':'Lịch thi','hoc_bong':'Học bổng','diem_hoc_tap':'Điểm học tập','cong_tac_sinh_vien':'Công tác sinh viên','ky_tuc_xa':'Ký túc xá'}
@@ -47,6 +48,37 @@ def evidence_matches(question,row):
     if not years<=set(re.findall(r'\b20\d{2}\b',text)):return False
     return len(terms)<2 or len(terms & set(text.split()))/len(terms)>=.25
 
+def explain_tfidf(vec,q,top=8):
+    """Trace-only: rebuild one query's TF-IDF weights term by term (tf -> idf -> L2)."""
+    counts=Counter(vec.build_analyzer()(q));vocab=vec.vocabulary_
+    raw={t:(1+math.log(c) if vec.sublinear_tf else c)*vec.idf_[vocab[t]] for t,c in counts.items() if t in vocab}
+    norm=math.sqrt(sum(v*v for v in raw.values())) or 1.0
+    terms=[{'term':t,'count':counts[t],'tf':round(1+math.log(counts[t]) if vec.sublinear_tf else counts[t],4),
+            'idf':round(float(vec.idf_[vocab[t]]),4),'tf_x_idf':round(float(v),4),'weight_l2':round(float(v/norm),4)}
+           for t,v in sorted(raw.items(),key=lambda kv:-kv[1])[:top]]
+    return {'preprocessed':vec.build_preprocessor()(q),'ngram_range':list(vec.ngram_range),'analyzer':vec.analyzer,
+            'vocabulary_size':len(vocab),'tokens':sum(counts.values()),'distinct_in_vocab':len(raw),
+            'out_of_vocab':[t for t in counts if t not in vocab][:8],'l2_norm':round(norm,4),
+            'formula':('tf=1+ln(count)' if vec.sublinear_tf else 'tf=count')+'; idf=ln((1+N)/(1+df))+1; weight=tf*idf/||v||2',
+            'top_terms':terms}
+
+def explain_classifier(model,q):
+    """Trace-only: show the arithmetic behind LinearSVC scores or the MLP forward pass."""
+    vec,clf=model.named_steps['tfidf'],model.named_steps['clf']
+    x=vec.transform([q]);names=vec.get_feature_names_out();classes=[str(c) for c in model.classes_]
+    if hasattr(clf,'coef_'):
+        z=(x@clf.coef_.T).ravel()+clf.intercept_;cols=x.indices
+        per=[{'class':c,'w_dot_x':round(float(z[k]-clf.intercept_[k]),4),'bias':round(float(clf.intercept_[k]),4),'score':round(float(z[k]),4),
+              'top_terms':', '.join(f"{names[j]}({clf.coef_[k,j]*v:+.3f})" for j,v in sorted(zip(cols,x.data),key=lambda jv:-clf.coef_[k,jv[0]]*jv[1])[:4])}
+             for k,c in enumerate(classes)]
+        return {'model':'LinearSVC','formula':'score_k = w_k·x + b_k; nhãn = argmax score','classes':sorted(per,key=lambda r:-r['score'])}
+    h=np.maximum(0,x@clf.coefs_[0]+clf.intercepts_[0]).ravel();z=h@clf.coefs_[1]+clf.intercepts_[1]
+    p=np.exp(z-z.max());p/=p.sum()
+    return {'model':'MLPClassifier','formula':'h = ReLU(x·W1 + b1); z = h·W2 + b2; p = softmax(z)',
+            'layers':' -> '.join(str(n) for n in [x.shape[1],*clf.hidden_layer_sizes,len(classes)]),
+            'hidden_relu':', '.join(f'{v:.3f}' for v in h),'active_neurons':f'{int((h>0).sum())}/{h.size}',
+            'classes':sorted(({'class':c,'logit_z':round(float(z[k]),4),'softmax_p':round(float(p[k]),4)} for k,c in enumerate(classes)),key=lambda r:-r['softmax_p'])}
+
 class Engine:
     def __init__(self):
         self.lock=threading.RLock()
@@ -74,15 +106,23 @@ class Engine:
     def search(self,q,category=None,limit=5):
         with self.lock:
             if not self.rows:return []
-            scores=(self.w@self.word.transform([q]).T).toarray().ravel()*.55+(self.c@self.char.transform([q]).T).toarray().ravel()*.45
-            ranked=[]
+            sw=(self.w@self.word.transform([q]).T).toarray().ravel();sc=(self.c@self.char.transform([q]).T).toarray().ravel()
+            scores=sw*.55+sc*.45
+            if tracing_on():
+                with span('engine','search() · TF-IDF từ (word 1–2 gram)',{'q':q}) as t:t.output=explain_tfidf(self.word,q)
+                with span('engine','search() · TF-IDF ký tự (char_wb 3–5 gram)',{'q':q}) as t:t.output=explain_tfidf(self.char,q)
+            ranked=[];picked=[]
             for i in np.argsort(-scores):
                 row=dict(self.rows[i])
                 if not active(row):continue
                 if category and row['intent']!=category: continue
                 row['score']=round(float(scores[i]),4)
-                ranked.append(row)
+                ranked.append(row);picked.append(i)
                 if len(ranked)>=limit: break
+            if tracing_on():
+                with span('engine','search() · cosine = 0.55·word + 0.45·char',{'category':category,'documents':len(self.rows)}) as t:
+                    t.output={'top':[{'id':r['id'],'intent':r['intent'],'cos_word':round(float(sw[i]),4),'cos_char':round(float(sc[i]),4),'score':r['score'],'question':r['question'][:90]}
+                                     for r,i in zip(ranked,picked)]}
             return ranked
 
     @traced('engine', ('q','model_mode'))
@@ -92,6 +132,12 @@ class Engine:
         name=self.default_model if model_mode=='auto' else model_mode
         model=self.models.get(name)
         if model is None:return None
+        if tracing_on():
+            with span('engine',f'classify() · TF-IDF pipeline ({name})',{'q':q}) as t:t.output=explain_tfidf(model.named_steps['tfidf'],q)
+            # Show every loaded model side by side; only `name` decides the label.
+            for other,m in self.models.items():
+                role='ĐANG DÙNG' if other==name else 'chỉ để so sánh'
+                with span('engine',f'classify() · {type(m.named_steps["clf"]).__name__} [{role}]',{'q':q}) as t:t.output=explain_classifier(m,q)
         pred=str(model.predict([q])[0])
         if pred not in RESEARCH_LABELS:return None
         kind='predict_proba' if name=='mlp' else 'decision_function'

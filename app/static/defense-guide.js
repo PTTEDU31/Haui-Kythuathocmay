@@ -31,6 +31,9 @@
     if (hint.includes('SELECT history')) return 'history';
     if (hint.includes('INSERT messages')) return 'persist';
     if (hint.includes('evidence_matches')) return 'evidence';
+    if (/MLPClassifier \[/.test(hint)) return 'mlp';
+    if (/LinearSVC \[/.test(hint)) return 'svc';
+    if (/^search\(\) · /.test(hint)) return 'search';
     if (hint.includes('Engine.classify')) {
       const model = context.record?.output?.model;
       return model === 'MLPClassifier' ? 'mlp' : model === 'LinearSVC' ? 'svc' : 'classify';
@@ -62,7 +65,7 @@
     }
     if (record.function.includes('evidence_matches')) return `Kết quả kiểm tra thật: ${String(output)}. Đây là kiểm tra theo quy tắc từ vựng/năm học.`;
     if (output?.generation) return `AI trong kết quả thật: used=${output.generation.used}; reason=${output.generation.reason ?? 'không có'}. Xem sự kiện HTTP riêng để biết provider có được gọi không.`;
-    if (output?.model) return `Mô hình thực sự trả kết quả: ${output.model}; nhãn=${output.intent}; loại điểm=${output.score_type}. Nội bộ sklearn không được trace từng phép tính.`;
+    if (output?.model && output.intent) return `Mô hình thực sự trả kết quả: ${output.model}; nhãn=${output.intent}; loại điểm=${output.score_type}. Nội bộ sklearn không được trace từng phép tính.`;
     return 'Đã quan sát lời gọi này. Input/Output ở bảng trace là dữ liệu thật; giải thích phương pháp bên dưới là chú giải code, không phải các sự kiện runtime bổ sung.';
   }
 
