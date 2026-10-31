@@ -34,6 +34,7 @@
     if (/MLPClassifier \[/.test(hint)) return 'mlp';
     if (/LinearSVC \[/.test(hint)) return 'svc';
     if (/^search\(\) · /.test(hint)) return 'search';
+    if (/^classify\(\) · TF-IDF/.test(hint)) return 'classify';
     if (hint.includes('Engine.classify')) {
       const model = context.record?.output?.model;
       return model === 'MLPClassifier' ? 'mlp' : model === 'LinearSVC' ? 'svc' : 'classify';

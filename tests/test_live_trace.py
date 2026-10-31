@@ -468,3 +468,12 @@ def test_trace_explains_tfidf_and_both_classifiers(client, enabled):
     assert any('LinearSVC' in n for n in names) and any('MLPClassifier' in n for n in names)
     tfidf = next(e for e in trace if e['event'] == 'end' and 'top_terms' in (e.get('output') or {}))
     assert {'tf', 'idf', 'weight_l2'} <= tfidf['output']['top_terms'][0].keys()
+
+def test_ml_sub_steps_point_at_the_production_lines(client, enabled):
+    client.get('/api/bootstrap')
+    lines = open('app/engine.py').read().splitlines()
+    for event in starts(events(client)):
+        real = (event.get('source') or {}).get('real')
+        if real:
+            assert real['code'].splitlines() == lines[real['line'] - 1:real['end_line']]
+            assert 'span(' not in real['code']

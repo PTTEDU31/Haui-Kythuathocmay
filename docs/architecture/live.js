@@ -206,6 +206,15 @@
     github.hidden = !source?.path;
     if (source?.path) github.href = `https://github.com/PTTEDU31/Haui-Kythuathocmay/blob/main/${source.path}#L${source.line || 1}${source.end_line ? '-L' + source.end_line : ''}`;
     $('#source-code').textContent = source?.code || 'Tham chiếu tới vị trí gọi ở trên. Đây là thao tác I/O tại call site.';
+    // ML sub-steps carry the production lines separately from the trace-only helper.
+    const real = source?.real;
+    $('#real-detail').hidden = !real;
+    if (real) {
+      $('#real-label').textContent = `Code chạy thật · ${real.path}:${real.line}–${real.end_line}`;
+      $('#real-github').href = `https://github.com/PTTEDU31/Haui-Kythuathocmay/blob/main/${real.path}#L${real.line}-L${real.end_line}`;
+      $('#real-code').dataset.firstLine = real.line;$('#real-code').textContent = real.code;
+      $('#source-label').textContent = `Hàm giải thích cho trace · ${source.path}:${source.line}–${source.end_line}`;
+    }
     window.DefenseGuide.render($('#defense-step'), record.function, {mode:'live',record});
     for (const item of records.values()) item.button.classList.toggle('selected',item === record);
     focusGraph(record);

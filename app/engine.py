@@ -1,5 +1,5 @@
 """Vietnamese retrieval and grounded generation. No student records are accessed."""
-import re, unicodedata, os, json, time, threading, math
+import re, unicodedata, os, json, time, threading, math, inspect, functools
 from collections import Counter
 from datetime import date
 from pathlib import Path
@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import joblib
 import httpx
 from .text import normalize_classification
-from .tracing import traced,span,tracing_on
+from .tracing import traced,span,tracing_on,source_ref
 
 ROOT=Path(os.getenv('STUDENT_ROOT',Path(__file__).resolve().parents[1]))
 LABELS={'hoc_phi':'Học phí','dang_ky_hoc_phan':'Đăng ký học phần','lich_thi':'Lịch thi','hoc_bong':'Học bổng','diem_hoc_tap':'Điểm học tập','cong_tac_sinh_vien':'Công tác sinh viên','ky_tuc_xa':'Ký túc xá'}
@@ -62,22 +62,41 @@ def explain_tfidf(vec,q,top=8):
             'formula':('tf=1+ln(count)' if vec.sublinear_tf else 'tf=count')+'; idf=ln((1+N)/(1+df))+1; weight=tf*idf/||v||2',
             'top_terms':terms}
 
-def explain_classifier(model,q):
-    """Trace-only: show the arithmetic behind LinearSVC scores or the MLP forward pass."""
+def explain_svc(model,q):
+    """Trace-only: LinearSVC score per class = w_k·x + b_k."""
     vec,clf=model.named_steps['tfidf'],model.named_steps['clf']
     x=vec.transform([q]);names=vec.get_feature_names_out();classes=[str(c) for c in model.classes_]
-    if hasattr(clf,'coef_'):
-        z=(x@clf.coef_.T).ravel()+clf.intercept_;cols=x.indices
-        per=[{'class':c,'w_dot_x':round(float(z[k]-clf.intercept_[k]),4),'bias':round(float(clf.intercept_[k]),4),'score':round(float(z[k]),4),
-              'top_terms':', '.join(f"{names[j]}({clf.coef_[k,j]*v:+.3f})" for j,v in sorted(zip(cols,x.data),key=lambda jv:-clf.coef_[k,jv[0]]*jv[1])[:4])}
-             for k,c in enumerate(classes)]
-        return {'model':'LinearSVC','formula':'score_k = w_k·x + b_k; nhãn = argmax score','classes':sorted(per,key=lambda r:-r['score'])}
+    z=(x@clf.coef_.T).ravel()+clf.intercept_;cols=x.indices
+    per=[{'class':c,'w_dot_x':round(float(z[k]-clf.intercept_[k]),4),'bias':round(float(clf.intercept_[k]),4),'score':round(float(z[k]),4),
+          'top_terms':', '.join(f"{names[j]}({clf.coef_[k,j]*v:+.3f})" for j,v in sorted(zip(cols,x.data),key=lambda jv:-clf.coef_[k,jv[0]]*jv[1])[:4])}
+         for k,c in enumerate(classes)]
+    return {'model':'LinearSVC','formula':'score_k = w_k·x + b_k; nhãn = argmax score','classes':sorted(per,key=lambda r:-r['score'])}
+
+def explain_mlp(model,q):
+    """Trace-only: MLP forward pass h = ReLU(x·W1+b1), z = h·W2+b2, p = softmax(z)."""
+    vec,clf=model.named_steps['tfidf'],model.named_steps['clf']
+    x=vec.transform([q]);classes=[str(c) for c in model.classes_]
     h=np.maximum(0,x@clf.coefs_[0]+clf.intercepts_[0]).ravel();z=h@clf.coefs_[1]+clf.intercepts_[1]
     p=np.exp(z-z.max());p/=p.sum()
     return {'model':'MLPClassifier','formula':'h = ReLU(x·W1 + b1); z = h·W2 + b2; p = softmax(z)',
             'layers':' -> '.join(str(n) for n in [x.shape[1],*clf.hidden_layer_sizes,len(classes)]),
             'hidden_relu':', '.join(f'{v:.3f}' for v in h),'active_neurons':f'{int((h>0).sum())}/{h.size}',
             'classes':sorted(({'class':c,'logit_z':round(float(z[k]),4),'softmax_p':round(float(p[k]),4)} for k,c in enumerate(classes)),key=lambda r:-r['softmax_p'])}
+
+def explain_classifier(model,q):
+    return (explain_svc if hasattr(model.named_steps['clf'],'coef_') else explain_mlp)(model,q)
+
+@functools.cache
+def real_code(method,first,last):
+    """Lines of an Engine method that run in production, shown beside the trace-only helper."""
+    lines,start=inspect.getsourcelines(inspect.unwrap(getattr(Engine,method)))
+    # Skip span(...) lines: they quote these needles as arguments.
+    hit=lambda k,n:n in lines[k] and 'span(' not in lines[k]
+    i=next(k for k in range(len(lines)) if hit(k,first));j=next(k for k in range(i,len(lines)) if hit(k,last))
+    return {'path':'app/engine.py','line':start+i,'end_line':start+j,'code':''.join(lines[i:j+1]).rstrip('\n')}
+
+def step_source(helper,method,first,last):
+    return {**source_ref(helper),'real':real_code(method,first,last)}
 
 class Engine:
     def __init__(self):
@@ -114,8 +133,8 @@ class Engine:
             sw=(self.w@self.word.transform([q]).T).toarray().ravel();sc=(self.c@self.char.transform([q]).T).toarray().ravel()
             scores=sw*.55+sc*.45
             if tracing_on():
-                with span('engine','search() · TF-IDF từ (word 1–2 gram)',{'q':q}) as t:t.output=explain_tfidf(self.word,q)
-                with span('engine','search() · TF-IDF ký tự (char_wb 3–5 gram)',{'q':q}) as t:t.output=explain_tfidf(self.char,q)
+                with span('engine','search() · TF-IDF từ (word 1–2 gram)',{'q':q},step_source(explain_tfidf,'search','sw=(self.w@','scores=sw')) as t:t.output=explain_tfidf(self.word,q)
+                with span('engine','search() · TF-IDF ký tự (char_wb 3–5 gram)',{'q':q},step_source(explain_tfidf,'search','sw=(self.w@','scores=sw')) as t:t.output=explain_tfidf(self.char,q)
             ranked=[];picked=[]
             for i in np.argsort(-scores):
                 row=dict(self.rows[i])
@@ -125,7 +144,7 @@ class Engine:
                 ranked.append(row);picked.append(i)
                 if len(ranked)>=limit: break
             if tracing_on():
-                with span('engine','search() · cosine = 0.55·word + 0.45·char',{'category':category,'documents':len(self.rows)}) as t:
+                with span('engine','search() · cosine = 0.55·word + 0.45·char',{'category':category,'documents':len(self.rows)},real_code('search','ranked=[];picked=[]','if len(ranked)>=limit')) as t:
                     t.output={'top':[{'id':r['id'],'intent':r['intent'],'cos_word':round(float(sw[i]),4),'cos_char':round(float(sc[i]),4),'score':r['score'],'question':r['question'][:90]}
                                      for r,i in zip(ranked,picked)]}
             return ranked
@@ -138,11 +157,12 @@ class Engine:
         model=self.models.get(name)
         if model is None:return None
         if tracing_on():
-            with span('engine',f'classify() · TF-IDF pipeline ({name})',{'q':q}) as t:t.output=explain_tfidf(model.named_steps['tfidf'],q)
+            with span('engine',f'classify() · TF-IDF pipeline ({name})',{'q':q},step_source(explain_tfidf,'classify','pred=str(model.predict','pred=str(model.predict')) as t:t.output=explain_tfidf(model.named_steps['tfidf'],q)
             # Show every loaded model side by side; only `name` decides the label.
             for other,m in self.models.items():
                 role='ĐANG DÙNG' if other==name else 'chỉ để so sánh'
-                with span('engine',f'classify() · {type(m.named_steps["clf"]).__name__} [{role}]',{'q':q}) as t:t.output=explain_classifier(m,q)
+                helper=explain_svc if hasattr(m.named_steps['clf'],'coef_') else explain_mlp
+                with span('engine',f'classify() · {type(m.named_steps["clf"]).__name__} [{role}]',{'q':q},step_source(helper,'classify','pred=str(model.predict','scores=getattr(model,kind)')) as t:t.output=helper(m,q)
         pred=str(model.predict([q])[0])
         if pred not in RESEARCH_LABELS:return None
         kind='predict_proba' if name=='mlp' else 'decision_function'

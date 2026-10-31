@@ -13,7 +13,8 @@
   function languageFor(pre, text) {
     const label = pre.closest('figure')?.querySelector('figcaption')?.textContent
       || (pre.id === 'code' ? document.querySelector('#name')?.textContent : '')
-      || (pre.id === 'source-code' ? document.querySelector('#source-label')?.textContent : '') || '';
+      || (pre.id === 'source-code' ? document.querySelector('#source-label')?.textContent : '')
+      || (pre.id === 'real-code' ? document.querySelector('#real-label')?.textContent : '') || '';
     const extension = label.match(/\.(py|js|json|html|css|sh)(?=[:\s]|$)/)?.[1];
     const languages = {py:'python', js:'javascript', json:'json', html:'xml', css:'css', sh:'bash'};
     if (extension) return languages[extension];
@@ -99,6 +100,8 @@
     if (pre.closest('.defense-excerpt')) {
       firstLine = Number(raw.match(/^(\d+)  /)?.[1] || 1);
       raw = raw.replace(/^\d+  /gm, '');
+    } else if (pre.dataset.firstLine) {
+      firstLine = Number(pre.dataset.firstLine);
     } else if (pre.id === 'source-code') {
       firstLine = Number(document.querySelector('#source-label')?.textContent.match(/:(\d+)/)?.[1] || 1);
     }
