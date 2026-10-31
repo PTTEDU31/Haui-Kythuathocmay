@@ -188,3 +188,13 @@ def test_research_endpoint_is_stateless_validates_mode_and_skips_generation(clie
     assert client.get('/api/history').json() == before
     assert client.post('/api/experiments/route', json={'question': 'học phí', 'model_mode': 'bad'}).status_code == 422
     assert client.post('/api/experiments/route', json={'question': '   '}).status_code == 422
+
+def test_student_model_env_overrides_auto_without_touching_selection(monkeypatch):
+    from app.engine import Engine
+    monkeypatch.setenv('STUDENT_MODEL', 'mlp')
+    e = Engine()
+    assert e.default_model == 'mlp'
+    assert e.classify('Quy định học phí năm học 2026–2027 ở đâu?')['model'] == 'MLPClassifier'
+    monkeypatch.setenv('STUDENT_MODEL', 'khong-co')
+    with pytest.raises(ValueError):
+        Engine()

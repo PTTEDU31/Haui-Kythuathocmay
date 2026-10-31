@@ -90,6 +90,11 @@ class Engine:
             if p.exists(): self.models[name]=joblib.load(p)
         p=ROOT/'reports'/'selection.json'
         self.default_model=json.loads(p.read_text())['selected'].lower() if p.exists() else 'linearsvc'
+        # Deployment override; reports/selection.json stays the frozen research result.
+        override=os.getenv('STUDENT_MODEL','').strip().lower()
+        if override:
+            if override not in self.models: raise ValueError(f'STUDENT_MODEL={override!r} chưa có trong models/')
+            self.default_model=override
 
     def rebuild(self,rows):
         rows=[dict(r) for r in rows if active(dict(r))]
