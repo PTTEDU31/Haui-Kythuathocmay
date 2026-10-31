@@ -1,0 +1,520 @@
+{
+  "checked_at": "2026-10-22T03:48:23.882527+00:00",
+  "domain": "ttech.io.vn",
+  "conclusion": "DNSSEC validation failure at parent io.vn; Cloudflare authoritative A records, TLS and named tunnel are operational.",
+  "verified_findings": [
+    "Cloudflare, Google and Quad9 validating resolvers return SERVFAIL with missing NSEC/invalid DS-denial proof.",
+    "Checking-disabled query returns existing Cloudflare A records.",
+    "Parent io.vn has authenticated DS records in vn, so its answers must validate.",
+    "Parent authorities return inconsistent DNSSEC material: a serves signatures; other tested servers omit signatures for SOA/DNSKEY; one SOA serial is behind.",
+    "Queries for ttech.io.vn DS omit the signed NSEC/NSEC3 denial proof, including direct TCP responses.",
+    "Both Cloudflare authoritative servers return the expected A records.",
+    "Pinning either Cloudflare A address while preserving hostname and verifying TLS yields HTTP 200 for /architecture/live.",
+    "Named connector has four ready connections, service has remained active since initial deployment and config mtime is unchanged.",
+    "Current server resolver is configured with DNSSEC=no/unsupported, explaining why local HTTP tests can succeed while validating resolvers fail."
+  ],
+  "inferences_and_limits": [
+    "The exact onset and triggering upstream DNS change are not established; no registry change audit is available.",
+    "Resolver cache differences and validation settings can explain earlier/intermittent success; the phone resolver settings were not inspected.",
+    "Evidence localizes the problem to parent-zone DNSSEC service; it does not establish an operator incident announcement."
+  ],
+  "actions_taken": "Read-only diagnostics; no DNS records, DNSSEC settings, tunnel config or services changed in this investigation.",
+  "recommended_action": "Send parent-zone DNSSEC evidence to the domain registrar/provider for escalation to the io.vn/VNNIC DNS operator. Repair signing/denial proofs and synchronize authorities; then recheck validating public DNS. Keep the existing fallback tunnel for the presentation.",
+  "historical_evidence": [
+    "reports/public-deployment.json",
+    "docs/architecture/evidence/live-tunnel-verification.json",
+    "docs/architecture/evidence/live-dns-fallback.json"
+  ],
+  "infrastructure": {
+    "104.21.46.113": {
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "5",
+        "--max-time",
+        "10",
+        "--resolve",
+        "ttech.io.vn:443:104.21.46.113",
+        "-o",
+        "/dev/null",
+        "-w",
+        "http=%{http_code} tls_verify=%{ssl_verify_result}\n",
+        "https://ttech.io.vn/architecture/live"
+      ],
+      "exit_code": 0,
+      "stdout": "http=200 tls_verify=0\n",
+      "stderr": ""
+    },
+    "172.67.168.118": {
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "5",
+        "--max-time",
+        "10",
+        "--resolve",
+        "ttech.io.vn:443:172.67.168.118",
+        "-o",
+        "/dev/null",
+        "-w",
+        "http=%{http_code} tls_verify=%{ssl_verify_result}\n",
+        "https://ttech.io.vn/architecture/live"
+      ],
+      "exit_code": 0,
+      "stdout": "http=200 tls_verify=0\n",
+      "stderr": ""
+    },
+    "connector": {
+      "command": [
+        "curl",
+        "--fail",
+        "--silent",
+        "http://127.0.0.1:20245/ready"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\":200,\"readyConnections\":4,\"connectorId\":\"a40ac197-c50d-4a11-b0f5-73e3a86e7d2c\"}",
+      "stderr": ""
+    },
+    "services": {
+      "command": [
+        "systemctl",
+        "--user",
+        "show",
+        "cloudflared-ttech.service",
+        "student-support.service",
+        "-p",
+        "Id",
+        "-p",
+        "ActiveState",
+        "-p",
+        "ActiveEnterTimestamp"
+      ],
+      "exit_code": 0,
+      "stdout": "Id=cloudflared-ttech.service\nActiveState=active\nActiveEnterTimestamp=Thu 2026-10-22 00:35:45 +07\n\nId=student-support.service\nActiveState=active\nActiveEnterTimestamp=Thu 2026-10-22 10:39:11 +07\n",
+      "stderr": ""
+    },
+    "local_dnssec_lines": [
+      "Protocols: LLMNR=resolve -mDNS -DNSOverTLS DNSSEC=no/unsupported",
+      "DNSSEC=no/unsupported",
+      "Current DNS Server: <router-lan>",
+      "DNSSEC=no/unsupported",
+      "Current DNS Server: <router-lan>",
+      "Protocols: -DefaultRoute -LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported",
+      "Current DNS Server: <tailscale-dns>"
+    ],
+    "tunnel_config_mtime": "2026-10-21T17:35:45.698070+00:00"
+  },
+  "dns_queries": [
+    {
+      "command": [
+        "dig",
+        "@1.1.1.1",
+        "ttech.io.vn",
+        "A",
+        "+dnssec",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @1.1.1.1 ttech.io.vn A +dnssec +time=3 +tries=1\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 17549\n;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; EDE: 12 (NSEC Missing): (failed to verify an insecure referral proof for ttech.io.vn.)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tA\n\n;; Query time: 32 msec\n;; SERVER: 1.1.1.1#53(1.1.1.1) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 106\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@8.8.8.8",
+        "ttech.io.vn",
+        "A",
+        "+dnssec",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @8.8.8.8 ttech.io.vn A +dnssec +time=3 +tries=1\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 24059\n;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 512\n; EDE: 12 (NSEC Missing): (Invalid denial of existence of ttech.io.vn/ds)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tA\n\n;; Query time: 369 msec\n;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 91\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@9.9.9.9",
+        "ttech.io.vn",
+        "A",
+        "+dnssec",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @9.9.9.9 ttech.io.vn A +dnssec +time=3 +tries=1\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: 50017\n;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; EDE: 12 (NSEC Missing)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tA\n\n;; Query time: 217 msec\n;; SERVER: 9.9.9.9#53(9.9.9.9) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 46\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@1.1.1.1",
+        "ttech.io.vn",
+        "A",
+        "+dnssec",
+        "+cd",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @1.1.1.1 ttech.io.vn A +dnssec +cd +time=3 +tries=1\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25715\n;; flags: qr rd ra cd; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; EDE: 12 (NSEC Missing): (failed to verify an insecure referral proof for ttech.io.vn.)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tA\n\n;; ANSWER SECTION:\nttech.io.vn.\t\t300\tIN\tA\t104.21.46.113\nttech.io.vn.\t\t300\tIN\tA\t172.67.168.118\n\n;; Query time: 33 msec\n;; SERVER: 1.1.1.1#53(1.1.1.1) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 138\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@a.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @a.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 50608\n;; flags: qr aa; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 4096\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\nio.vn.\t\t\t43200\tIN\tRRSIG\tSOA 8 2 43200 20261121031351 20261022021351 63499 io.vn. QYWc847O81PwXQKYXqtyRY0uGks8XtAWcWcbjrlQg+4Gw3YVPJhLPnhD MrTJKfbNkv9AchKzUN/36tARiCZTpy+n0ljGVSdBEvaD0H9Tn5jScArv KVcymQEQmAWFZkC6MdUvSSBbZx0ECKus6s3vZBw4iS69XgD/gZNUXtkG v7Q=\n\n;; Query time: 57 msec\n;; SERVER: 194.0.1.18#53(a.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 273\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@a.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @a.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 62311\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 2, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 4096\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\nio.vn.\t\t\t5400\tIN\tRRSIG\tSOA 8 2 43200 20261121031351 20261022021351 63499 io.vn. QYWc847O81PwXQKYXqtyRY0uGks8XtAWcWcbjrlQg+4Gw3YVPJhLPnhD MrTJKfbNkv9AchKzUN/36tARiCZTpy+n0ljGVSdBEvaD0H9Tn5jScArv KVcymQEQmAWFZkC6MdUvSSBbZx0ECKus6s3vZBw4iS69XgD/gZNUXtkG v7Q=\n\n;; Query time: 58 msec\n;; SERVER: 194.0.1.18#53(a.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 289\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@b.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @b.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64545\n;; flags: qr aa; QUERY: 1, ANSWER: 1, AUTHORITY: 8, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: cc0dbbffffa1e410010000006ad987811f2e79cc9026afe9 (good)\n; EDE: 18 (Prohibited)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t43200\tIN\tNS\tf.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\td.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\th.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\ta.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tb.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tc.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\te.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tg.dns-servers.vn.\n\n;; Query time: 6 msec\n;; SERVER: 203.119.73.105#53(b.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 272\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@b.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 9,
+      "stdout": ";; communications error to 203.119.73.105#53: timed out\n;; communications error to 2001:dc8:1:2::105#53: timed out\n\n; <<>> DiG 9.18.47 <<>> @b.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; no servers could be reached\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@c.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @c.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 38006\n;; flags: qr aa; QUERY: 1, ANSWER: 1, AUTHORITY: 8, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: ce56dc90ec5d292c010000006ad98781d06df07286d0bcc0 (good)\n; EDE: 18 (Prohibited)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t43200\tIN\tNS\th.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\ta.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\td.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tf.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tb.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tg.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\te.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tc.dns-servers.vn.\n\n;; Query time: 55 msec\n;; SERVER: 203.119.38.105#53(c.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 272\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@c.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @c.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 16893\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: e40db5a809f9167b010000006ad987812f39c0466736165f (good)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; Query time: 28 msec\n;; SERVER: 203.119.38.105#53(c.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 132\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@d.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @d.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 16025\n;; flags: qr aa; QUERY: 1, ANSWER: 1, AUTHORITY: 8, ADDITIONAL: 20\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: a88e84924653df5edb5316ae6ad98781ff51eb9a34e135c8 (good)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746079 3600 1800 604800 5400\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t43200\tIN\tNS\td.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tc.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\th.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tf.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tb.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\te.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\ta.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tg.dns-servers.vn.\n\n;; ADDITIONAL SECTION:\na.dns-servers.vn.\t86400\tIN\tA\t194.0.1.18\nb.dns-servers.vn.\t86400\tIN\tA\t203.119.73.105\nc.dns-servers.vn.\t86400\tIN\tA\t203.119.38.105\nd.dns-servers.vn.\t86400\tIN\tA\t203.119.44.105\ne.dns-servers.vn.\t86400\tIN\tA\t203.119.60.105\nf.dns-servers.vn.\t86400\tIN\tA\t203.119.68.105\ng.dns-servers.vn.\t86400\tIN\tA\t204.61.216.115\nh.dns-servers.vn.\t43200\tIN\tA\t202.47.142.105\na.dns-servers.vn.\t86400\tIN\tAAAA\t2001:678:4::12\nb.dns-servers.vn.\t86400\tIN\tAAAA\t2001:dc8:1:2::105\nc.dns-servers.vn.\t86400\tIN\tAAAA\t2001:dc8:c000:7::105\nd.dns-servers.vn.\t43200\tIN\tAAAA\t2001:dc8:8000:2::105\ne.dns-servers.vn.\t43200\tIN\tAAAA\t2001:dc8:1000:2::105\nf.dns-servers.vn.\t86400\tIN\tAAAA\t2001:dc8:d000:2::105\ng.dns-servers.vn.\t86400\tIN\tAAAA\t2001:500:14:6115:ad::1\nh.dns-servers.vn.\t43200\tIN\tAAAA\t2001:dc8:6000::105\na.dns-servers.vn.\t86400\tIN\tRRSIG\tA 8 3 86400 20261029023429 20260929020606 61969 dns-servers.vn. lnC6TNGiVBYRGgrh+tXQ8QNEn+aJgC4kbsYo7rMf4b5JQ4iAoKFuuBkL nBCH+Cwyb8yNBd3RuX7FM7Oym76YAYqlx32F2jzeQeTZjRUeHJktYNX+ UYT5iiplPZXTB13qEwCYNa8L++gYEsv/sOgFJ/q+x8rcVfwXNt1SAwws g98=\na.dns-servers.vn.\t86400\tIN\tRRSIG\tAAAA 8 3 86400 20261029023429 20260929020606 61969 dns-servers.vn. D4+gE8NEc5pl9TnSOYCvDlYe1zVdBzzZ6Nap3IF/tFlLEes329FsrlTh lMHXQHxflTN+q7gpr+ZGV78sT/2DM8MyDIZK1yXTATAHqH40OPjzEDpY iH+ayVCMTBrXIhSI6wRcwID4OEOXYUYfC02RoItFYgsfJtVughULeeIZ jiw=\nb.dns-servers.vn.\t86400\tIN\tRRSIG\tA 8 3 86400 20261101202628 20261002200318 61969 dns-servers.vn. ReO+Plkyqktw7wnSq9e+RmQ6MbXU3OcSFk583RY35r5gpEI87SCm2gHV H4O9NCNH+kGu90DcmnxN0Q0XxPDTICPWoa+DkWIQLQibK0EEytwNok4B ICUkjqXfuNLLz8cPFJv85sbsEcQ46BFBI1EGpyH/aonTZNIIC3S7JUl0 z3I=\n\n;; Query time: 13 msec\n;; SERVER: 203.119.44.105#53(d.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 1140\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@d.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @d.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43304\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: 0a8a5656a030cce8e73ef02c6ad98781c7db7f0448b8db7a (good)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746079 3600 1800 604800 5400\n\n;; Query time: 13 msec\n;; SERVER: 203.119.44.105#53(d.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 132\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@e.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @e.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43496\n;; flags: qr aa; QUERY: 1, ANSWER: 1, AUTHORITY: 8, ADDITIONAL: 20\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: 74e2caa6e016efc3ca65480e6ad987810dde196b137b46df (good)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t43200\tIN\tNS\tb.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tc.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\th.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tg.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\td.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\ta.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tf.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\te.dns-servers.vn.\n\n;; ADDITIONAL SECTION:\na.dns-servers.vn.\t86400\tIN\tA\t194.0.1.18\nb.dns-servers.vn.\t86400\tIN\tA\t203.119.73.105\nc.dns-servers.vn.\t86400\tIN\tA\t203.119.38.105\nd.dns-servers.vn.\t86400\tIN\tA\t203.119.44.105\ne.dns-servers.vn.\t86400\tIN\tA\t203.119.60.105\nf.dns-servers.vn.\t86400\tIN\tA\t203.119.68.105\ng.dns-servers.vn.\t86400\tIN\tA\t204.61.216.115\nh.dns-servers.vn.\t43200\tIN\tA\t202.47.142.105\na.dns-servers.vn.\t86400\tIN\tAAAA\t2001:678:4::12\nb.dns-servers.vn.\t86400\tIN\tAAAA\t2001:dc8:1:2::105\nc.dns-servers.vn.\t86400\tIN\tAAAA\t2001:dc8:c000:7::105\nd.dns-servers.vn.\t43200\tIN\tAAAA\t2001:dc8:8000:2::105\ne.dns-servers.vn.\t43200\tIN\tAAAA\t2001:dc8:1000:2::105\nf.dns-servers.vn.\t86400\tIN\tAAAA\t2001:dc8:d000:2::105\ng.dns-servers.vn.\t86400\tIN\tAAAA\t2001:500:14:6115:ad::1\nh.dns-servers.vn.\t43200\tIN\tAAAA\t2001:dc8:6000::105\na.dns-servers.vn.\t86400\tIN\tRRSIG\tA 8 3 86400 20261029023429 20260929020606 61969 dns-servers.vn. lnC6TNGiVBYRGgrh+tXQ8QNEn+aJgC4kbsYo7rMf4b5JQ4iAoKFuuBkL nBCH+Cwyb8yNBd3RuX7FM7Oym76YAYqlx32F2jzeQeTZjRUeHJktYNX+ UYT5iiplPZXTB13qEwCYNa8L++gYEsv/sOgFJ/q+x8rcVfwXNt1SAwws g98=\na.dns-servers.vn.\t86400\tIN\tRRSIG\tAAAA 8 3 86400 20261029023429 20260929020606 61969 dns-servers.vn. D4+gE8NEc5pl9TnSOYCvDlYe1zVdBzzZ6Nap3IF/tFlLEes329FsrlTh lMHXQHxflTN+q7gpr+ZGV78sT/2DM8MyDIZK1yXTATAHqH40OPjzEDpY iH+ayVCMTBrXIhSI6wRcwID4OEOXYUYfC02RoItFYgsfJtVughULeeIZ jiw=\nb.dns-servers.vn.\t86400\tIN\tRRSIG\tA 8 3 86400 20261101202628 20261002200318 61969 dns-servers.vn. ReO+Plkyqktw7wnSq9e+RmQ6MbXU3OcSFk583RY35r5gpEI87SCm2gHV H4O9NCNH+kGu90DcmnxN0Q0XxPDTICPWoa+DkWIQLQibK0EEytwNok4B ICUkjqXfuNLLz8cPFJv85sbsEcQ46BFBI1EGpyH/aonTZNIIC3S7JUl0 z3I=\n\n;; Query time: 3 msec\n;; SERVER: 203.119.60.105#53(e.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 1140\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@e.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @e.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 21212\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: 41442742854a63363d7215bc6ad98781f78cb30f5c7afbde (good)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; Query time: 3 msec\n;; SERVER: 203.119.60.105#53(e.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 132\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@f.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 9,
+      "stdout": ";; communications error to 203.119.68.105#53: timed out\n;; communications error to 2001:dc8:d000:2::105#53: timed out\n\n; <<>> DiG 9.18.47 <<>> @f.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; no servers could be reached\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@f.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 9,
+      "stdout": ";; communications error to 203.119.68.105#53: timed out\n;; communications error to 2001:dc8:d000:2::105#53: timed out\n\n; <<>> DiG 9.18.47 <<>> @f.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; no servers could be reached\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@g.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @g.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 13336\n;; flags: qr aa; QUERY: 1, ANSWER: 1, AUTHORITY: 8, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 4096\n; COOKIE: 3aae03313e8de293c9ac5e756ad98781cfbf6d937fa515e2 (good)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t43200\tIN\tNS\tc.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\te.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tg.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\th.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\ta.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tb.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tf.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\td.dns-servers.vn.\n\n;; Query time: 53 msec\n;; SERVER: 204.61.216.115#53(g.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 270\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@g.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @g.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 32091\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 4096\n; COOKIE: a439d63e4a676e74351b6da66ad987818367e72628d43f50 (good)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; Query time: 56 msec\n;; SERVER: 204.61.216.115#53(g.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 134\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@h.dns-servers.vn",
+        "io.vn",
+        "SOA",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @h.dns-servers.vn io.vn SOA +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 40585\n;; flags: qr aa; QUERY: 1, ANSWER: 1, AUTHORITY: 8, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: a53c63b98fef928d4ca210616ad9878130afe5b53b0505f5 (good)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tSOA\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t43200\tIN\tNS\th.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tc.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\ta.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tb.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\td.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\te.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tf.dns-servers.vn.\nio.vn.\t\t\t43200\tIN\tNS\tg.dns-servers.vn.\n\n;; Query time: 27 msec\n;; SERVER: 202.47.142.105#53(h.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 270\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@h.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @h.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 7742\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: 0b19762102377440d34294bf6ad9878160cb4b676b9ea4aa (good)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; Query time: 26 msec\n;; SERVER: 202.47.142.105#53(h.dns-servers.vn) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 134\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@a.dns-servers.vn",
+        "io.vn",
+        "DNSKEY",
+        "+dnssec",
+        "+norecurse",
+        "+tcp",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @a.dns-servers.vn io.vn DNSKEY +dnssec +norecurse +tcp +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 4261\n;; flags: qr aa; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 4096\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tDNSKEY\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tDNSKEY\t256 3 8 AwEAAYvsQDca4SLzG+fAGieg78wjnKjYzDm2jT5lKROa10pcEGjKJ1xI BC/2zR+FPJGydVDr2gRHt3M0R1joZ/DbOSG9lEm2DL2GaoQoxDL3krHF BFgDjhY5QxPCLjimh8gd2ppZK4nEbnoQzZH6boPx0h2M2PFocgBVzhGI lro90vtP\nio.vn.\t\t\t43200\tIN\tDNSKEY\t257 3 8 AwEAAahBwIfzIbZ5C8uwFGlku1R9RsAZev+8oGxbVVv7cUOaWFE47Hcm d3zyvE0sLD82JaV4IqUHBgu6lXOZaIr4oKUAuYz2WLN1ZSEcui+0HPeC 476bEXKy9cLIHT+5FCRJZfwBjaWea73U3BXK1mcuR8AWsTpLhKUxyyQ9 nmjgDCe/ai5MCuGmZ2AIC0xb8FdB0nLn8PSwLMTm1KYL8HTN1fsJG4SH ro+iUQLIIaFQz4CUjqMF9MYbOD/OIAqGme0NGCjyo0ocAznFATkLXzEB T54JtWCRfSsvBnEIqi6pQuLZVuj6qsKqItur34+3bUuncOvJfrLX86Xh dAs5yLNAKQM=\nio.vn.\t\t\t43200\tIN\tRRSIG\tDNSKEY 8 2 43200 20261031015903 20261022015000 56381 io.vn. BdT8mF1NezZmKbiQJdQVprEJHCZn4VytbyqjNZvF7K0SfJIibcxNtzS4 45eLkXEJ5htrN0eJy5f7Oyf3l0R5vQVd58cmEvs97+FVjqjmrVGklIEn d8+KrLOzzX5bgiKhJ76VaAnaW9QrcHE+W/vhUUj4SHstrSQYBGxN1URM XDn+dLiLdE6ruyuasfJuH/PBk49X43gJmQN8beqmpt1Z+Ep/zvH5Gh22 +QTaTgMRnaeUgGRZShhcVJ+e21BgJ24BHDFTnGj9UIZSOzs5tz9dAD0V sMpky+dH0aOfETf0icYFeGzwy48JYSwFWQ9cMGqR8UwhnF1Vw2mDHwRa 8nqDaw==\nio.vn.\t\t\t43200\tIN\tRRSIG\tDNSKEY 8 2 43200 20261031015903 20261022015000 63499 io.vn. H/bXPdMHT9PixOhJWvvqXhgYFmvr14fMAqCHTVpkdKx1jHh5c28WLfg7 4g8Kyx168GS29vn4YUUh7q1tRHORs784AaBmYHiFKgzEoXcH/srGFRyi /NoMjkI87ndWBrtKWuIBSAkOu3FjEuRnwb/6JhOIilIE5mAluW0Z4Eh7 G3E=\n\n;; Query time: 56 msec\n;; SERVER: 194.0.1.18#53(a.dns-servers.vn) (TCP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 916\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@a.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+tcp",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @a.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +tcp +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 15267\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 2, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 4096\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\nio.vn.\t\t\t5400\tIN\tRRSIG\tSOA 8 2 43200 20261121031351 20261022021351 63499 io.vn. QYWc847O81PwXQKYXqtyRY0uGks8XtAWcWcbjrlQg+4Gw3YVPJhLPnhD MrTJKfbNkv9AchKzUN/36tARiCZTpy+n0ljGVSdBEvaD0H9Tn5jScArv KVcymQEQmAWFZkC6MdUvSSBbZx0ECKus6s3vZBw4iS69XgD/gZNUXtkG v7Q=\n\n;; Query time: 59 msec\n;; SERVER: 194.0.1.18#53(a.dns-servers.vn) (TCP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 289\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@b.dns-servers.vn",
+        "io.vn",
+        "DNSKEY",
+        "+dnssec",
+        "+norecurse",
+        "+tcp",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @b.dns-servers.vn io.vn DNSKEY +dnssec +norecurse +tcp +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 11103\n;; flags: qr aa; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: a1764778a8223e27010000006ad98781566a219db654584e (good)\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tDNSKEY\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tDNSKEY\t256 3 8 AwEAAYvsQDca4SLzG+fAGieg78wjnKjYzDm2jT5lKROa10pcEGjKJ1xI BC/2zR+FPJGydVDr2gRHt3M0R1joZ/DbOSG9lEm2DL2GaoQoxDL3krHF BFgDjhY5QxPCLjimh8gd2ppZK4nEbnoQzZH6boPx0h2M2PFocgBVzhGI lro90vtP\nio.vn.\t\t\t43200\tIN\tDNSKEY\t257 3 8 AwEAAahBwIfzIbZ5C8uwFGlku1R9RsAZev+8oGxbVVv7cUOaWFE47Hcm d3zyvE0sLD82JaV4IqUHBgu6lXOZaIr4oKUAuYz2WLN1ZSEcui+0HPeC 476bEXKy9cLIHT+5FCRJZfwBjaWea73U3BXK1mcuR8AWsTpLhKUxyyQ9 nmjgDCe/ai5MCuGmZ2AIC0xb8FdB0nLn8PSwLMTm1KYL8HTN1fsJG4SH ro+iUQLIIaFQz4CUjqMF9MYbOD/OIAqGme0NGCjyo0ocAznFATkLXzEB T54JtWCRfSsvBnEIqi6pQuLZVuj6qsKqItur34+3bUuncOvJfrLX86Xh dAs5yLNAKQM=\n\n;; Query time: 6 msec\n;; SERVER: 203.119.73.105#53(b.dns-servers.vn) (TCP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 486\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@b.dns-servers.vn",
+        "ttech.io.vn",
+        "DS",
+        "+dnssec",
+        "+norecurse",
+        "+tcp",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @b.dns-servers.vn ttech.io.vn DS +dnssec +norecurse +tcp +time=3 +tries=1\n; (2 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 16017\n;; flags: qr aa; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n; COOKIE: 310ec9f61f284f8b010000006ad9878112085be92ba38910 (good)\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tDS\n\n;; AUTHORITY SECTION:\nio.vn.\t\t\t5400\tIN\tSOA\tdns-master.vnnic.vn. postmaster.vnnic.vn. 2023746087 3600 1800 604800 5400\n\n;; Query time: 5 msec\n;; SERVER: 203.119.73.105#53(b.dns-servers.vn) (TCP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 132\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@celine.ns.cloudflare.com",
+        "ttech.io.vn",
+        "A",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @celine.ns.cloudflare.com ttech.io.vn A +dnssec +norecurse +time=3 +tries=1\n; (6 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 60649\n;; flags: qr aa; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tA\n\n;; ANSWER SECTION:\nttech.io.vn.\t\t300\tIN\tA\t172.67.168.118\nttech.io.vn.\t\t300\tIN\tA\t104.21.46.113\n\n;; Query time: 71 msec\n;; SERVER: 162.159.38.98#53(celine.ns.cloudflare.com) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 72\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@dakota.ns.cloudflare.com",
+        "ttech.io.vn",
+        "A",
+        "+dnssec",
+        "+norecurse",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @dakota.ns.cloudflare.com ttech.io.vn A +dnssec +norecurse +time=3 +tries=1\n; (6 servers found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 15465\n;; flags: qr aa; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n;; QUESTION SECTION:\n;ttech.io.vn.\t\t\tIN\tA\n\n;; ANSWER SECTION:\nttech.io.vn.\t\t300\tIN\tA\t172.67.168.118\nttech.io.vn.\t\t300\tIN\tA\t104.21.46.113\n\n;; Query time: 74 msec\n;; SERVER: 162.159.44.79#53(dakota.ns.cloudflare.com) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 72\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "dig",
+        "@1.1.1.1",
+        "io.vn",
+        "DS",
+        "+dnssec",
+        "+time=3",
+        "+tries=1"
+      ],
+      "exit_code": 0,
+      "stdout": "\n; <<>> DiG 9.18.47 <<>> @1.1.1.1 io.vn DS +dnssec +time=3 +tries=1\n; (1 server found)\n;; global options: +cmd\n;; Got answer:\n;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 47591\n;; flags: qr rd ra ad; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: 1\n\n;; OPT PSEUDOSECTION:\n; EDNS: version: 0, flags: do; udp: 1232\n;; QUESTION SECTION:\n;io.vn.\t\t\t\tIN\tDS\n\n;; ANSWER SECTION:\nio.vn.\t\t\t43200\tIN\tDS\t56381 8 2 2A93E4C24ABE3AD962598BF8D982186C05410B56335EFE5FAE30D2D9 E1FA875D\nio.vn.\t\t\t43200\tIN\tDS\t56381 8 4 EA9094C4C9641AAF513CF298312151A53D1CDBA3FA17D8F7BBA34684 269D432590DF94B43E786755FBBACAE34D0D7B1E\nio.vn.\t\t\t43200\tIN\tRRSIG\tDS 8 2 43200 20261110132401 20261011124540 52956 vn. C+HuvTMeVjgyhgURI1z7hPXsjaa4DyRh9cF9bsvL/R+BAaZPcaJnqbCx mxaRKwV2c6rjPhxKQJVW+IkQf/+J8E0VxzixuNtdfcTdEXU1fUXLGEip NbcWp6oIQvKZvk2qWlAk6KusoZVGlDB1Dk++rxn01/Vv1kz1vgdNZ++h bcs=\n\n;; Query time: 31 msec\n;; SERVER: 1.1.1.1#53(1.1.1.1) (UDP)\n;; WHEN: Thu Oct 22 10:48:17 +07 2026\n;; MSG SIZE  rcvd: 308\n\n",
+      "stderr": ""
+    }
+  ]
+}
